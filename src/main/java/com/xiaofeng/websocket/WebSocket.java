@@ -18,10 +18,8 @@ import com.xiaofeng.websocket.utils.MsgUtils;
  
 /**
  * 
- * @ClassName:  WebSocket   
- * @Description: 连接  
- * @author: 严伟峰(ywf)
- * @date:   2020年7月14日 下午4:48:15
+ * @author xiaofeng
+ * websocket主线程
  */
 @ServerEndpoint("/websocket/{groupId}")
 @Component
