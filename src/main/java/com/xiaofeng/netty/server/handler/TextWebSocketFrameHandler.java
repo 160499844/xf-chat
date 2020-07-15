@@ -3,6 +3,7 @@ package com.xiaofeng.netty.server.handler;
 import java.net.SocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
@@ -10,10 +11,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.global.UserInfoContext;
+import com.xiaofeng.utils.DateUtils;
+import com.xiaofeng.utils.MessageVo;
+import com.xiaofeng.utils.Result;
 import com.xiaofeng.utils.UserToken;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -36,24 +40,17 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		//获取前端传递信息
 		String userId = ctx.channel().id().asLongText();
 		String message = msg.text();
-		log.info(userId + "：" + message);
 		//更新用户信息
 		UserToken user = UserInfoContext.getUser(userId);
-		message = message.replace("null", "\"\"");
-		JSONObject json = new JSONObject(message);
-
-		String content = json.getString("msg");
-		String groupId =StringUtils.isEmpty(json.getString("groupId"))?user.getGroupId():json.getString("groupId");
-		String name = StringUtils.isEmpty(json.getString("name"))?user.getUserName():json.getString("name");
-		String type = json.getString("type");
+		MessageVo messageVo = JSONObject.parseObject(message,MessageVo.class);
+		String content = messageVo.getMsg();
 		
 		
-		user.setGroupId(groupId);
-		user.setUserName(name);
+		user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId())?user.getGroupId():messageVo.getGroupId());
+		user.setUserName(StringUtils.isEmpty(messageVo.getName())?user.getUserName():messageVo.getName());
 		
-		Date nowDate = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		content  = String.format("%s(%s):%s", user.getUserName(), sdf.format(nowDate), content);
+		content  = String.format("%s(%s):%s", user.getUserName(), DateUtils.getNowDateToString(), content);
+		log.info(content);
 		/**
 		 * writeAndFlush接收的参数类型是Object类型，但是一般我们都是要传入管道中传输数据的类型，比如我们当前的demo
 		 * 传输的就是TextWebSocketFrame类型的数据
@@ -67,7 +64,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 			Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
 			userGroup.put(user.getUserId(), ctx);
 			groupList.add(userGroup);
-			GroupContext.USER_GROUP.put(groupId, groupList);
+			GroupContext.USER_GROUP.put(user.getGroupId(), groupList);
 		}else {
 			//小组已经存在，如果小组中没有当前成员，加入小组
 			//临时保存新的组成员
@@ -81,35 +78,43 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 			}
 			//更新组成员
 			if(tempList.size()>0) {
-				Set<Map<String, ChannelHandlerContext>> list = GroupContext.USER_GROUP.get(groupId);
+				Set<Map<String, ChannelHandlerContext>> list = GroupContext.USER_GROUP.get(user.getGroupId());
 				list.addAll(tempList);
 			}
 		}
 		//广播给组成员
 		groupList = GroupContext.USER_GROUP.get(user.getGroupId());
+		//组装返回对象
+		Result of = Result.of(content);
+		Map<String,Object> ofInfo = new HashMap<>();
+		ofInfo.put("group_count", groupList.size());//当前在线人数
+		ofInfo.put("gourp_users", GroupContext.getGroupUsers(user.getGroupId()));//当前在线成员
+		of.setInfo(ofInfo);
+		String jsonString = JSONObject.toJSONString(of);
 		for (Map<String, ChannelHandlerContext> map : groupList) {
 			for(String key:map.keySet()) {
 				ChannelHandlerContext channelHandlerContext = map.get(key);
 				channelHandlerContext.channel().writeAndFlush(
-						new TextWebSocketFrame(content));
+						new TextWebSocketFrame(jsonString));
 			}
 		}
 	}
-
+	//用户加入
 	// 每个channel都有一个唯一的id值
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
 		SocketAddress localAddress = ctx.channel().localAddress();
+		String ip = localAddress.toString().replace("/", "");
 		String userId = ctx.channel().id().asLongText();
 		// 打印出channel唯一值，asLongText方法是channel的id的全名
-		log.info(String.format("访问用户:%s,ip:%s", userId, localAddress.toString()));
+		log.info(String.format("访问用户:%s,ip:%s", userId, ip));
 		// UserInfoContext.USER_SESSION.put(userId, ctx);
 
 		UserToken user = UserInfoContext.getUser(userId);
 		if (user == null) {
 			// 首次访问
 			user = new UserToken();
-			user.setIp(localAddress.toString());
+			user.setIp(ip);
 			user.setUserId(userId);
 			Random random = new Random();
 			user.setUserName("访客" + random.nextInt(100));
@@ -127,8 +132,14 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		// 加入组中
 		groupList.add(map);
 		GroupContext.USER_GROUP.put(groupId, groupList);
+		//组装返回对象
+		String jsonString = JSONObject.toJSONString(Result.of(String.format("%s进入群聊", user.getUserName())));
+		//推送信息
+		log.info(jsonString);
 	}
-
+	/**
+	 * 用户退出
+	 */
 	@Override
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
 		String userId = ctx.channel().id().asLongText();

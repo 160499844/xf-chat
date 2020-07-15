@@ -1,5 +1,7 @@
 package com.xiaofeng.utils;
 
+import java.io.Serializable;
+
 import lombok.Data;
 
 /**
@@ -8,7 +10,7 @@ import lombok.Data;
  *
  */
 @Data
-public class UserToken {
+public class UserToken implements Serializable{
 	//用户id
 	private String userId;
 	//组id
