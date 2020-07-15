@@ -21,7 +21,20 @@ public class EncryptMessage {
 	 */
 	public static String encrypt(String str) throws InvalidAlgorithmParameterException {
 		String string = "";
-		string = SymmetricEncoder.AESEncode(str);
+		string = SymmetricEncoder.encrypt(str);
+		return string;
+	}
+	
+	
+	/**
+	 * 解密
+	 * @param str 需要解密的字符串
+	 * @return
+	 * @throws InvalidAlgorithmParameterException
+	 */
+	public static String decrypt(String str) throws InvalidAlgorithmParameterException {
+		String string = "";
+		string = SymmetricEncoder.decrypt(str);
 		return string;
 	}
 }

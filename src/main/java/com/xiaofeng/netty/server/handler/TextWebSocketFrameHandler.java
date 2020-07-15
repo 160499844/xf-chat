@@ -41,6 +41,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		//获取前端传递信息
 		String userId = ctx.channel().id().asLongText();
 		String message = msg.text();
+		message = EncryptMessage.decrypt(message);
 		//更新用户信息
 		UserToken user = UserInfoContext.getUser(userId);
 		MessageVo messageVo = JSONObject.parseObject(message,MessageVo.class);
