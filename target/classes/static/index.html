@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <title>WebSocket客户端</title>
 <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="/js/CryptoJS-master/rollups/aes.js"></script>
+<script type="text/javascript" src="/js/CryptoJS-master/components/mode-ecb.js"></script>
+<script type="text/javascript" src="/js/CryptoJS-master/components/pad-nopadding.js"></script>
+<script type="text/javascript" src="/js/aesUtils.js"></script>
 </head>
 <body>
 	<script type="text/javascript">
@@ -45,6 +49,7 @@
 			socket.onopen = function(event) {
 				var ta = document.getElementById("responseText");
 				ta.value = "连接开启";
+				
 			}
 
 			//连接断掉的回调函数

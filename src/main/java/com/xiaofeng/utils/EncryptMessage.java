@@ -1,5 +1,7 @@
 package com.xiaofeng.utils;
 
+import java.security.InvalidAlgorithmParameterException;
+
 /**
  * 
  * @ClassName:  EncryptMessage   
@@ -8,6 +10,7 @@ package com.xiaofeng.utils;
  */
 public class EncryptMessage {
 	/**
+	 * @throws InvalidAlgorithmParameterException 
 	 * 
 	 * @Title: encrypt   
 	 * @Description: 加密
@@ -16,9 +19,9 @@ public class EncryptMessage {
 	 * @return: String  加密后的信息
 	 * @throws
 	 */
-	public static String encrypt(String str) {
+	public static String encrypt(String str) throws InvalidAlgorithmParameterException {
 		String string = "";
-		string = str;
+		string = SymmetricEncoder.AESEncode(str);
 		return string;
 	}
 }
