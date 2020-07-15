@@ -16,6 +16,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.global.UserInfoContext;
 import com.xiaofeng.utils.DateUtils;
+import com.xiaofeng.utils.EncryptMessage;
 import com.xiaofeng.utils.MessageVo;
 import com.xiaofeng.utils.Result;
 import com.xiaofeng.utils.UserToken;
@@ -82,7 +83,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 				list.addAll(tempList);
 			}
 		}
-		//广播给组成员
+		//获取小组成员
 		groupList = GroupContext.USER_GROUP.get(user.getGroupId());
 		//组装返回对象
 		Result of = Result.of(content);
@@ -90,7 +91,11 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		ofInfo.put("group_count", groupList.size());//当前在线人数
 		ofInfo.put("gourp_users", GroupContext.getGroupUsers(user.getGroupId()));//当前在线成员
 		of.setInfo(ofInfo);
+		
+		//广播给组成员
 		String jsonString = JSONObject.toJSONString(of);
+		jsonString = EncryptMessage.encrypt(jsonString);
+		
 		for (Map<String, ChannelHandlerContext> map : groupList) {
 			for(String key:map.keySet()) {
 				ChannelHandlerContext channelHandlerContext = map.get(key);
