@@ -42,6 +42,8 @@
 			//客户端收到服务器消息的时候就会执行这个回调方法
 			socket.onmessage = function(event) {
 				var ta = document.getElementById("responseText");
+				var countSpan = $("#count");
+				var usersSpan = $("#users");
 				//将接收的json字符串转对象
 				var content = event.data;
 				content = AESdecrypt(content);
@@ -49,6 +51,9 @@
 				var result = JSON.parse(content);
 				console.log("收到消息",result);
 				ta.value = ta.value + "\n" + result.content;
+				
+				countSpan.html(result.info.group_count);
+				//usersSpan.val(result.info.gourp_users);
 			}
 
 			//连接建立的回调函数
@@ -93,8 +98,16 @@
 	</script>
 	<form onsubmit="return false">
 
-		<h3>服务器输出：</h3>
-
+		<h3>服务器信息：</h3>
+		<span>
+			当前在线人数:
+		</span>
+		<span id="count"></span>
+		<br>
+		<!-- <span>
+			当前成员:
+		</span>
+		<input id="users"/><br> -->
 		<textarea id="responseText" style="width: 400px; height: 300px;"></textarea>
 
 		<input type="button"
