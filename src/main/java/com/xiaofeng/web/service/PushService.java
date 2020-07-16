@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xiaofeng.global.GroupContext;
+import com.xiaofeng.netty.server.DynMessage;
 import com.xiaofeng.utils.EncryptMessage;
+import com.xiaofeng.utils.MessageVo;
 import com.xiaofeng.utils.Result;
 import com.xiaofeng.utils.UserToken;
 
@@ -28,28 +30,14 @@ public class PushService {
 
 	public void pushMessage(String groupId, String txt) {
 		// 组装返回对象
-		Result of = Result.of(txt);
-		Map<String, Object> ofInfo = new HashMap<>();
+		// 组装返回对象
+		MessageVo messageVo = new MessageVo();
+		messageVo.setContent(txt);
 		List<UserToken> currentUsers = GroupContext.getGroupUsers(groupId);
-		ofInfo.put("group_count", currentUsers.size());// 当前在线人数
-		ofInfo.put("gourp_users", currentUsers);// 当前在线成员
-		of.setInfo(ofInfo);
+		messageVo.put("group_count", currentUsers.size());// 当前在线人数
+		messageVo.put("gourp_users", currentUsers);// 当前在线成员
 
-		// 广播给组成员
-		String jsonString = JSONObject.toJSONString(of);
-		try {
-			jsonString = EncryptMessage.encrypt(jsonString);
-		} catch (InvalidAlgorithmParameterException e) {
-			e.printStackTrace();
-		}
-		Map<String, Set<Map<String, ChannelHandlerContext>>> uSER_GROUP = GroupContext.USER_GROUP;
-		Set<Map<String, ChannelHandlerContext>> set = uSER_GROUP.get(groupId);
-		for (Map<String, ChannelHandlerContext> map : set) {
-			for (String userId : map.keySet()) {
-				ChannelHandlerContext channelHandlerContext = map.get(userId);
-				channelHandlerContext.channel().writeAndFlush(new TextWebSocketFrame(jsonString));
-			}
-		}
+		DynMessage.broadcast(groupId, com.xiaofeng.utils.StringUtils.toJsonEncrypt(messageVo));
 	}
 
 }

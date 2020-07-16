@@ -2,6 +2,8 @@ package com.xiaofeng.utils;
 
 import java.io.Serializable;
 
+import com.xiaofeng.netty.server.DynMessage;
+
 import lombok.Data;
 
 /**
@@ -14,7 +16,7 @@ public class UserToken implements Serializable{
 	//用户id
 	private String userId;
 	//组id
-	private String groupId = "default";
+	private String groupId = DynMessage.DEFAULT_GROUP;
 	//用户名称
 	private String userName;
 	

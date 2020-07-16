@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import com.xiaofeng.websocket.utils.MsgUtils;
  
 /**
- * 
+ * 废弃，不适用
  * @author xiaofeng
  * websocket主线程
  */

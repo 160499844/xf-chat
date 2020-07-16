@@ -24,6 +24,9 @@ public class GroupContext {
 	public static List<UserToken> getGroupUsers(String groupId) {
 		List<UserToken> list = new ArrayList<UserToken>();
 		Set<Map<String, ChannelHandlerContext>> set = USER_GROUP.get(groupId);
+		if(set==null) {
+			return null;
+		}
 		for (Map<String, ChannelHandlerContext> map : set) {
 			for(String userId:map.keySet()) {
 				//获取小组全部成员
