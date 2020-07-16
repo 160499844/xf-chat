@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -23,270 +24,127 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tomcat.util.codec.binary.Base64;
+
+import com.xiaofeng.netty.server.NettyServer;
+
+import lombok.extern.slf4j.Slf4j;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 /*
  * AES对称加密和解密
  */
+@Slf4j
 public class SymmetricEncoder {
 
-	private static final String encodeRules = "tx-abc";
-	private static final Integer IVSize = 16;
-	private static final int ZERO = 0;
-	public static final int ONE = 1;
-	public static final String ivParameter = "AAAABBBBCCCCDDDD";
-	/*
-	 * 加密 1.构造密钥生成器 2.根据ecnodeRules规则初始化密钥生成器 3.产生密钥 4.创建和初始化密码器 5.内容加密 6.返回字符串
+	private static String key = "1538663015386630";
+
+	/**
+	 * AES 解密操作
+	 *
+	 * @param content
+	 * @param key
+	 * @return
 	 */
-	public static String AESEncode(String content) throws InvalidAlgorithmParameterException {
+	public static String decrypt(String content) {
+		SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
 		try {
-			// 1.构造密钥生成器，指定为AES算法,不区分大小写
-			KeyGenerator keygen = KeyGenerator.getInstance("AES");
-			// 2.根据ecnodeRules规则初始化密钥生成器
-			// 生成一个128位的随机源,根据传入的字节数组
-			keygen.init(128, new SecureRandom(encodeRules.getBytes()));
-			// 3.产生原始对称密钥
-			SecretKey original_key = keygen.generateKey();
-			// 4.获得原始对称密钥的字节数组
-			byte[] raw = original_key.getEncoded();
-			// 5.根据字节数组生成AES密钥
-			SecretKey key = new SecretKeySpec(raw, "AES");
-			// 6.根据指定算法AES自成密码器
-			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			// 7.初始化密码器，第一个参数为加密(Encrypt_mode)或者解密解密(Decrypt_mode)操作，第二个参数为使用的KEY
-			cipher.init(Cipher.ENCRYPT_MODE, key, createIV());
-			// 8.获取加密内容的字节数组(这里要设置为utf-8)不然内容中如果有中文和英文混合中文就会解密为乱码
-			byte[] byte_encode = content.getBytes("utf-8");
-			// 9.根据密码器的初始化方式--加密：将数据加密
-			byte[] byte_AES = cipher.doFinal(byte_encode);
-			// 10.将加密后的数据转换为字符串
-			// 这里用Base64Encoder中会找不到包
-			// 解决办法：
-			// 在项目的Build path中先移除JRE System Library，再添加库JRE System Library，重新编译后就一切正常了。
-			String AES_encode = new BASE64Encoder().encode(byte_AES);
-			// 11.将字符串返回
-			return AES_encode;
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			// 实例化
+			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+
+			// 使用密钥初始化，设置为解密模式
+			cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+
+			// 执行操作
+			byte[] result = cipher.doFinal(StringUtils.decodeBase64(content));
+
+			return new String(result, "utf-8");
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 
-		// 如果有错就返加nulll
 		return null;
 	}
 
-	/*
-	 * 解密 解密过程： 1.同加密1-4步 2.将加密后的字符串反纺成byte[]数组 3.将加密内容解密
+	/**
+	 * AES 加密操作
+	 *
+	 * @param content 待加密内容
+	 * @param key     加密密码
+	 * @return 返回Base64转码后的加密数据
 	 */
-	public static String AESDncode(String content) throws NoSuchProviderException, InvalidAlgorithmParameterException {
+	public static String encrypt(String content) {
 		try {
-			// 1.构造密钥生成器，指定为AES算法,不区分大小写
-			KeyGenerator keygen = KeyGenerator.getInstance("AES");
-			// 2.根据ecnodeRules规则初始化密钥生成器
-			// 生成一个128位的随机源,根据传入的字节数组
-			keygen.init(128, new SecureRandom(encodeRules.getBytes()));
-			// 3.产生原始对称密钥
-			SecretKey original_key = keygen.generateKey();
-			// 4.获得原始对称密钥的字节数组
-			byte[] raw = original_key.getEncoded();
-			// 5.根据字节数组生成AES密钥
-			SecretKey key = new SecretKeySpec(raw, "AES");
-			// 6.根据指定算法AES自成密码器
-			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			// 7.初始化密码器，第一个参数为加密(Encrypt_mode)或者解密(Decrypt_mode)操作，第二个参数为使用的KEY
-			cipher.init(Cipher.DECRYPT_MODE, key, createIV());
-			// 8.将加密并编码后的内容解码成字节数组
-			byte[] byte_content = new BASE64Decoder().decodeBuffer(content);
-			/*
-			 * 解密
-			 */
-			byte[] byte_decode = cipher.doFinal(byte_content);
-			String AES_decode = new String(byte_decode, "utf-8");
-			return AES_decode;
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			e.printStackTrace();
+			SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
+			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");// 创建密码器
+
+			byte[] byteContent = content.getBytes("utf-8");
+
+			cipher.init(Cipher.ENCRYPT_MODE, skeySpec);// 初始化为加密模式的密码器
+
+			byte[] result = cipher.doFinal(byteContent);// 加密
+
+			return StringUtils.encodeBase64String(result);// 通过Base64转码返回
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 
-		// 如果有错就返加nulll
 		return null;
 	}
 
-	private static IvParameterSpec createIV() {
-		StringBuffer sb = new StringBuffer(IVSize);
-		sb.append(encodeRules);
-		if (sb.length() > IVSize) {
-			sb.setLength(IVSize);
-		}
-		if (sb.length() < IVSize) {
-			while (sb.length() < IVSize) {
-				sb.append("0");
-			}
-		}
-		byte[] data = null;
-		try {
-			data = sb.toString().getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		return new IvParameterSpec(data);
-	}
 
 	/**
-	 * 文件处理方法 code为加密或者解密的判断条件 file 密文文件 key 加密密钥 ivParameterm iv向量 filename
-	 * 加解密结果存入的文件名
-	 */
-	public static void doFile(int code, File file, String key, String ivParameterm, String filename) throws Exception {
-		BufferedOutputStream bos = null;
-		BufferedInputStream bis = null;
-		FileOutputStream fileOutputStream = null;
-		FileInputStream fileInputStream =null;
-		try {
-			fileInputStream = new FileInputStream(file);
-			bis = new BufferedInputStream(fileInputStream);
-			byte[] bytIn = new byte[(int) file.length()];
-			bis.read(bytIn);
-			// AES加密
-			byte[] raw = key.getBytes("ASCII");
-			SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-			//Cipher cipher = Cipher.getInstance("AES/CBC/NOPadding");
-			 Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			IvParameterSpec iv = new IvParameterSpec(ivParameterm.getBytes());
-			if (0 == code) {
-				cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
-			} else if (1 == code) {
-				cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
-			}
-			// 写文件
-			byte[] bytOut = cipher.doFinal(bytIn);
-			File outfile = new File(filename);
-			fileOutputStream = new FileOutputStream(outfile);
-			bos = new BufferedOutputStream(fileOutputStream);
-			bos.write(bytOut);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally {
-			fileInputStream.close();
-			fileOutputStream.close();
-			bis.close();
-			bos.close();
-		}
-	}
-	/**
+	 * 字符串转化成为16进制字符串
 	 * 
-	 * @Title: getInputStream   
-	 * @Description: 获取文件解密流
-	 * @param: @param code
-	 * @param: @param file
-	 * @param: @param key
-	 * @param: @param ivParameterm
-	 * @param: @param response
-	 * @param: @return
-	 * @param: @throws Exception      
-	 * @return: byte[]      
-	 * @throws
+	 * @param s
+	 * @return
 	 */
-	public static byte[] getInputStream(int code, File file, String key, String ivParameterm,HttpServletResponse response) throws Exception {
-		long startTime = System.currentTimeMillis();    //获取开始时间
-		BufferedOutputStream bos = null;
-		BufferedInputStream bis = null;
-		FileInputStream fileInputStream = null;
-		byte[] bytOut= null;
-		try {
-			fileInputStream = new FileInputStream(file);
-			bis = new BufferedInputStream(fileInputStream);
-			//byte[] buffer = new byte[fileInputStream.available()];
-			byte[] bytIn = new byte[(int) file.length()];
-			bis.read(bytIn);
-			// AES加密
-			byte[] raw = key.getBytes("ASCII");
-			SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-			//Cipher cipher = Cipher.getInstance("AES/CBC/NOPadding");
-			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			IvParameterSpec iv = new IvParameterSpec(ivParameterm.getBytes());
-			if (0 == code) {
-				cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
-			} else if (1 == code) {
-				cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
-			}
-			// 写文件
-			bytOut = cipher.doFinal(bytIn);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally {
-			
-			bis.close();
-			if(bos!=null) {
-				bos.close();
-			}
-			if(fileInputStream!=null) {
-				fileInputStream.close();
-			}
-			Long endTime = System.currentTimeMillis();    //获取结束时间
-			System.out.println("關閉輸出流消耗时间：" + (endTime - startTime) + "ms");    //输出程序运行时间
+	public static String strTo16(String s) {
+		String str = "";
+		for (int i = 0; i < s.length(); i++) {
+			int ch = (int) s.charAt(i);
+			String s4 = Integer.toHexString(ch);
+			str = str + s4;
 		}
-		return bytOut;
-	}
-	// 文件加密
-	public static void encryptfile(File file, String key, String filename) throws Exception {
-		doFile(ZERO, file, key, ivParameter, filename);
+		return str;
 	}
 
-	// 文件解密
-	public static void decriptfile(File file, String key, String filename) throws Exception {
-		doFile(ONE, file, key, ivParameter, filename);
-	}
-
-	/*public static void main(String[] args) {
-		// key： 加密密钥
-		String key = "aaaabbbbccccdddd";
-		// ivParameter：AES cbc加密模式的iv向量
-		String ivParameter = "AAAABBBBCCCCDDDD";
-		try {
-			// 对给出的密文的解密过程。
-			// 密文保存在“密文.txt”中
-			// 将解密结果保存在“明文.txt”中
-			File file = new File("C:\\Users\\xiaofeng\\Desktop\\test.jpg");
-			String fileName1 = "C:\\Users\\xiaofeng\\Desktop\\testxx.jpg";
-			encryptfile(file, key,fileName1);
-			
-			File file2 = new File("C:\\Users\\xiaofeng\\Desktop\\testxx.jpg");
-			String fileName2 = "C:\\Users\\xiaofeng\\Desktop\\result.jpg";
-			decriptfile(file2, key, fileName2);
-		} catch (Exception e) {
-			e.printStackTrace();
+	/**
+	 * 将16进制转换为二进制
+	 *
+	 * @param hexStr
+	 * @return
+	 */
+	private static byte[] parseHexStr2Byte(String hexStr) {
+		if (hexStr.length() < 1) {
+			return null;
 		}
-	}*/
+		byte[] result = new byte[hexStr.length() / 2];
+		for (int i = 0; i < hexStr.length() / 2; i++) {
+			int high = Integer.parseInt(hexStr.substring(i * 2, i * 2 + 1), 16);
+			int low = Integer.parseInt(hexStr.substring(i * 2 + 1, i * 2 + 2), 16);
+			result[i] = (byte) (high * 16 + low);
+		}
+		return result;
+	}
 
-	
-	public static void main(String[] args) throws NoSuchProviderException, InvalidAlgorithmParameterException {
-		SymmetricEncoder se = new SymmetricEncoder();
-		// 加密
-		String input = "你好吗，你现在在哪里玩啊》12345123！@#";
-		String result = se.AESEncode(input);
-		System.out.println("根据输入的规则" + encodeRules + "加密后的密文是:" + result);
-		// 解密
-		String output = result;
-		System.out.println("根据输入的规则" + encodeRules + "解密后的明文是:" + se.AESDncode(output));
+	/**
+	 * 16进制直接转换成为字符串(无需Unicode解码)
+	 * 
+	 * @param hexStr
+	 * @return
+	 */
+	public static String hexStr2Str(String hexStr) {
+		String str = "0123456789ABCDEF";
+		char[] hexs = hexStr.toCharArray();
+		byte[] bytes = new byte[hexStr.length() / 2];
+		int n;
+		for (int i = 0; i < bytes.length; i++) {
+			n = str.indexOf(hexs[2 * i]) * 16;
+			n += str.indexOf(hexs[2 * i + 1]);
+			bytes[i] = (byte) (n & 0xff);
+		}
+		return new String(bytes);
 	}
 }

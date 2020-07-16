@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -23,12 +24,18 @@ import com.xiaofeng.utils.UserToken;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * Netty服务端处理器 处理websocket连接
- * 
+ * https://fangjian0423.github.io/2016/08/29/netty-in-action-note2/
  * @author xiaofeng
  *
  */
@@ -41,6 +48,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		//获取前端传递信息
 		String userId = ctx.channel().id().asLongText();
 		String message = msg.text();
+		message = EncryptMessage.decrypt(message);
 		//更新用户信息
 		UserToken user = UserInfoContext.getUser(userId);
 		MessageVo messageVo = JSONObject.parseObject(message,MessageVo.class);
@@ -88,8 +96,9 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		//组装返回对象
 		Result of = Result.of(content);
 		Map<String,Object> ofInfo = new HashMap<>();
-		ofInfo.put("group_count", groupList.size());//当前在线人数
-		ofInfo.put("gourp_users", GroupContext.getGroupUsers(user.getGroupId()));//当前在线成员
+		List<UserToken> currentUsers = GroupContext.getGroupUsers(user.getGroupId());
+		ofInfo.put("group_count", currentUsers.size());//当前在线人数
+		ofInfo.put("gourp_users", currentUsers);//当前在线成员
 		of.setInfo(ofInfo);
 		
 		//广播给组成员
@@ -141,7 +150,11 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		String jsonString = JSONObject.toJSONString(Result.of(String.format("%s进入群聊", user.getUserName())));
 		//推送信息
 		log.info(jsonString);
+		
+		ctx.channel().writeAndFlush(
+				new TextWebSocketFrame(jsonString));
 	}
+
 	/**
 	 * 用户退出
 	 */
@@ -157,7 +170,12 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 				map.remove(userId);
 			}
 		}
+		//组装返回对象
+		String jsonString = JSONObject.toJSONString(Result.of(String.format("%s进入群聊", user.getUserName())));
 		log.info("离开用户：" + userId);
+		
+		ctx.channel().writeAndFlush(
+				new TextWebSocketFrame(jsonString));
 	}
 
 	@Override
