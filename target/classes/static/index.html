@@ -60,7 +60,7 @@
 			socket.onopen = function(event) {
 				var ta = document.getElementById("responseText");
 				ta.value = "连接服务器成功";
-			
+				send("加入群聊");
 			}
 
 			//连接断掉的回调函数

@@ -50,7 +50,11 @@ public class UserInfoContext {
 	 * @return
 	 */
 	public static UserToken getUser(String userId) {
-		return userMap.get(userId);
+		UserToken userToken = userMap.get(userId);
+		if(userToken==null) {
+			userToken = new UserToken();
+		}
+		return userToken;
 	}
 	
 	public static UserToken delUser(String userId) {

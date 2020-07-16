@@ -13,15 +13,13 @@ import lombok.Data;
  * @date:   2020年7月15日 上午10:20:09
  */
 @Data
-public class Result implements Serializable{
+public class Result extends MessageVo implements Serializable{
 
-	private int code;
 	private String content;
 	private Map<String,Object> info = new HashMap<String, Object>();
 	
 	public static Result of(String content) {
 		Result r = new Result();
-		r.code = 0;
 		r.content = content;
 		return r;
 		

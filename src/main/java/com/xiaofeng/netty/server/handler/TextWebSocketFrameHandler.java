@@ -48,17 +48,16 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		//获取前端传递信息
 		String userId = ctx.channel().id().asLongText();
 		String message = msg.text();
-		message = EncryptMessage.decrypt(message);
 		//更新用户信息
 		UserToken user = UserInfoContext.getUser(userId);
-		MessageVo messageVo = JSONObject.parseObject(message,MessageVo.class);
+		MessageVo messageVo = com.xiaofeng.utils.StringUtils.toJsonDecode(message);
 		String content = messageVo.getMsg();
 		
 		
 		user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId())?user.getGroupId():messageVo.getGroupId());
 		user.setUserName(StringUtils.isEmpty(messageVo.getName())?user.getUserName():messageVo.getName());
 		
-		content  = String.format("%s(%s):%s", user.getUserName(), DateUtils.getNowDateToString(), content);
+		content  = String.format("%s(%s):%s", user.getUserName(), DateUtils.getNowDateToString(), messageVo.getMsg());
 		log.info(content);
 		/**
 		 * writeAndFlush接收的参数类型是Object类型，但是一般我们都是要传入管道中传输数据的类型，比如我们当前的demo
@@ -94,16 +93,13 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		//获取小组成员
 		groupList = GroupContext.USER_GROUP.get(user.getGroupId());
 		//组装返回对象
-		Result of = Result.of(content);
-		Map<String,Object> ofInfo = new HashMap<>();
+		messageVo.setContent(content);
 		List<UserToken> currentUsers = GroupContext.getGroupUsers(user.getGroupId());
-		ofInfo.put("group_count", currentUsers.size());//当前在线人数
-		ofInfo.put("gourp_users", currentUsers);//当前在线成员
-		of.setInfo(ofInfo);
+		messageVo.put("group_count", currentUsers.size());//当前在线人数
+		messageVo.put("gourp_users", currentUsers);//当前在线成员
 		
 		//广播给组成员
-		String jsonString = JSONObject.toJSONString(of);
-		jsonString = EncryptMessage.encrypt(jsonString);
+		String jsonString = com.xiaofeng.utils.StringUtils.toJsonEncrypt(messageVo);
 		
 		for (Map<String, ChannelHandlerContext> map : groupList) {
 			for(String key:map.keySet()) {
@@ -121,19 +117,15 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		String ip = localAddress.toString().replace("/", "");
 		String userId = ctx.channel().id().asLongText();
 		// 打印出channel唯一值，asLongText方法是channel的id的全名
-		log.info(String.format("访问用户:%s,ip:%s", userId, ip));
+		log.info(String.format("连接用户:%s,ip:%s", userId, ip));
 		// UserInfoContext.USER_SESSION.put(userId, ctx);
 
 		UserToken user = UserInfoContext.getUser(userId);
-		if (user == null) {
-			// 首次访问
-			user = new UserToken();
-			user.setIp(ip);
-			user.setUserId(userId);
-			Random random = new Random();
-			user.setUserName("访客" + random.nextInt(100));
-			UserInfoContext.addUser(userId, user);
-		}
+		user.setIp(ip);
+		user.setUserId(userId);
+		Random random = new Random();
+		user.setUserName("访客" + random.nextInt(1000));
+		UserInfoContext.addUser(userId, user);
 		// 获取组id
 		String groupId = user.getGroupId();
 		Set<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(groupId);
@@ -146,13 +138,6 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		// 加入组中
 		groupList.add(map);
 		GroupContext.USER_GROUP.put(groupId, groupList);
-		//组装返回对象
-		String jsonString = JSONObject.toJSONString(Result.of(String.format("%s进入群聊", user.getUserName())));
-		//推送信息
-		log.info(jsonString);
-		
-		ctx.channel().writeAndFlush(
-				new TextWebSocketFrame(jsonString));
 	}
 
 	/**
@@ -170,12 +155,8 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 				map.remove(userId);
 			}
 		}
-		//组装返回对象
-		String jsonString = JSONObject.toJSONString(Result.of(String.format("%s进入群聊", user.getUserName())));
 		log.info("离开用户：" + userId);
 		
-		ctx.channel().writeAndFlush(
-				new TextWebSocketFrame(jsonString));
 	}
 
 	@Override

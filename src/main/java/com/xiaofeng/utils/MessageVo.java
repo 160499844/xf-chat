@@ -1,5 +1,11 @@
 package com.xiaofeng.utils;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+import com.alibaba.fastjson.JSONObject;
+
 import lombok.Data;
 
 /**
@@ -9,9 +15,32 @@ import lombok.Data;
  */
 @Data
 public class MessageVo {
-
-	private String msg;
-	private String groupId;
-	private String name;
-	private String type;
+	/**
+	 * var obj = {
+				"msg" : message,
+				"name" : userName,
+				"type" : "T",
+				"groupId" : groupId
+			}
+	 */
+	private String msg;//消息实体
+	private String content ;//返回内容
+	private String groupId;//群组id
+	private String name;//昵称
+	private String type;//消息类型 T-文本 P-图片
+	private Map<String,Object> info = new HashMap<String, Object>();//额外信息
+	
+	/**
+	 * @Title: put   
+	 * @Description: 放入额外信息
+	 * @param: @param key
+	 * @param: @param obj      
+	 * @return: void      
+	 * @throws
+	 */
+	public void put(String key,Object obj) {
+		info.put(key, obj);
+	}
+	
+	
 }
