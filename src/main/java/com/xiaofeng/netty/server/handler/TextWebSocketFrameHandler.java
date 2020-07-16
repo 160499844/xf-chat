@@ -22,6 +22,7 @@ import com.xiaofeng.utils.DateUtils;
 import com.xiaofeng.utils.EncryptMessage;
 import com.xiaofeng.utils.MessageVo;
 import com.xiaofeng.utils.Result;
+import com.xiaofeng.utils.User;
 import com.xiaofeng.utils.UserToken;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -66,7 +67,22 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		 * 传输的就是TextWebSocketFrame类型的数据
 		 */
 		// 遍历组内全部用户，发送消息
-		Set<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(user.getGroupId());
+		 //User<Map<String, ChannelHandlerContext>> groupList = GroupContext.getGroup(user.getGroupId());
+		 GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
+		 /*Set<Map<String, ChannelHandlerContext>> tempList = new HashSet<Map<String, ChannelHandlerContext>>();
+		 for (Map<String, ChannelHandlerContext> allUser : groupList) {
+				if (!allUser.containsKey(userId)) {
+					Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
+					userGroup.put(userId, ctx);
+					tempList.add(userGroup);
+				}
+			}
+			// 更新组成员
+			if (tempList.size() > 0) {
+				Set<Map<String, ChannelHandlerContext>> list = GroupContext.USER_GROUP.get(user.getGroupId());
+				list.addAll(tempList);
+			}*/
+		/*Set<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(user.getGroupId());
 		if (groupList == null) {
 			// 没有找到对应的组
 			// 创建新小组
@@ -91,9 +107,9 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 				Set<Map<String, ChannelHandlerContext>> list = GroupContext.USER_GROUP.get(user.getGroupId());
 				list.addAll(tempList);
 			}
-		}
+		}*/
 		// 获取小组成员
-		groupList = GroupContext.USER_GROUP.get(user.getGroupId());
+		 //User<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(user.getGroupId());
 		// 组装返回对象
 		messageVo.setContent(content);
 		List<UserToken> currentUsers = GroupContext.getGroupUsers(user.getGroupId());
@@ -103,12 +119,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		// 广播给组成员
 		String jsonString = com.xiaofeng.utils.StringUtils.toJsonEncrypt(messageVo);
 		DynMessage.broadcast(user.getGroupId(), jsonString);
-		/*
-		 * for (Map<String, ChannelHandlerContext> map : groupList) { for(String
-		 * key:map.keySet()) { ChannelHandlerContext channelHandlerContext =
-		 * map.get(key); channelHandlerContext.channel().writeAndFlush( new
-		 * TextWebSocketFrame(jsonString)); } }
-		 */
+		
 	}
 
 	// 用户加入
@@ -130,9 +141,9 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		UserInfoContext.addUser(userId, user);
 		// 获取组id
 		String groupId = user.getGroupId();
-		Set<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(groupId);
+		User<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(groupId);
 		if (groupList == null) {
-			groupList = new HashSet<Map<String, ChannelHandlerContext>>();
+			groupList = new User<Map<String, ChannelHandlerContext>>();
 
 		}
 		Map<String, ChannelHandlerContext> map = new ConcurrentHashMap<String, ChannelHandlerContext>();
@@ -148,9 +159,9 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 	@Override
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
 		String userId = ctx.channel().id().asLongText();
-		// UserInfoContext.USER_SESSION.remove(userId);
 		UserToken user = UserInfoContext.getUser(userId);
-		UserInfoContext.remove(userId);
+		UserInfoContext.remove(userId);//删除用户信息
+		//删除登录信息
 		Set<Map<String, ChannelHandlerContext>> list = GroupContext.USER_GROUP.get(user.getGroupId());
 		Iterator<Map<String, ChannelHandlerContext>> iterator = list.iterator();
 		while (iterator.hasNext()) {
