@@ -112,9 +112,9 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		 //User<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(user.getGroupId());
 		// 组装返回对象
 		messageVo.setContent(content);
-		List<UserToken> currentUsers = GroupContext.getGroupUsers(user.getGroupId());
-		messageVo.put("group_count", currentUsers.size());// 当前在线人数
-		messageVo.put("gourp_users", currentUsers);// 当前在线成员
+		Integer groupCount = GroupContext.getGroupCount(user.getGroupId());
+		messageVo.put("group_count", groupCount);// 当前在线人数
+		messageVo.put("gourp_users", "");// 当前在线成员
 
 		// 广播给组成员
 		String jsonString = com.xiaofeng.utils.StringUtils.toJsonEncrypt(messageVo);
@@ -151,6 +151,8 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		// 加入组中
 		groupList.add(map);
 		GroupContext.USER_GROUP.put(groupId, groupList);
+		//小组人数+1
+		GroupContext.groupAddCount(user.getGroupId());
 	}
 
 	/**
@@ -160,6 +162,10 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
 		String userId = ctx.channel().id().asLongText();
 		UserToken user = UserInfoContext.getUser(userId);
+		
+		//小组人数-1
+		GroupContext.groupReduceCount(user.getGroupId());
+		
 		UserInfoContext.remove(userId);//删除用户信息
 		//删除登录信息
 		Set<Map<String, ChannelHandlerContext>> list = GroupContext.USER_GROUP.get(user.getGroupId());
