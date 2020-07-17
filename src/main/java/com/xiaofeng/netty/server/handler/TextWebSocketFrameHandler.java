@@ -54,7 +54,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		String message = msg.text();
 		// 更新用户信息
 		UserToken user = UserInfoContext.getUser(userId);
-		MessageVo messageVo = com.xiaofeng.utils.StringUtils.toJsonDecode(message);
+		MessageVo messageVo = com.xiaofeng.utils.StringUtils.toJsonDecode(message,"1538663015386630");
 		String content = messageVo.getMsg();
 
 		user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId()) ? user.getGroupId() : messageVo.getGroupId());
@@ -69,47 +69,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		// 遍历组内全部用户，发送消息
 		 //User<Map<String, ChannelHandlerContext>> groupList = GroupContext.getGroup(user.getGroupId());
 		 GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
-		 /*Set<Map<String, ChannelHandlerContext>> tempList = new HashSet<Map<String, ChannelHandlerContext>>();
-		 for (Map<String, ChannelHandlerContext> allUser : groupList) {
-				if (!allUser.containsKey(userId)) {
-					Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
-					userGroup.put(userId, ctx);
-					tempList.add(userGroup);
-				}
-			}
-			// 更新组成员
-			if (tempList.size() > 0) {
-				Set<Map<String, ChannelHandlerContext>> list = GroupContext.USER_GROUP.get(user.getGroupId());
-				list.addAll(tempList);
-			}*/
-		/*Set<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(user.getGroupId());
-		if (groupList == null) {
-			// 没有找到对应的组
-			// 创建新小组
-			groupList = new HashSet<Map<String, ChannelHandlerContext>>();
-			Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
-			userGroup.put(user.getUserId(), ctx);
-			groupList.add(userGroup);
-			GroupContext.USER_GROUP.put(user.getGroupId(), groupList);
-		} else {
-			// 小组已经存在，如果小组中没有当前成员，加入小组
-			// 临时保存新的组成员
-			Set<Map<String, ChannelHandlerContext>> tempList = new HashSet<Map<String, ChannelHandlerContext>>();
-			for (Map<String, ChannelHandlerContext> allUser : groupList) {
-				if (!allUser.containsKey(userId)) {
-					Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
-					userGroup.put(userId, ctx);
-					tempList.add(userGroup);
-				}
-			}
-			// 更新组成员
-			if (tempList.size() > 0) {
-				Set<Map<String, ChannelHandlerContext>> list = GroupContext.USER_GROUP.get(user.getGroupId());
-				list.addAll(tempList);
-			}
-		}*/
-		// 获取小组成员
-		 //User<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(user.getGroupId());
+		 
 		// 组装返回对象
 		messageVo.setContent(content);
 		Integer groupCount = GroupContext.getGroupCount(user.getGroupId());
@@ -117,7 +77,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		messageVo.put("gourp_users", "");// 当前在线成员
 
 		// 广播给组成员
-		String jsonString = com.xiaofeng.utils.StringUtils.toJsonEncrypt(messageVo);
+		String jsonString = com.xiaofeng.utils.StringUtils.toJsonEncrypt(messageVo,"1538663015386630");
 		DynMessage.broadcast(user.getGroupId(), jsonString);
 		
 	}
@@ -127,6 +87,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
 		SocketAddress localAddress = ctx.channel().localAddress();
+		
 		String ip = localAddress.toString().replace("/", "");
 		String userId = ctx.channel().id().asLongText();
 		// 打印出channel唯一值，asLongText方法是channel的id的全名

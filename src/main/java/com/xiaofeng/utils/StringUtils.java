@@ -48,11 +48,11 @@ public class StringUtils {
 	 * @return: MessageVo      
 	 * @throws
 	 */
-	public static MessageVo toJsonDecode(String content) {
+	public static MessageVo toJsonDecode(String content,String key) {
 		String result = "";
 		MessageVo messageVo = null;
 		try {
-			result = EncryptMessage.decrypt(content);
+			result = EncryptMessage.decrypt(content,key);
 			messageVo = JSONObject.parseObject(result,MessageVo.class);
 		} catch (InvalidAlgorithmParameterException e) {
 			e.printStackTrace();
@@ -68,11 +68,11 @@ public class StringUtils {
 	 * @return: String      
 	 * @throws
 	 */
-	public static String toJsonEncrypt(Object obj) {
+	public static String toJsonEncrypt(Object obj,String key) {
 		String result = "";
 		String jsonString = JSONObject.toJSONString(obj);
 		try {
-			result = EncryptMessage.encrypt(jsonString);
+			result = EncryptMessage.encrypt(jsonString,key);
 		} catch (InvalidAlgorithmParameterException e) {
 			e.printStackTrace();
 		}

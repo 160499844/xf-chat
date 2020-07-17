@@ -7,7 +7,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.xiaofeng.utils.Group;
+import com.xiaofeng.utils.SymmetricEncoder;
 import com.xiaofeng.utils.User;
 import com.xiaofeng.utils.UserToken;
 
@@ -26,6 +29,7 @@ public class GroupContext {
 	// = new ConcurrentHashMap<>();
 	public static Group<String, User<Map<String, ChannelHandlerContext>>> USER_GROUP = new Group<>();
 	public static Group<String,Integer> GROUP_COUNTS =  new Group<>();//群成员数量
+	public static Group<String,String> GROUP_KEYS = new Group<>();//小组密钥
 
 	public static List<UserToken> getGroupUsers(String groupId) {
 		List<UserToken> list = new ArrayList<UserToken>();
@@ -141,5 +145,22 @@ public class GroupContext {
 	 */
 	public static Integer getGroupCount(String groupId) {
 		return GroupContext.GROUP_COUNTS.get(groupId);
+	}
+	/**
+	 * 
+	 * @Title: getGroupKey   
+	 * @Description:  获取小组密钥
+	 * @param: @param groupId
+	 * @param: @return      
+	 * @return: String      
+	 * @throws
+	 */
+	public static String getGroupKey(String groupId) {
+		String key = GroupContext.GROUP_KEYS.get(groupId);
+		if(StringUtils.isEmpty(key)) {
+			key = SymmetricEncoder.generateDesKey();
+			GroupContext.GROUP_KEYS.put(groupId, key);
+		}
+		return key;
 	}
 }

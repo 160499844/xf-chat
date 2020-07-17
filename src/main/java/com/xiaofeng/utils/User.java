@@ -3,6 +3,7 @@ package com.xiaofeng.utils;
 import java.util.HashSet;
 
 import io.netty.channel.ChannelHandlerContext;
+import lombok.Data;
 
 /**
  * 
@@ -12,7 +13,9 @@ import io.netty.channel.ChannelHandlerContext;
  * @date:   2020年7月16日 下午4:48:00    
  * @param <T>
  */
+@Data
 public class User<T> extends HashSet<T>{
+	
 
 	public void addUser(String userId,ChannelHandlerContext ctx) {
 		

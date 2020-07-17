@@ -19,9 +19,9 @@ public class EncryptMessage {
 	 * @return: String  加密后的信息
 	 * @throws
 	 */
-	public static String encrypt(String str) throws InvalidAlgorithmParameterException {
+	public static String encrypt(String str,String key) throws InvalidAlgorithmParameterException {
 		String string = "";
-		string = SymmetricEncoder.encrypt(str);
+		string = SymmetricEncoder.encrypt(str,key);
 		return string;
 	}
 	
@@ -32,9 +32,9 @@ public class EncryptMessage {
 	 * @return
 	 * @throws InvalidAlgorithmParameterException
 	 */
-	public static String decrypt(String str) throws InvalidAlgorithmParameterException {
+	public static String decrypt(String str,String key) throws InvalidAlgorithmParameterException {
 		String string = "";
-		string = SymmetricEncoder.decrypt(str);
+		string = SymmetricEncoder.decrypt(str,key);
 		return string;
 	}
 }
