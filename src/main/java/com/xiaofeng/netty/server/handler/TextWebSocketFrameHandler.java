@@ -69,13 +69,6 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		// 遍历组内全部用户，发送消息
 		 //User<Map<String, ChannelHandlerContext>> groupList = GroupContext.getGroup(user.getGroupId());
 		 GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
-<<<<<<< HEAD
-		
-		// 获取小组成员
-		 //User<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(user.getGroupId());
-=======
-		 
->>>>>>> 3feb18c0ad361103b514a5e96b94245353fd0653
 		// 组装返回对象
 		messageVo.setContent(content);
 		Integer groupCount = GroupContext.getGroupCount(user.getGroupId());
