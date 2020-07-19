@@ -181,6 +181,8 @@
 <script src="/js/jquery-2.2.4.min.js"></script>
 <script src="/js/mui.js"></script>
 <script src="/js/mui.imageViewer.js"></script>
+<!-- <script src="/js/mui.zoom.js"></script>
+<script src="/js/mui.previewimage.js"></script> -->
 <link href="/css/zoom.css" rel="stylesheet">
 <script  type="text/javascript" src="/js/zoom.js"></script>
 <script type="text/javascript">
@@ -205,7 +207,6 @@
 		last.classList.add('mui-slider-item-duplicate');
 
 	})(mui);
-
 	$(function() {
 
 		//输入框事件绑定
@@ -407,6 +408,7 @@
 				id : 'index'
 			});
 		});
+		
 		//点击消息列表，关闭键盘
 		$("#msg_list")
 				.on(
@@ -565,6 +567,7 @@ layui.use('upload', function(){
   });
 });
 </script>
+
 <script type="text/javascript" src="/js/aesUtils.js"></script>
 <script type="text/javascript" src="/js/jsencrypt.js"></script>
 </html>

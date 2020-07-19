@@ -57,8 +57,8 @@ var groupId = GetQueryValue("groupId");
 // 如果浏览器支持WebSocket
 if (window.WebSocket) {
 	// 参数就是与服务器连接的地址
-	socket = new WebSocket("ws://192.168.0.178:8000/ws");
-
+	socket = new WebSocket("ws://127.0.0.1:8000/ws");
+	//socket = new WebSocket("ws://y-xiaofeng.top:8070/ws");
 	// 客户端收到服务器消息的时候就会执行这个回调方法
 	socket.onmessage = function(event) {
 		// var ta = document.getElementById("responseText");
@@ -136,6 +136,8 @@ function messageElement(messageVo) {
 		html += messageVo.msg;
 	}else if("P" === type){
 		html += "<img data-action='zoom' src='"+messageVo.msg+"'/>"
+		
+		//html += "<img  data-preview-src='' data-preview-group='1' src='"+messageVo.msg+"'/>"
 	}
 	html += "</div></li>";
 	$("#msg_list").append(html);
