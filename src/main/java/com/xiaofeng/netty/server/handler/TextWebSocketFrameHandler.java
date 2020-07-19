@@ -56,11 +56,11 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		UserToken user = UserInfoContext.getUser(userId);
 		MessageVo messageVo = com.xiaofeng.utils.StringUtils.toJsonDecode(message);
 		String content = messageVo.getMsg();
-
 		user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId()) ? user.getGroupId() : messageVo.getGroupId());
-		user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName());
-
-		content = String.format("%s(%s):%s", user.getUserName(), DateUtils.getNowDateToString(), messageVo.getMsg());
+		user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName().trim());
+		
+		messageVo.setName(user.getUserName());
+		//content = String.format("%s(%s):%s", user.getUserName(), DateUtils.getNowDateToString(), messageVo.getMsg());
 		log.info(content);
 		/**
 		 * writeAndFlush接收的参数类型是Object类型，但是一般我们都是要传入管道中传输数据的类型，比如我们当前的demo
@@ -69,45 +69,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		// 遍历组内全部用户，发送消息
 		 //User<Map<String, ChannelHandlerContext>> groupList = GroupContext.getGroup(user.getGroupId());
 		 GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
-		 /*Set<Map<String, ChannelHandlerContext>> tempList = new HashSet<Map<String, ChannelHandlerContext>>();
-		 for (Map<String, ChannelHandlerContext> allUser : groupList) {
-				if (!allUser.containsKey(userId)) {
-					Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
-					userGroup.put(userId, ctx);
-					tempList.add(userGroup);
-				}
-			}
-			// 更新组成员
-			if (tempList.size() > 0) {
-				Set<Map<String, ChannelHandlerContext>> list = GroupContext.USER_GROUP.get(user.getGroupId());
-				list.addAll(tempList);
-			}*/
-		/*Set<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(user.getGroupId());
-		if (groupList == null) {
-			// 没有找到对应的组
-			// 创建新小组
-			groupList = new HashSet<Map<String, ChannelHandlerContext>>();
-			Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
-			userGroup.put(user.getUserId(), ctx);
-			groupList.add(userGroup);
-			GroupContext.USER_GROUP.put(user.getGroupId(), groupList);
-		} else {
-			// 小组已经存在，如果小组中没有当前成员，加入小组
-			// 临时保存新的组成员
-			Set<Map<String, ChannelHandlerContext>> tempList = new HashSet<Map<String, ChannelHandlerContext>>();
-			for (Map<String, ChannelHandlerContext> allUser : groupList) {
-				if (!allUser.containsKey(userId)) {
-					Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
-					userGroup.put(userId, ctx);
-					tempList.add(userGroup);
-				}
-			}
-			// 更新组成员
-			if (tempList.size() > 0) {
-				Set<Map<String, ChannelHandlerContext>> list = GroupContext.USER_GROUP.get(user.getGroupId());
-				list.addAll(tempList);
-			}
-		}*/
+		
 		// 获取小组成员
 		 //User<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(user.getGroupId());
 		// 组装返回对象

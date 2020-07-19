@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>会话列表</title>
+    <link rel="stylesheet" type="text/css" href="static/css/mui.min.css">
+    <style type="text/css">
+        .mui-content>.mui-table-view:first-child {
+            margin-top: 0;
+        }
+        /***群聊列表***/
+        .chat-list .wechat-avatar {
+            float: left;
+            margin-right: 0.62999rem;
+            line-height: 3rem;
+            max-width: 3rem;
+            height: 3rem;
+        }
+        .chat-list .wechat-avatar .mui-row {
+            background-color: #dddee0;
+            padding: 0.15rem;
+            border-radius: 0.2rem;
+            margin-left: -0.05rem;
+            margin-right: -0.05rem;
+        }
+        .chat-list .wechat-avatar .mui-row [class*=mui-col-xs-] {
+            padding: 0.05rem;
+        }
+        .chat-list .wechat-avatar .mui-row [class*=mui-col-xs-] img {
+            max-width: 100%;
+            width: 100%;
+            display: block;
+        }
+        .chat-list .wechat-avatar,
+        .chat-list .wechat-avatar > img {
+            border-radius: 50%;
+        }
+        .chat-list .mui-media-body>.time{
+            float: right;
+            font-size: 0.9rem;
+            color: #999999;
+        }
+        .chat-list .mui-media-body>p{
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-size: 0.9rem;
+            color: #999999;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mui-content">
+    	<!-- 群聊列表 -->
+        <ul class="mui-table-view chat-list">
+            <li class="mui-table-view-cell mui-media">
+                <img class="mui-media-object mui-pull-left" src="static/images/jd.png">
+                <div class="mui-media-body">京东JD.COM
+                    <span class="time">16:26</span>
+                    <p class="mui-ellipsis">11.11有话说:秒杀天天有，今天特别大</p>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media">
+                <img class="mui-media-object mui-pull-left" src="static/images/xiaomishouhuan.png">
+                <div class="mui-media-body">小米手环
+                    <span class="time">16:14</span>
+                    <p class="mui-ellipsis">京东11.11华米专场 黑色手表预定10被订金膨胀</p>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media">
+                <div class="wechat-avatar">
+                    <div class="mui-row">
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo8.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo6.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo9.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo7.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo1.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo4.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo5.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo3.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo2.jpg" />
+                        </div>
+                    </div>
+                </div>
+                <div class="mui-media-body">HBUILD+MUI+DCLOUD(486)
+                    <span class="time">15:14</span>
+                    <p class="mui-ellipsis">这个问题困扰了我两天了</p>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media">
+                <div class="wechat-avatar">
+                    <div class="mui-row">
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo1.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo3.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo5.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo2.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo7.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo4.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo9.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo6.jpg" />
+                        </div>
+                        <div class="mui-col-xs-4">
+                            <img src="static/images/demo8.jpg" />
+                        </div>
+                    </div>
+                </div>
+                <div class="mui-media-body">零点国际集团(110)
+                    <span class="time">昨天</span>
+                    <p class="mui-ellipsis">去吧，到时候请吃东西请玩的，就没有鲍鱼宴给你吃</p>
+                </div>
+            </li>
+            <li class="mui-table-view-cell mui-media">
+                <div class="wechat-avatar">
+                    <div class="mui-row">
+                        <div class="mui-col-xs-6">
+                            <img src="static/images/demo3.jpg" />
+                        </div>
+                        <div class="mui-col-xs-6">
+                            <img src="static/images/demo8.jpg" />
+                        </div>
+                        <div class="mui-col-xs-6">
+                            <img src="static/images/demo5.jpg" />
+                        </div>
+                        <div class="mui-col-xs-6">
+                            <img src="static/images/demo7.jpg" />
+                        </div>
+                    </div>
+                </div>
+                <div class="mui-media-body">广州程序员之家(4)
+                    <span class="time">10月20日</span>
+                    <p class="mui-ellipsis">两个膝盖都有伤，肯定有故事</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

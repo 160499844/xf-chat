@@ -28,6 +28,8 @@ public class MessageVo {
 	private String groupId;//群组id
 	private String name;//昵称
 	private String type;//消息类型 T-文本 P-图片
+	private String dateTime = DateUtils.getNowDateToString();//消息发送时间
+	private String time = DateUtils.getNowDateToString("HH:mm:ss");;//消息发送时间
 	private Map<String,Object> info = new HashMap<String, Object>();//额外信息
 	
 	/**

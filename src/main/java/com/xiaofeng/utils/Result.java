@@ -18,10 +18,23 @@ public class Result extends MessageVo implements Serializable{
 	private String content;
 	private Map<String,Object> info = new HashMap<String, Object>();
 	
+	
+	
+	
 	public static Result of(String content) {
 		Result r = new Result();
 		r.content = content;
 		return r;
 		
+	}
+
+	public Result() {
+		super();
+	}
+
+	public Result(String content) {
+		super();
+		this.content = content;
+		this.info = info;
 	}
 }

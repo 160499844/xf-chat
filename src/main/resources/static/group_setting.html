@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>群设置</title>
+    <link rel="stylesheet" type="text/css" href="static/css/mui.min.css">
+    <style type="text/css">
+        .mui-grid-view.mui-grid-9 {
+            background-color: #FFFFFF;
+        }
+        .mui-grid-view .grid-icon {
+            vertical-align: middle;
+            width: 3.5rem;
+        }
+        .mui-grid-view.mui-grid-9 .mui-table-view-cell {
+            padding: 10px 10px 10px;
+            border-right: none;
+            border-bottom: none;
+        }
+        .mui-table-view.mui-grid-view .mui-table-view-cell .mui-media-body{
+            line-height: 1rem;
+            height: 1rem;
+            color: #B3B3B3;
+        }
+        
+        .mui-popup.mui-popup-in {
+            background: #fff;
+            border-radius: 8px;
+        }
+        .mui-popup-inner {
+            padding: 15px 15px 0px 15px;
+        }
+        .mui-popup-title {
+            text-align: left;
+            color: #313131;
+        }
+        .mui-popup-text {
+            margin-top: 6px;
+            font-size: 12px;
+            text-align: left;
+            color: #656565;
+        }
+        .mui-popup-input input {
+            height: 30px;
+            margin: 10px 0 0;
+            padding: 0 5px;
+            border: none;
+            border-bottom: 1px solid #1AAD19;
+            color: #303030;
+        }
+        .mui-popup-inner:after {
+            display: none;
+        }
+        .mui-popup-buttons {
+            float: right;
+            right: 15px;
+            background: #fff;
+        }
+        .mui-popup-button.mui-popup-button-bold {
+            color: #1AAD19;
+            font-weight: normal;
+        }
+        .mui-popup-button {
+            color: #666666;
+        }
+        .mui-popup-button:after {
+             display: none;
+        }
+        .mui-popup-button:first-child {
+            margin-right: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mui-content">
+        <section>
+            <ul class="mui-table-view mui-grid-view mui-grid-9" id="group_member_list">
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <img src="static/images/demo1.jpg" class="grid-icon"/>
+                    <div class="mui-media-body">
+                        <p class="mui-ellipsis">罗玉凤</p>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <img src="static/images/demo2.jpg" class="grid-icon"/>
+                    <div class="mui-media-body">
+                        <p class="mui-ellipsis">谢楠</p>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <img src="static/images/demo3.jpg" class="grid-icon"/>
+                    <div class="mui-media-body">
+                        <p class="mui-ellipsis">长泽梓Azusa</p>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <img src="static/images/demo4.jpg" class="grid-icon"/>
+                    <div class="mui-media-body">
+                        <p class="mui-ellipsis">柏雪近在它香</p>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <img src="static/images/demo5.jpg" class="grid-icon"/>
+                    <div class="mui-media-body">
+                        <p class="mui-ellipsis">佟丽娅</p>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <img src="static/images/demo6.jpg" class="grid-icon"/>
+                    <div class="mui-media-body">
+                        <p class="mui-ellipsis">Z_子晴</p>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <img src="static/images/demo7.jpg" class="grid-icon"/>
+                    <div class="mui-media-body">
+                        <p class="mui-ellipsis">Lemon_CC</p>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <img src="static/images/demo8.jpg" class="grid-icon"/>
+                    <div class="mui-media-body">
+                        <p class="mui-ellipsis">徐小静</p>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+                    <img src="static/images/demo9.jpg" class="grid-icon"/>
+                    <div class="mui-media-body">
+                        <p class="mui-ellipsis">林心如</p>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3" id="add_members">
+                    <img src="static/images/add_group_icon.png" class="grid-icon"/>
+                    <div class="mui-media-body"></div>
+                </li>
+            </ul> 
+        </section>
+        
+        <section style="margin-top: 20px;">
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell">全部群成员(10)</li>
+                <li class="mui-table-view-cell" id="setGroupName">群聊名称
+                    <span class="mui-pull-right" style="font-size: 14px;" id="groupNameText">HBUILD+MUI+DCLOUD</span>
+                </li>
+                <li class="mui-table-view-cell" id="setMemberName">我在本群的名称
+                    <span class="mui-pull-right" style="font-size: 14px;" id="memberNameText">小虾米</span>
+                </li>
+                <li class="mui-table-view-cell">清空聊天记录</li>
+            </ul>
+        </section>
+        
+        <section style="padding: 15px 15px;">
+            <button type="button" class="mui-btn mui-btn-danger mui-btn-block">删除并退出</button>
+        </section>
+    </div>
+    
+</body>
+<script src="static/js/mui.js"></script>
+<script>
+mui.init();
+(function($) {
+    //修改群名称
+    document.getElementById("setGroupName").addEventListener("tap", function(e) {
+        e.detail.gesture.preventDefault();
+        var currGroupName = document.getElementById("groupNameText");
+        var btnArray = ['取消', '确定'];
+        mui.prompt(' ', currGroupName.innerText, '群聊名称', btnArray, function(e) {
+            if (e.index == 1) {
+                if(e.value == null || e.value == ''){
+                    mui.toast("群聊名称不能为空");
+                    return false;
+                }else if(currGroupName.innerText == e.value){
+                    return false;
+                }
+                document.getElementById("groupNameText").innerText = e.value;
+            }
+        });
+        document.querySelector('.mui-popup-input input').value = currGroupName.innerText;
+    });
+    
+    //修改群昵称
+    document.getElementById("setMemberName").addEventListener("tap", function(e) {
+        e.detail.gesture.preventDefault();
+        var currMemberName = document.getElementById("memberNameText");
+        var btnArray = ['取消', '确定'];
+        mui.prompt('设置你在群里的昵称，这个昵称指挥在这个群内显示', currMemberName.innerText, '我在本群的昵称', btnArray, function(e) {
+            if (e.index == 1) {
+                if(e.value == null || e.value == ''){
+                    mui.toast("群昵称不能为空");
+                    return false;
+                }else if(currMemberName.innerText == e.value){
+                    return false;
+                }
+                document.getElementById("memberNameText").innerText = e.value;
+            }
+        });
+        document.querySelector('.mui-popup-input input').value = currMemberName.innerText;
+    });
+})(mui);
+</script>
+</html>

@@ -24,4 +24,10 @@ public class DateUtils {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return sdf.format(nowDate);
 	}
+	public static String getNowDateToString(String format) {
+		Date nowDate = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		return sdf.format(nowDate);
+	}
+	
 }

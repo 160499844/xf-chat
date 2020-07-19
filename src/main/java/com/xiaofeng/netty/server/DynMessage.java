@@ -39,6 +39,25 @@ public class DynMessage {
 	}
 	/**
 	 * 
+	 * @param groupId
+	 * @param userId
+	 * @param msg
+	 */
+	public static void broadcast(String groupId,String excludeUserId,String msg) {
+		Set<Map<String, ChannelHandlerContext>> groups = GroupContext.USER_GROUP.get(groupId);
+		for (Map<String, ChannelHandlerContext> map : groups) {
+			for(String userId:map.keySet()) {
+				if(userId.equals(excludeUserId)) {
+					continue;
+				}
+				ChannelHandlerContext channelHandlerContext = map.get(userId);
+				channelHandlerContext.channel().writeAndFlush(
+						new TextWebSocketFrame(msg));
+			}
+		}
+	}
+	/**
+	 * 
 	 * @Title: broadcast   
 	 * @Description: 广播消息  
 	 * @param: @param msg      消息
