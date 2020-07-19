@@ -16,7 +16,7 @@ public class XfChatApplication {
 		SpringApplication.run(XfChatApplication.class, args);
 		 //启动服务端
         NettyServer nettyServer = new NettyServer();
-        nettyServer.start(new InetSocketAddress("0.0.0.0", 8000));
+        nettyServer.start(new InetSocketAddress("0.0.0.0", 8888));
 	}
 	
 	

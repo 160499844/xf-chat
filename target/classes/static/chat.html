@@ -210,13 +210,12 @@
 	$(function() {
 
 		//输入框事件绑定
-		$("#msg_text")
-				.on(
-						{
-							"keydown" : function(e) {
+		$("#msg_text").on({"keydown" : function(e) {
 								var that = this;
 								if (e.ctrlKey && e.keyCode == 13) {
-									sendMsg(that.val(), 0);
+									//sendMsg(that.val(), 0);
+									send(imContent($("#msg_text").val()
+											|| '&nbsp;'),"T");
 								}
 							},
 							"input propertychange" : function(e) {
@@ -232,7 +231,7 @@
 											+ msgList.offsetHeight;
 								}
 							}
-						});
+		});
 
 		//语音按钮事件
 		$(".footer-left i.chat-icon-voice")
