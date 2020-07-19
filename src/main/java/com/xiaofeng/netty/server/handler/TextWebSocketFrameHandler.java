@@ -1,12 +1,7 @@
 package com.xiaofeng.netty.server.handler;
 
 import java.net.SocketAddress;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -14,26 +9,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.alibaba.fastjson.JSONObject;
 import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.global.UserInfoContext;
 import com.xiaofeng.netty.server.DynMessage;
 import com.xiaofeng.utils.DateUtils;
-import com.xiaofeng.utils.EncryptMessage;
 import com.xiaofeng.utils.MessageVo;
-import com.xiaofeng.utils.Result;
 import com.xiaofeng.utils.User;
 import com.xiaofeng.utils.UserToken;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -60,7 +46,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName().trim());
 		
 		messageVo.setName(user.getUserName());
-		//content = String.format("%s(%s):%s", user.getUserName(), DateUtils.getNowDateToString(), messageVo.getMsg());
+		content = String.format("%s(%s):%s", user.getUserName(), DateUtils.getNowDateToString(), messageVo.getMsg());
 		log.info(content);
 		/**
 		 * writeAndFlush接收的参数类型是Object类型，但是一般我们都是要传入管道中传输数据的类型，比如我们当前的demo
@@ -78,7 +64,6 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		// 广播给组成员
 		String jsonString = com.xiaofeng.utils.StringUtils.toJsonEncrypt(messageVo,"1538663015386630");
 		DynMessage.broadcast(user.getGroupId(), jsonString);
-		
 	}
 
 	// 用户加入

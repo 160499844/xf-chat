@@ -25,7 +25,7 @@ public class StringUtils {
 		Encoder encoder = Base64.getEncoder();
 		byte[] data = encoder.encode(b);
 		String result = new String(data);
-		System.out.println("BASE64加密：" + result);
+		//System.out.println("BASE64加密：" + result);
 		return result;
 	}
 	/**
