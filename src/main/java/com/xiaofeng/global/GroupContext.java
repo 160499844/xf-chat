@@ -7,7 +7,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.xiaofeng.utils.Group;
+import com.xiaofeng.utils.SymmetricEncoder;
 import com.xiaofeng.utils.User;
 import com.xiaofeng.utils.UserToken;
 
@@ -25,6 +28,8 @@ public class GroupContext {
 	// public static Map<String, Set<Map<String, ChannelHandlerContext>>> USER_GROUP
 	// = new ConcurrentHashMap<>();
 	public static Group<String, User<Map<String, ChannelHandlerContext>>> USER_GROUP = new Group<>();
+	public static Group<String,Integer> GROUP_COUNTS =  new Group<>();//群成员数量
+	public static Group<String,String> GROUP_KEYS = new Group<>();//小组密钥
 
 	public static List<UserToken> getGroupUsers(String groupId) {
 		List<UserToken> list = new ArrayList<UserToken>();
@@ -79,7 +84,7 @@ public class GroupContext {
 	 * @return: void      
 	 * @throws
 	 */
-	public static void groupAddUser(String groupId, String userId, ChannelHandlerContext ctx) {
+	public synchronized static void groupAddUser(String groupId, String userId, ChannelHandlerContext ctx) {
 		User<Map<String, ChannelHandlerContext>> groupList = GroupContext.getGroup(groupId);
 		Set<Map<String, ChannelHandlerContext>> tempList = new HashSet<Map<String, ChannelHandlerContext>>();
 		for (Map<String, ChannelHandlerContext> allUser : groupList) {
@@ -93,5 +98,69 @@ public class GroupContext {
 		if (tempList.size() > 0) {
 			groupList.addAll(tempList);
 		}
+	}
+	/**
+	 * 
+	 * @Title: groupReduce   
+	 * @Description: 减少组成员数量
+	 * @param: @param groupId      
+	 * @return: void      
+	 * @throws
+	 */
+	public synchronized static Integer groupReduceCount(String groupId) {
+		Integer groupCount = GroupContext.GROUP_COUNTS.get(groupId);
+		if(groupCount!=null) {
+			groupCount = groupCount - 1;
+			GroupContext.GROUP_COUNTS.put(groupId, groupCount);
+		}
+		return groupCount;
+	}
+	/**
+	 * 
+	 * @Title: groupAddCount   
+	 * @Description: 增加组成员数量 
+	 * @param: @param groupId
+	 * @param: @return      
+	 * @return: Integer      
+	 * @throws
+	 */
+	public synchronized static Integer groupAddCount(String groupId) {
+		Integer groupCount = GroupContext.GROUP_COUNTS.get(groupId);
+		if(groupCount!=null) {
+			groupCount = groupCount + 1;
+		}else {
+			groupCount = 1;
+		}
+		GroupContext.GROUP_COUNTS.put(groupId, groupCount);
+		return groupCount;
+	}
+	/**
+	 * 
+	 * @Title: getGroupCount   
+	 * @Description: 获取小组成员数量
+	 * @param: @param groupId
+	 * @param: @return      
+	 * @return: Integer      
+	 * @throws
+	 */
+	public static Integer getGroupCount(String groupId) {
+		return GroupContext.GROUP_COUNTS.get(groupId);
+	}
+	/**
+	 * 
+	 * @Title: getGroupKey   
+	 * @Description:  获取小组密钥
+	 * @param: @param groupId
+	 * @param: @return      
+	 * @return: String      
+	 * @throws
+	 */
+	public static String getGroupKey(String groupId) {
+		String key = GroupContext.GROUP_KEYS.get(groupId);
+		if(StringUtils.isEmpty(key)) {
+			key = SymmetricEncoder.generateDesKey();
+			GroupContext.GROUP_KEYS.put(groupId, key);
+		}
+		return key;
 	}
 }

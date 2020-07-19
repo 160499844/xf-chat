@@ -54,7 +54,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		String message = msg.text();
 		// 更新用户信息
 		UserToken user = UserInfoContext.getUser(userId);
-		MessageVo messageVo = com.xiaofeng.utils.StringUtils.toJsonDecode(message);
+		MessageVo messageVo = com.xiaofeng.utils.StringUtils.toJsonDecode(message,"1538663015386630");
 		String content = messageVo.getMsg();
 		user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId()) ? user.getGroupId() : messageVo.getGroupId());
 		user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName().trim());
@@ -69,17 +69,21 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		// 遍历组内全部用户，发送消息
 		 //User<Map<String, ChannelHandlerContext>> groupList = GroupContext.getGroup(user.getGroupId());
 		 GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
+<<<<<<< HEAD
 		
 		// 获取小组成员
 		 //User<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(user.getGroupId());
+=======
+		 
+>>>>>>> 3feb18c0ad361103b514a5e96b94245353fd0653
 		// 组装返回对象
 		messageVo.setContent(content);
-		List<UserToken> currentUsers = GroupContext.getGroupUsers(user.getGroupId());
-		messageVo.put("group_count", currentUsers.size());// 当前在线人数
-		messageVo.put("gourp_users", currentUsers);// 当前在线成员
+		Integer groupCount = GroupContext.getGroupCount(user.getGroupId());
+		messageVo.put("group_count", groupCount);// 当前在线人数
+		messageVo.put("gourp_users", "");// 当前在线成员
 
 		// 广播给组成员
-		String jsonString = com.xiaofeng.utils.StringUtils.toJsonEncrypt(messageVo);
+		String jsonString = com.xiaofeng.utils.StringUtils.toJsonEncrypt(messageVo,"1538663015386630");
 		DynMessage.broadcast(user.getGroupId(), jsonString);
 		
 	}
@@ -89,6 +93,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
 		SocketAddress localAddress = ctx.channel().localAddress();
+		
 		String ip = localAddress.toString().replace("/", "");
 		String userId = ctx.channel().id().asLongText();
 		// 打印出channel唯一值，asLongText方法是channel的id的全名
@@ -113,6 +118,8 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		// 加入组中
 		groupList.add(map);
 		GroupContext.USER_GROUP.put(groupId, groupList);
+		//小组人数+1
+		GroupContext.groupAddCount(user.getGroupId());
 	}
 
 	/**
@@ -122,6 +129,10 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
 		String userId = ctx.channel().id().asLongText();
 		UserToken user = UserInfoContext.getUser(userId);
+		
+		//小组人数-1
+		GroupContext.groupReduceCount(user.getGroupId());
+		
 		UserInfoContext.remove(userId);//删除用户信息
 		//删除登录信息
 		Set<Map<String, ChannelHandlerContext>> list = GroupContext.USER_GROUP.get(user.getGroupId());

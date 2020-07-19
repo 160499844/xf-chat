@@ -37,7 +37,7 @@ public class PushService {
 		messageVo.put("group_count", currentUsers.size());// 当前在线人数
 		messageVo.put("gourp_users", currentUsers);// 当前在线成员
 
-		DynMessage.broadcast(groupId, com.xiaofeng.utils.StringUtils.toJsonEncrypt(messageVo));
+		DynMessage.broadcast(groupId, com.xiaofeng.utils.StringUtils.toJsonEncrypt(messageVo,"1538663015386630"));
 	}
 
 }

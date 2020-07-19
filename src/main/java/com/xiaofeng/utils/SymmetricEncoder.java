@@ -13,6 +13,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
+import java.util.Random;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -38,7 +39,8 @@ import sun.misc.BASE64Encoder;
 @Slf4j
 public class SymmetricEncoder {
 
-	private static String key = "1538663015386630";
+	//private static String key = "1538663015386630";
+	//private static String key = generateDesKey();
 
 	/**
 	 * AES 解密操作
@@ -47,7 +49,7 @@ public class SymmetricEncoder {
 	 * @param key
 	 * @return
 	 */
-	public static String decrypt(String content) {
+	public static String decrypt(String content,String key) {
 		SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
 		try {
 			// 实例化
@@ -74,7 +76,7 @@ public class SymmetricEncoder {
 	 * @param key     加密密码
 	 * @return 返回Base64转码后的加密数据
 	 */
-	public static String encrypt(String content) {
+	public static String encrypt(String content,String key) {
 		try {
 			SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
 			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");// 创建密码器
@@ -147,4 +149,35 @@ public class SymmetricEncoder {
 		}
 		return new String(bytes);
 	}
+	/**
+	 * 
+	 * @Title: generateDesKey   
+	 * @Description: 生成key
+	 * @param: @param length 长度
+	 * @param: @return
+	 * @param: @throws Exception      
+	 * @return: byte[]      
+	 * @throws
+	 */
+	public static String generateDesKey() {
+		String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		int length = 16;
+        Random random = new Random();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < length; i++) {
+            int number = random.nextInt(str.length());
+            sb.append(str.charAt(number));
+        }
+        String key = sb.toString();
+        System.out.println("随机密钥:"+key);
+        return key;  
+    }
+	
+	/*public static void main(String[] args) {
+		String encrypt = encrypt("测试");
+		System.out.println("加密后:" + encrypt);
+		String decrypt = decrypt(encrypt);
+		System.out.println("解密后:" + decrypt);
+	}*/
+	
 }

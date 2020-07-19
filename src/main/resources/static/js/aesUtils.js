@@ -31,6 +31,7 @@ function AESencrypt(plaintText) {
 	console.log("加密后：" + encryptedData + '');
 	return encryptedData;
 }
+<<<<<<< HEAD
 /**
  * [通过参数名获取url中的参数值]
  * 示例URL:http://htmlJsTest/getrequest.html?uid=admin&rid=1&fid=2&name=小明
@@ -171,3 +172,47 @@ function send(message,type) {
 	}
 }
 
+=======
+// 发送数据
+function send(message) {
+
+	var obj = {
+		"msg" : message,
+		"name" : userName,
+		"type" : "T",
+		"groupId" : groupId
+	}
+	if (!window.WebSocket) {
+		return;
+	}
+
+	// 当websocket状态打开
+	if (socket.readyState == WebSocket.OPEN) {
+		var content = JSON.stringify(obj);
+		content = AESencrypt(content);
+		console.log("加密后:", content);
+		socket.send(content);
+	} else {
+		alert("服务器连接失败");
+	}
+}
+/**
+ * [通过参数名获取url中的参数值]
+ * 示例URL:http://htmlJsTest/getrequest.html?uid=admin&rid=1&fid=2&name=小明
+ * 
+ * @param {[string]}
+ *            queryName [参数名]
+ * @return {[string]} [参数值]
+ */
+function GetQueryValue(queryName) {
+	var query = decodeURI(window.location.search.substring(1));
+	var vars = query.split("&");
+	for (var i = 0; i < vars.length; i++) {
+		var pair = vars[i].split("=");
+		if (pair[0] == queryName) {
+			return pair[1];
+		}
+	}
+	return null;
+}
+>>>>>>> 3feb18c0ad361103b514a5e96b94245353fd0653

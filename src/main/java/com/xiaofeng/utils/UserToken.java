@@ -22,5 +22,9 @@ public class UserToken implements Serializable{
 	
 	private String ip;
 	
+	private String key;//密钥
+	
+	
+	
 	
 }
