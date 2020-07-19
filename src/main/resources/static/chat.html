@@ -12,8 +12,7 @@
 	src="/js/CryptoJS-master/components/mode-ecb.js"></script>
 <script type="text/javascript"
 	src="/js/CryptoJS-master/components/pad-nopadding.js"></script>
-<script type="text/javascript" src="/js/aesUtils.js"></script>
-<script type="text/javascript" src="/js/jsencrypt.js"></script>
+
 
 <script src="/js/layui.all.js"></script>
 
@@ -25,109 +24,15 @@
 </head>
 
 <body contextmenu="return false;">
+	
 	<!-- 聊天内容列表 -->
 	<div class="im-chat-main" style="height: 100%;">
-		<ul id="msg_list">
-			<!--  <li>
-				<div class="im-chat-user">
-					<img src="http://tp1.sinaimg.cn/1241679004/180/5743814375/0" /> 
-					<cite>罗玉凤<i>2016-11-01 11:39:13</i></cite>
-				</div>
-				<div class="im-chat-text">你好啊！</div>
-			</li>
-			<li class="im-chat-mine">
-				<div class="im-chat-user">
-					<img
-						src="http://tva1.sinaimg.cn/crop.0.0.180.180.180/86b15b6cjw1e8qgp5bmzyj2050050aa8.jpg" />
-					<cite><i>2016-11-01 11:40:19</i>长泽梓Azusa</cite>
-				</div>
-				<div class="im-chat-text">不怎好啊</div>
-			</li>
-			<li>
-				<div class="im-chat-user">
-					<img src="http://tp1.sinaimg.cn/1241679004/180/5743814375/0" /> <cite>罗玉凤<i>2016-11-01
-							11:40:23</i></cite>
-				</div>
-				<div class="im-chat-text">
-					为什么不好呀 <img src="/images/face/27.gif">
-				</div>
-			</li>
-			<li class="im-chat-mine">
-				<div class="im-chat-user">
-					<img
-						src="http://tva1.sinaimg.cn/crop.0.0.180.180.180/86b15b6cjw1e8qgp5bmzyj2050050aa8.jpg" />
-					<cite><i>2016-11-01 11:41:19</i>长泽梓Azusa</cite>
-				</div>
-				<div class="im-chat-text">
-					就是不好呀 <img src="/images/face/72.gif">
-				</div>
-			</li>
-			<li class="im-chat-mine">
-				<div class="im-chat-user">
-					<img
-						src="http://tva1.sinaimg.cn/crop.0.0.180.180.180/86b15b6cjw1e8qgp5bmzyj2050050aa8.jpg" />
-					<cite><i>2016-11-01 11:41:45</i>长泽梓Azusa</cite>
-				</div>
-				<div class="im-chat-text">给你看张照片</div>
-			</li>
-			<li class="im-chat-mine">
-				<div class="im-chat-user">
-					<img
-						src="http://tva1.sinaimg.cn/crop.0.0.180.180.180/86b15b6cjw1e8qgp5bmzyj2050050aa8.jpg" />
-					<cite><i>2016-11-01 11:41:50</i>长泽梓Azusa</cite>
-				</div>
-				<div class="im-chat-text">
-					<img class="msg-content-image"
-						src="http://ww1.sinaimg.cn/mw690/86b15b6cjw1dojhue8wuzj.jpg">
-				</div>
-			</li>
-			<li>
-				<div class="im-chat-user">
-					<img src="http://tp1.sinaimg.cn/1241679004/180/5743814375/0" /> <cite>罗玉凤<i>2016-11-01
-							11:40:23</i></cite>
-				</div>
-				<div class="im-chat-text">
-					不错呀，要看我的不 <img src="/images/face/72.gif">
-				</div>
-			</li>
-			<li>
-				<div class="im-chat-user">
-					<img src="http://tp1.sinaimg.cn/1241679004/180/5743814375/0" /> <cite>罗玉凤<i>2016-11-01
-							11:40:23</i></cite>
-				</div>
-				<div class="im-chat-text">
-					不错呀，要看我的不 <img src="/images/face/72.gif">
-				</div>
-			</li>
-			<li>
-				<div class="im-chat-user">
-					<img src="http://tp1.sinaimg.cn/1241679004/180/5743814375/0" /> <cite>罗玉凤<i>2016-11-01
-							11:40:23</i></cite>
-				</div>
-				<div class="im-chat-text">
-					不错呀，要看我的不 <img src="/images/face/72.gif">
-				</div>
-			</li>
-			<li>
-				<div class="im-chat-user">
-					<img src="http://tp1.sinaimg.cn/1241679004/180/5743814375/0" /> <cite>罗玉凤<i>2016-11-01
-							11:40:23</i></cite>
-				</div>
-				<div class="im-chat-text">
-					不错呀，要看我的不 <img src="/images/face/72.gif">
-				</div>
-			</li> -->
-<!-- 			 <li>
-				<div class="im-chat-user">
-					<img src="http://tp1.sinaimg.cn/1241679004/180/5743814375/0" /> <cite><i>2016-11-01
-							11:40:23</i>&nbsp;罗玉凤</cite>
-				</div>
-				<div class="im-chat-text">
-					<img class="msg-content-image"
-						src="https://pics4.baidu.com/feed/f31fbe096b63f624f826ed83526a15fe1b4ca3e9.jpeg?token=7199b3a598fe9350fb29b536c9461349">
-				</div>
-			</li> 
- -->		</ul>
+	<header class="mui-bar mui-bar-nav">
+      <a class="mui-icon mui-icon-back returnIndex"></a>
+      <span id="title"></span>
+    </header>
+		<ul id="msg_list" style="margin-top: 50px;height: 90%;">
+		</ul>
 	</div>
 
 	<!-- 底部 -->
@@ -486,7 +391,22 @@
 		$(".footer-center .voice-btn").on("tap", function() {
 			mui.toast("该功能正在开发中，敬请期待");
 		});
-
+		$(".mui-icon-eye").on("tap", function() {
+			mui.toast("该功能正在开发中，敬请期待");
+		});
+		$(".mui-icon-location").on("tap", function() {
+			mui.toast("该功能正在开发中，敬请期待");
+		});
+		$(".mui-icon-contact").on("tap", function() {
+			mui.toast("该功能正在开发中，敬请期待");
+		});
+		
+		$(".returnIndex").on("tap", function() {
+			mui.openWindow({
+				url : 'index.html',
+				id : 'index'
+			});
+		});
 		//点击消息列表，关闭键盘
 		$("#msg_list")
 				.on(
@@ -645,4 +565,6 @@ layui.use('upload', function(){
   });
 });
 </script>
+<script type="text/javascript" src="/js/aesUtils.js"></script>
+<script type="text/javascript" src="/js/jsencrypt.js"></script>
 </html>

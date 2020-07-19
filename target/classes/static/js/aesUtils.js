@@ -52,7 +52,7 @@ function GetQueryValue(queryName) {
 }
 
 var socket;
-var userName = GetQueryValue("name");
+var userName = GetQueryValue("userName");
 var groupId = GetQueryValue("groupId");
 // 如果浏览器支持WebSocket
 if (window.WebSocket) {
@@ -72,6 +72,7 @@ if (window.WebSocket) {
 		console.log("收到消息", result);
 		// ta.value = ta.value + "\n" + result.content;
 		messageElement(result);
+		updateGroupInfo(result);
 		// countSpan.html(result.info.group_count);
 		// usersSpan.val(result.info.gourp_users);
 	}
@@ -85,11 +86,24 @@ if (window.WebSocket) {
 
 	// 连接断掉的回调函数
 	socket.onclose = function(event) {
-		var ta = document.getElementById("responseText");
-		ta.value = ta.value + "\n" + "服务器中断";
+		//var ta = document.getElementById("responseText");
+		//mui.toast("该功能正在开发中，敬请期待");
+		//ta.value = ta.value + "\n" + "服务器中断";
+		alert("服务器中断");
 	}
 } else {
 	alert("浏览器不支持WebSocket！");
+}
+/**
+ * 更新组信息
+ * @param messageVo
+ * @returns
+ */
+function updateGroupInfo(messageVo){
+	var title = "";
+	title += messageVo.groupId;
+	title += "("+messageVo.info.group_count+")";
+	$("#title").html(title);
 }
 /**
  * 组装消息组件
