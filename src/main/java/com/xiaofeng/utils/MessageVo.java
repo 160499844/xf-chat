@@ -23,6 +23,7 @@ public class MessageVo {
 				"groupId" : groupId
 			}
 	 */
+	private String sessionId;//创建消息的用户唯一标识
 	private String msg;//消息实体
 	private String content ;//返回内容
 	private String groupId;//群组id

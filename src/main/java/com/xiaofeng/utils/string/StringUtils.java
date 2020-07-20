@@ -1,11 +1,14 @@
-package com.xiaofeng.utils;
+package com.xiaofeng.utils.string;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.util.Base64;
+import java.util.UUID;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xiaofeng.utils.EncryptMessage;
+import com.xiaofeng.utils.MessageVo;
 
 /**
  * ' 字符串处理工具类
@@ -13,7 +16,7 @@ import com.alibaba.fastjson.JSONObject;
  * @author xiaofeng
  *
  */
-public class StringUtils {
+public class StringUtils extends RandomUtil{
 
 	/**
 	 * base64编码
@@ -77,5 +80,9 @@ public class StringUtils {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	public static String getUUID() {
+		return  UUID.randomUUID().toString().replace("-", "");
 	}
 }

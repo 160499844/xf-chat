@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.tomcat.util.codec.binary.Base64;
 
 import com.xiaofeng.netty.server.NettyServer;
-import com.xiaofeng.utils.StringUtils;
+import com.xiaofeng.utils.string.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import sun.misc.BASE64Decoder;

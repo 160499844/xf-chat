@@ -14,8 +14,8 @@ import com.xiaofeng.global.UserInfoContext;
 import com.xiaofeng.netty.server.DynMessage;
 import com.xiaofeng.utils.DateUtils;
 import com.xiaofeng.utils.MessageVo;
-import com.xiaofeng.utils.User;
-import com.xiaofeng.utils.UserToken;
+import com.xiaofeng.utils.user.User;
+import com.xiaofeng.utils.user.UserToken;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -40,7 +40,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		String message = msg.text();
 		// 更新用户信息
 		UserToken user = UserInfoContext.getUser(userId);
-		MessageVo messageVo = com.xiaofeng.utils.StringUtils.toJsonDecode(message,"1538663015386630");
+		MessageVo messageVo = com.xiaofeng.utils.string.StringUtils.toJsonDecode(message,"1538663015386630");
 		String content = messageVo.getMsg();
 		user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId()) ? user.getGroupId() : messageVo.getGroupId());
 		user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName().trim());
@@ -48,6 +48,10 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		messageVo.setName(user.getUserName());
 		content = String.format("%s(%s):%s", user.getUserName(), DateUtils.getNowDateToString(), messageVo.getMsg());
 		log.info(content);
+		
+		//保存用户session映射关系key netty sesion value springboot session
+		if(StringUtils.isEmpty(user.getSessionId()))user.setSessionId(messageVo.getSessionId());
+		UserInfoContext.sessionMap.put(userId,messageVo.getSessionId());
 		/**
 		 * writeAndFlush接收的参数类型是Object类型，但是一般我们都是要传入管道中传输数据的类型，比如我们当前的demo
 		 * 传输的就是TextWebSocketFrame类型的数据
@@ -58,11 +62,12 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		// 组装返回对象
 		messageVo.setContent(content);
 		Integer groupCount = GroupContext.getGroupCount(user.getGroupId());
+		//GroupContext.getGroupUsers(groupId);
 		messageVo.put("group_count", groupCount);// 当前在线人数
 		messageVo.put("gourp_users", "");// 当前在线成员
 
 		// 广播给组成员
-		String jsonString = com.xiaofeng.utils.StringUtils.toJsonEncrypt(messageVo,"1538663015386630");
+		String jsonString = com.xiaofeng.utils.string.StringUtils.toJsonEncrypt(messageVo,"1538663015386630");
 		DynMessage.broadcast(user.getGroupId(), jsonString);
 	}
 

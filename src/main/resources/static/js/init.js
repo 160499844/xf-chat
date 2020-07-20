@@ -1,4 +1,8 @@
 var key = CryptoJS.enc.Utf8.parse("1538663015386630"); // 秘钥
+var sessionId = "5493CB6D73399587A92B1A4CAC1D982A";
+var userName = "";
+var groupId = "";
+var socket;
 /**
  * aes解密
  * 
@@ -50,49 +54,53 @@ function GetQueryValue(queryName) {
 	}
 	return null;
 }
+/**
+ * 初始化
+ * @returns
+ */
+function socketInit(){
+	userName = GetQueryValue("userName");
+	groupId = GetQueryValue("groupId");
+	// 如果浏览器支持WebSocket
+	if (window.WebSocket) {
+		// 参数就是与服务器连接的地址
+		socket = new WebSocket("ws://127.0.0.1:8888/ws");
+		//socket = new WebSocket("ws://y-xiaofeng.top:8900/ws");
+		// 客户端收到服务器消息的时候就会执行这个回调方法
+		socket.onmessage = function(event) {
+			// var ta = document.getElementById("responseText");
+			// var countSpan = $("#count");
+			// var usersSpan = $("#users");
+			// 将接收的json字符串转对象
+			var content = event.data;
+			content = AESdecrypt(content);
+			console.log("解密消息", content);
+			var result = JSON.parse(content);
+			console.log("收到消息", result);
+			// ta.value = ta.value + "\n" + result.content;
+			messageElement(result);
+			updateGroupInfo(result);
+			// countSpan.html(result.info.group_count);
+			// usersSpan.val(result.info.gourp_users);
+		}
 
-var socket;
-var userName = GetQueryValue("userName");
-var groupId = GetQueryValue("groupId");
-// 如果浏览器支持WebSocket
-if (window.WebSocket) {
-	// 参数就是与服务器连接的地址
-	socket = new WebSocket("ws://127.0.0.1:8888/ws");
-	//socket = new WebSocket("ws://y-xiaofeng.top:8900/ws");
-	// 客户端收到服务器消息的时候就会执行这个回调方法
-	socket.onmessage = function(event) {
-		// var ta = document.getElementById("responseText");
-		// var countSpan = $("#count");
-		// var usersSpan = $("#users");
-		// 将接收的json字符串转对象
-		var content = event.data;
-		content = AESdecrypt(content);
-		console.log("解密消息", content);
-		var result = JSON.parse(content);
-		console.log("收到消息", result);
-		// ta.value = ta.value + "\n" + result.content;
-		messageElement(result);
-		updateGroupInfo(result);
-		// countSpan.html(result.info.group_count);
-		// usersSpan.val(result.info.gourp_users);
-	}
+		// 连接建立的回调函数
+		socket.onopen = function(event) {
+			var ta = document.getElementById("responseText");
+			// ta.value = "连接服务器成功";
+			send("加入群聊","T");
+		}
 
-	// 连接建立的回调函数
-	socket.onopen = function(event) {
-		var ta = document.getElementById("responseText");
-		// ta.value = "连接服务器成功";
-		send("加入群聊","T");
+		// 连接断掉的回调函数
+		socket.onclose = function(event) {
+			//var ta = document.getElementById("responseText");
+			//mui.toast("该功能正在开发中，敬请期待");
+			//ta.value = ta.value + "\n" + "服务器中断";
+			alert("服务器中断");
+		}
+	} else {
+		alert("浏览器不支持WebSocket！");
 	}
-
-	// 连接断掉的回调函数
-	socket.onclose = function(event) {
-		//var ta = document.getElementById("responseText");
-		//mui.toast("该功能正在开发中，敬请期待");
-		//ta.value = ta.value + "\n" + "服务器中断";
-		alert("服务器中断");
-	}
-} else {
-	alert("浏览器不支持WebSocket！");
 }
 /**
  * 更新组信息
@@ -151,6 +159,7 @@ function send(message,type) {
 		type = 'T';
 	}
 	var obj = {
+		"sessionId" : sessionId,
 		"msg" : message,
 		"name" : userName,
 		"type" : type,
