@@ -38,4 +38,10 @@ public class Result<T> implements Serializable{
 		super();
 		this.content = content;
 	}
+	
+	public Result(int code,Object content) {
+		super();
+		this.code = code;
+		this.content = content;
+	}
 }

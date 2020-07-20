@@ -178,9 +178,9 @@ public class FileUploadUtils {
 			setUploadPath(uploadData);
 		} else {
 			if (!contains) {
-				throw new BaseException("上传文件格式不合法");
+				throw new BaseException("不支持该文件格式!");
 			}
-			throw new BaseException("上传文件大小不合法");
+			throw new BaseException("上传文件大小不合法!");
 		}
 	}
 

@@ -1,14 +1,10 @@
 package com.xiaofeng.web.controller;
 
-import java.io.File;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.xiaofeng.netty.server.handler.TextWebSocketFrameHandler;
 import com.xiaofeng.utils.Result;
 import com.xiaofeng.utils.exception.BaseException;
 import com.xiaofeng.utils.file.FileUploadUtils;
@@ -35,7 +31,7 @@ public class FileController {
 			throw new BaseException("请上传文件");
 		FileUploadUtils fileUploadUtils = new FileUploadUtils(file);
 		//fileUploadUtils.setUploadPath("D:\\broadband_img\\pic\\");
-		fileUploadUtils.setSuffixes(new String[] { ".png", ".jpeg", ".jpg", ".gif", ".docx", ".doc", ".xlsx", ".pdf" });
+		fileUploadUtils.setSuffixes(new String[] { ".png", ".jpeg", ".jpg", ".gif", ".docx", ".doc", ".xlsx", ".pdf","mp4","mp3" });
 		fileUploadUtils.setUploadPath(uploadPath);
 		fileUploadUtils.save();
 		return new Result(fileUploadUtils.getUploadPath());
