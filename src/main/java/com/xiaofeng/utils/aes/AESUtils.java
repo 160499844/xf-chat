@@ -1,4 +1,4 @@
-package com.xiaofeng.utils;
+package com.xiaofeng.utils.aes;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.tomcat.util.codec.binary.Base64;
 
 import com.xiaofeng.netty.server.NettyServer;
+import com.xiaofeng.utils.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import sun.misc.BASE64Decoder;
@@ -37,7 +38,7 @@ import sun.misc.BASE64Encoder;
  * AES对称加密和解密
  */
 @Slf4j
-public class SymmetricEncoder {
+public class AESUtils {
 
 	//private static String key = "1538663015386630";
 	//private static String key = generateDesKey();
