@@ -13,7 +13,9 @@ import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.global.UserInfoContext;
 import com.xiaofeng.netty.server.DynMessage;
 import com.xiaofeng.utils.DateUtils;
+import com.xiaofeng.utils.EncryptMessage;
 import com.xiaofeng.utils.MessageVo;
+import com.xiaofeng.utils.user.GroupToken;
 import com.xiaofeng.utils.user.User;
 import com.xiaofeng.utils.user.UserToken;
 
@@ -39,7 +41,12 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		String message = msg.text();
 		// 更新用户信息
 		UserToken user = UserInfoContext.getUser(userId);
-		MessageVo messageVo = com.xiaofeng.utils.string.StringUtils.toJsonDecode(message,"1538663015386630");
+		MessageVo messageVo = com.xiaofeng.utils.string.StringUtils.jsonToMessageVo(message);
+		
+		
+		GroupToken groupToken = GroupContext.GROUP_KEYS.get(messageVo.getGroupId());
+		messageVo.setMsg(EncryptMessage.decrypt(messageVo.getMsg(),groupToken.getAesKey()));
+		
 		String content = messageVo.getMsg();
 		user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId()) ? user.getGroupId() : messageVo.getGroupId());
 		user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName().trim());
@@ -49,24 +56,27 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		log.info(content);
 		
 		//保存用户session映射关系key netty sesion value springboot session
-		if(StringUtils.isEmpty(user.getSessionId()))user.setSessionId(messageVo.getSessionId());
-		UserInfoContext.sessionMap.put(userId,messageVo.getSessionId());
+		if(StringUtils.isEmpty(user.getSessionId())) {
+			//第一次加入发送消息
+			user.setSessionId(messageVo.getSessionId());
+			//加入小组
+			GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
+			UserInfoContext.sessionMap.put(userId,messageVo.getSessionId());
+			//小组人数+1
+			GroupContext.groupAddCount(user.getGroupId());
+		}
 		/**
 		 * writeAndFlush接收的参数类型是Object类型，但是一般我们都是要传入管道中传输数据的类型，比如我们当前的demo
 		 * 传输的就是TextWebSocketFrame类型的数据
 		 */
-		// 遍历组内全部用户，发送消息
-		 //User<Map<String, ChannelHandlerContext>> groupList = GroupContext.getGroup(user.getGroupId());
-		 GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
 		// 组装返回对象
 		messageVo.setContent(content);
 		Integer groupCount = GroupContext.getGroupCount(user.getGroupId());
 		//GroupContext.getGroupUsers(groupId);
 		messageVo.put("group_count", groupCount);// 当前在线人数
-		messageVo.put("gourp_users", "");// 当前在线成员
 
 		// 广播给组成员
-		String jsonString = com.xiaofeng.utils.string.StringUtils.toJsonEncrypt(messageVo,"1538663015386630");
+		String jsonString = com.xiaofeng.utils.string.StringUtils.toJsonEncrypt(messageVo,groupToken.getAesKey());
 		DynMessage.broadcast(user.getGroupId(), jsonString);
 	}
 
@@ -85,23 +95,19 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		UserToken user = UserInfoContext.getUser(userId);
 		user.setIp(ip);
 		user.setUserId(userId);
-		Random random = new Random();
-		user.setUserName("访客" + random.nextInt(1000));
 		UserInfoContext.addUser(userId, user);
-		// 获取组id
-		String groupId = user.getGroupId();
-		User<Map<String, ChannelHandlerContext>> groupList = GroupContext.USER_GROUP.get(groupId);
-		if (groupList == null) {
-			groupList = new User<Map<String, ChannelHandlerContext>>();
-
-		}
-		Map<String, ChannelHandlerContext> map = new ConcurrentHashMap<String, ChannelHandlerContext>();
-		map.put(userId, ctx);
-		// 加入组中
-		groupList.add(map);
-		GroupContext.USER_GROUP.put(groupId, groupList);
-		//小组人数+1
-		GroupContext.groupAddCount(user.getGroupId());
+		/*
+		 * Random random = new Random(); user.setUserName("访客" + random.nextInt(1000));
+		 * UserInfoContext.addUser(userId, user); // 获取组id String groupId =
+		 * user.getGroupId(); User<Map<String, ChannelHandlerContext>> groupList =
+		 * GroupContext.USER_GROUP.get(groupId); if (groupList == null) { groupList =
+		 * new User<Map<String, ChannelHandlerContext>>();
+		 * 
+		 * } Map<String, ChannelHandlerContext> map = new ConcurrentHashMap<String,
+		 * ChannelHandlerContext>(); map.put(userId, ctx); // 加入组中 groupList.add(map);
+		 * GroupContext.USER_GROUP.put(groupId, groupList); //小组人数+1
+		 * GroupContext.groupAddCount(user.getGroupId());
+		 */
 	}
 
 	/**

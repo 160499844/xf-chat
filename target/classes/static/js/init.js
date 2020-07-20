@@ -1,8 +1,16 @@
-var key = CryptoJS.enc.Utf8.parse("1538663015386630"); // 秘钥
-var sessionId = "5493CB6D73399587A92B1A4CAC1D982A";
+var key; // 秘钥
+var sessionId = "";
 var userName = "";
-var groupId = "";
+var groupId = "test";
+userName = GetQueryValue("userName");
+var qrCode = GetQueryValue("code");
+
+//公钥
+var PUBLIC_KEY = '';
+//私钥
+var PRIVATE_KEY = '';
 var socket;
+var encrypt = new JSEncrypt();
 /**
  * aes解密
  * 
@@ -33,7 +41,7 @@ function AESencrypt(plaintText) {
 	var b = encryptedData + '';// 加密后：
 	console.log("加密前：" + plaintText + '');
 	console.log("加密后：" + encryptedData + '');
-	return encryptedData;
+	return encryptedData + '';
 }
 /**
  * [通过参数名获取url中的参数值]
@@ -49,6 +57,7 @@ function GetQueryValue(queryName) {
 	for (var i = 0; i < vars.length; i++) {
 		var pair = vars[i].split("=");
 		if (pair[0] == queryName) {
+			console.log("获取参数" + queryName + "=", pair[1]);
 			return pair[1];
 		}
 	}
@@ -59,8 +68,6 @@ function GetQueryValue(queryName) {
  * @returns
  */
 function socketInit(){
-	userName = GetQueryValue("userName");
-	groupId = GetQueryValue("groupId");
 	// 如果浏览器支持WebSocket
 	if (window.WebSocket) {
 		// 参数就是与服务器连接的地址
@@ -73,8 +80,8 @@ function socketInit(){
 			// var usersSpan = $("#users");
 			// 将接收的json字符串转对象
 			var content = event.data;
-			content = AESdecrypt(content);
-			console.log("解密消息", content);
+			//content = AESdecrypt(content);
+			//console.log("解密消息", content);
 			var result = JSON.parse(content);
 			console.log("收到消息", result);
 			// ta.value = ta.value + "\n" + result.content;
@@ -96,11 +103,13 @@ function socketInit(){
 			//var ta = document.getElementById("responseText");
 			//mui.toast("该功能正在开发中，敬请期待");
 			//ta.value = ta.value + "\n" + "服务器中断";
-			alert("服务器中断");
+			mui.toast("服务器连接失败");
 		}
 	} else {
-		alert("浏览器不支持WebSocket！");
+		mui.toast("当前环境不支持加密通信");
 	}
+	
+	getGroupName(qrCode);
 }
 /**
  * 更新组信息
@@ -123,6 +132,7 @@ function messageElement(messageVo) {
 	var type = messageVo.type;
 	var html = "";
 	var name = messageVo.name;
+	var msg = AESdecrypt(messageVo.msg);
 	var className = "im-chat-user";
 	/*
 	 * if(name===userName){ className = "im-chat-mine"; }
@@ -141,9 +151,9 @@ function messageElement(messageVo) {
 		+ "</cite>" + "</div>";
 	html += "<div class='im-chat-text'>";
 	if ("T" === type) {
-		html += messageVo.msg;
+		html += msg;
 	}else if("P" === type){
-		html += "<img data-action='zoom' src='"+messageVo.msg+"'/>"
+		html += "<img data-action='zoom' src='"+msg+"'/>"
 		
 		//html += "<img  data-preview-src='' data-preview-group='1' src='"+messageVo.msg+"'/>"
 	}
@@ -158,9 +168,11 @@ function send(message,type) {
 	if("" === type){
 		type = 'T';
 	}
+	var msg = AESencrypt(message);
+	console.log("加密后msg:", msg);
 	var obj = {
 		"sessionId" : sessionId,
-		"msg" : message,
+		"msg" : msg,
 		"name" : userName,
 		"type" : type,
 		"groupId" : groupId
@@ -172,11 +184,71 @@ function send(message,type) {
 	// 当websocket状态打开
 	if (socket.readyState == WebSocket.OPEN) {
 		var content = JSON.stringify(obj);
-		content = AESencrypt(content);
-		console.log("加密后:", content);
+		//content = AESencrypt(content);
+		//console.log("加密后:", content);
 		socket.send(content);
 	} else {
-		alert("服务器连接失败");
+		mui.toast("服务器连接失败");
 	}
 }
 
+//校验密码
+function checkPassword(password){
+	var c = false;
+	$.ajax({
+		"async" : false,
+		"url" : "group/checkPassword",
+		"type" : "POST",
+			"data" : {
+				"groupId":groupId,
+				"password":password
+				
+			},
+		"dataType" : "json",
+		"success" : function(data) {
+			var result = data.content;
+			c = result;
+		}
+	});
+	return c;
+}
+//获取公钥
+function getPrivateKey(){
+	$.ajax({
+		"async" : false,
+		"url" : "group/checkPassword",
+		"type" : "POST",
+			"data" : {
+				"groupId":groupId,
+				"password":password
+				
+			},
+		"dataType" : "json",
+		"success" : function(data) {
+			var result = data.content;
+			return result;
+		}
+	});
+	return "";
+}
+function setSession(s){
+	sessionId = s;
+}
+
+function getGroupName(code){
+	$.ajax({
+		"async" : false,
+		"url" : "group/getGroupInfo",
+		"type" : "POST",
+			"data" : {"code":code},
+		"dataType" : "json",
+		"success" : function(data) {
+			var content = data.content.key;
+			//CryptoJS.enc.Utf8.parse(1538663015386630);
+			console.log("content:",content);
+			key = CryptoJS.enc.Utf8.parse(content);
+			console.log("key:",key);
+			//修改groupId
+		}
+	});
+}

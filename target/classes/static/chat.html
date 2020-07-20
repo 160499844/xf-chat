@@ -566,12 +566,21 @@ layui.use('upload', function(){
   });
 });
 </script>
-
+<script src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>
 <script type="text/javascript" src="/js/init.js"></script>
-<script type="text/javascript" src="/js/jsencrypt.js"></script>
+<!-- <script type="text/javascript" src="/js/jsencrypt.js"></script> -->
 <script type="text/javascript">
 	$(function(){
-		socketInit();
+		mui.prompt('','请输入口令','口令',['校验'],function(e){
+			var password = e.value;
+			if(checkPassword(password)){
+				check = true;
+				socketInit();
+				
+			}else{
+				mui.toast("口令无效");
+			}
+		},'div');
 	})
 </script>
 </html>

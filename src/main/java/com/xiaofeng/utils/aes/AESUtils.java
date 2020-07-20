@@ -174,11 +174,11 @@ public class AESUtils {
         return key;  
     }
 	
-	/*public static void main(String[] args) {
-		String encrypt = encrypt("测试");
+	public static void main(String[] args) {
+		String encrypt = encrypt("测试","mwro30b4bbcFyNHU");
 		System.out.println("加密后:" + encrypt);
-		String decrypt = decrypt(encrypt);
+		String decrypt = decrypt(encrypt,"mwro30b4bbcFyNHU");
 		System.out.println("解密后:" + decrypt);
-	}*/
+	}
 	
 }

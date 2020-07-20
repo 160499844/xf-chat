@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.xiaofeng.utils.aes.AESUtils;
 import com.xiaofeng.utils.user.Group;
+import com.xiaofeng.utils.user.GroupToken;
 import com.xiaofeng.utils.user.User;
 import com.xiaofeng.utils.user.UserToken;
 
@@ -29,7 +30,7 @@ public class GroupContext {
 	// = new ConcurrentHashMap<>();
 	public static Group<String, User<Map<String, ChannelHandlerContext>>> USER_GROUP = new Group<>();
 	public static Group<String,Integer> GROUP_COUNTS =  new Group<>();//群成员数量
-	public static Group<String,String> GROUP_KEYS = new Group<>();//小组密钥
+	public static Group<String,GroupToken> GROUP_KEYS = new Group<>();//小组口令
 
 	public static List<UserToken> getGroupUsers(String groupId) {
 		List<UserToken> list = new ArrayList<UserToken>();
@@ -89,6 +90,7 @@ public class GroupContext {
 		Set<Map<String, ChannelHandlerContext>> tempList = new HashSet<Map<String, ChannelHandlerContext>>();
 		for (Map<String, ChannelHandlerContext> allUser : groupList) {
 			if (!allUser.containsKey(userId)) {
+				//创建临时小组
 				Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
 				userGroup.put(userId, ctx);
 				tempList.add(userGroup);
@@ -96,6 +98,7 @@ public class GroupContext {
 		}
 		// 更新组成员
 		if (tempList.size() > 0) {
+			//将临时小组加入正式小组中
 			groupList.addAll(tempList);
 		}
 	}
@@ -144,7 +147,7 @@ public class GroupContext {
 	 * @throws
 	 */
 	public static Integer getGroupCount(String groupId) {
-		return GroupContext.GROUP_COUNTS.get(groupId);
+		return GroupContext.GROUP_COUNTS.get(groupId)==null?0:GroupContext.GROUP_COUNTS.get(groupId);
 	}
 	/**
 	 * 
@@ -155,12 +158,10 @@ public class GroupContext {
 	 * @return: String      
 	 * @throws
 	 */
-	public static String getGroupKey(String groupId) {
-		String key = GroupContext.GROUP_KEYS.get(groupId);
-		if(StringUtils.isEmpty(key)) {
-			key = AESUtils.generateDesKey();
-			GroupContext.GROUP_KEYS.put(groupId, key);
-		}
-		return key;
-	}
+	/*
+	 * public static String getGroupKey(String groupId) { String key =
+	 * GroupContext.GROUP_KEYS.get(groupId).getKey(); if(StringUtils.isEmpty(key)) {
+	 * key = AESUtils.generateDesKey(); GroupContext.GROUP_KEYS.put(groupId, new
+	 * GroupToken(key,"","")); } return key; }
+	 */
 }

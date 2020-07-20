@@ -16,7 +16,7 @@ import lombok.Data;
 public class UserToken implements Serializable{
 	
 	//每个用户分配一个id
-	private String sessionId = StringUtils.getUUID();
+	private String sessionId;
 	//用户id
 	private String userId;
 	//组id

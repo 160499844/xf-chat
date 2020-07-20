@@ -32,7 +32,6 @@ public class UserController {
 	public Result<String> getSession(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		String id = session.getId();
-		System.out.println(id);
 		return new Result<String>(id);
 	}
 }

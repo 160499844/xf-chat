@@ -30,36 +30,6 @@ public class FileController {
 	 * @throws Exception 
 	 */
 	@RequestMapping("upload")
-<<<<<<< HEAD
-	private Result upload(MultipartFile file) {
-		log.info(" >>> 文件上传  <<< ");
-        if (file == null) {
-        }
-        String fileName = "";
-        File filePath = new File(uploadPath);
-        if (!filePath.mkdir()) {
-            filePath.mkdirs();
-        }
-        try {
-            byte[] bytes = file.getBytes();
-            //获取上传文件类型
-            String fileUrl = file.getOriginalFilename();
-            String fileType = fileUrl.substring(fileUrl.lastIndexOf(".")).toLowerCase();
-            //自定义上传文件的名字
-            fileName = UUID.randomUUID().toString().replace("-", "") + fileType;
-            System.out.println("临时保存文件名:"+fileName);
-            //截取文件格式
-            String type = fileUrl.substring(fileUrl.lastIndexOf(".") + 1).toLowerCase();
-            String destPath = filePath + File.separator + fileName;
-            //保存到一个目标文件中
-            file.transferTo(new File(destPath));
-            log.info(" >>> 文件上传结束  <<< ");
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("You failed to upload " + " => " + e.getMessage());
-        }
-		return new Result(fileName);
-=======
 	private Result<String> upload(MultipartFile file) throws Exception {
 		log.info(" >>> 文件上传入口  <<< ");
 		if(file==null)
@@ -70,7 +40,6 @@ public class FileController {
 		fileUploadUtils.setUploadPath(uploadPath);
 		fileUploadUtils.save();
 		return new Result(fileUploadUtils.getUploadPath());
->>>>>>> f7d80f39c4607cfc8215a448ecf0b85d8f725f14
 	}
 	
 }

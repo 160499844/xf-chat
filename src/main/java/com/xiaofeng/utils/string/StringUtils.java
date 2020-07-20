@@ -16,7 +16,7 @@ import com.xiaofeng.utils.MessageVo;
  * @author xiaofeng
  *
  */
-public class StringUtils extends RandomUtil{
+public class StringUtils extends RandomUtil {
 
 	/**
 	 * base64编码
@@ -28,11 +28,13 @@ public class StringUtils extends RandomUtil{
 		Encoder encoder = Base64.getEncoder();
 		byte[] data = encoder.encode(b);
 		String result = new String(data);
-		//System.out.println("BASE64加密：" + result);
+		// System.out.println("BASE64加密：" + result);
 		return result;
 	}
+
 	/**
 	 * base64解码
+	 * 
 	 * @param content
 	 * @return
 	 */
@@ -42,47 +44,36 @@ public class StringUtils extends RandomUtil{
 		byte[] bytes = decoder.decode(content);
 		return bytes;
 	}
+
 	/**
 	 * 
-	 * @Title: toJsonDecode   
-	 * @Description:  解密消息
-	 * @param: @param content
-	 * @param: @return      
-	 * @return: MessageVo      
-	 * @throws
+	 * @Title: toJsonDecode @Description: 解密消息 @param: @param
+	 * content @param: @return @return: MessageVo @throws
 	 */
-	public static MessageVo toJsonDecode(String content,String key) {
-		String result = "";
+	public static MessageVo jsonToMessageVo(String content) {
 		MessageVo messageVo = null;
-		try {
-			result = EncryptMessage.decrypt(content,key);
-			messageVo = JSONObject.parseObject(result,MessageVo.class);
-		} catch (InvalidAlgorithmParameterException e) {
-			e.printStackTrace();
-		}
+		messageVo = JSONObject.parseObject(content, MessageVo.class);
 		return messageVo;
 	}
+
 	/**
 	 * 
-	 * @Title: toDecodeJson   
-	 * @Description: 将对象加密转成字符串
-	 * @param: @param obj
-	 * @param: @return      
-	 * @return: String      
-	 * @throws
+	 * @Title: toDecodeJson @Description: 将对象加密转成字符串 @param: @param
+	 * obj @param: @return @return: String @throws
 	 */
-	public static String toJsonEncrypt(Object obj,String key) {
+	public static String toJsonEncrypt(MessageVo obj, String key) {
 		String result = "";
-		String jsonString = JSONObject.toJSONString(obj);
 		try {
-			result = EncryptMessage.encrypt(jsonString,key);
+			String msg = EncryptMessage.encrypt(obj.getMsg(), key);
+			obj.setMsg(msg);
+			result = JSONObject.toJSONString(obj);
 		} catch (InvalidAlgorithmParameterException e) {
 			e.printStackTrace();
 		}
 		return result;
 	}
-	
+
 	public static String getUUID() {
-		return  UUID.randomUUID().toString().replace("-", "");
+		return UUID.randomUUID().toString().replace("-", "");
 	}
 }

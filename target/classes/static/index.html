@@ -60,7 +60,7 @@
 .mui-content {
 	height: 100%;
 	width: 100%;
-/* 	background-image: url(images/bc.jpg); */
+ 	background-image: url(images/bc.jpg); 
 	background-size: cover;
 	position: absolute;
 	overflow: hidden;
@@ -79,10 +79,10 @@
 		<div style="height: 30%;"></div>
 		<div id="starForm">
 			<form class="mui-input-group">
-				<div class="mui-input-row">
+				<!-- <div class="mui-input-row">
 					<label>房间号</label> <input type="text" class="mui-input-clear"
 						placeholder="房间号" id="groupId" value="default">
-				</div>
+				</div> -->
 				<div class="mui-input-row">
 					<label>昵称</label> <input type="text" class="mui-input-clear"
 						placeholder="我的昵称" id="userName">
@@ -103,7 +103,7 @@
 		document.getElementById('starChat').addEventListener('tap', function() {
 			//打开关于页面
 			var userName= document.getElementById('userName').value;
-			var groupId= document.getElementById('groupId').value;
+			var code = GetQueryValue("code");
 			console.log("userName",userName);
 			var check= false;
 			if(userName === "") {
@@ -115,8 +115,10 @@
 			}
 			console.log("昵称不允许为空",check);
 			if(check){
+				var url = 'chat.html?userName=' + userName + '&code=' + code;
+				console.log("url",url);
 				mui.openWindow({
-					url : 'chat.html?userName=' + userName + '&groupId=' + groupId,
+					url : url,
 					id : 'info',
 					extras : {}
 				});
@@ -124,10 +126,24 @@
 		});
 	})(mui);
 </script>
+<script src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>
+<script type="text/javascript" src="/js/CryptoJS-master/rollups/aes.js"></script>
+<script type="text/javascript"
+	src="/js/CryptoJS-master/components/mode-ecb.js"></script>
+<script type="text/javascript"
+	src="/js/CryptoJS-master/components/pad-nopadding.js"></script>
+<script type="text/javascript" src="/js/init.js"></script>
+
+<!-- <script type="text/javascript" src="/js/jsencrypt.js"></script> -->
 <script type="text/javascript">
 	$(function(){
 		//初始化
 		init();
+		var code = GetQueryValue("code");
+		console.log("code",code);
+		getGroupName(code);
+		
+		
 	});
 	function init(){
 		$.ajax({
@@ -138,7 +154,7 @@
 			"dataType" : "json",
 			"success" : function(data) {
 				var session = data.content;
-				console.log(session);
+				setSession(session);
 			}
 		});
 	}
