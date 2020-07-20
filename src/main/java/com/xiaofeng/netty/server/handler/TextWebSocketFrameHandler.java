@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Netty服务端处理器 处理websocket连接
- * https://fangjian0423.github.io/2016/08/29/netty-in-action-note2/
  * 
  * @author xiaofeng
  *

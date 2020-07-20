@@ -12,6 +12,11 @@ import com.xiaofeng.netty.server.handler.TextWebSocketFrameHandler;
 import com.xiaofeng.utils.Result;
 
 import lombok.extern.slf4j.Slf4j;
+/**
+ * 文件处理
+ * @author xiaofeng
+ *
+ */
 @Slf4j
 @RestController
 @RequestMapping("file")
@@ -27,7 +32,7 @@ public class FileController {
 	 */
 	@RequestMapping("upload")
 	private Result upload(MultipartFile file) {
-		log.info(" >>> 文件上传入口... <<< ");
+		log.info(" >>> 文件上传  <<< ");
         if (file == null) {
         }
         String fileName = "";
@@ -48,7 +53,7 @@ public class FileController {
             String destPath = filePath + File.separator + fileName;
             //保存到一个目标文件中
             file.transferTo(new File(destPath));
-            log.info(" >>> 文件上传结束... <<< ");
+            log.info(" >>> 文件上传结束  <<< ");
         } catch (Exception e) {
             e.printStackTrace();
             log.error("You failed to upload " + " => " + e.getMessage());
