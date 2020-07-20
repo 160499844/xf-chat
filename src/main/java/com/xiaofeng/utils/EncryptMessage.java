@@ -2,6 +2,8 @@ package com.xiaofeng.utils;
 
 import java.security.InvalidAlgorithmParameterException;
 
+import com.xiaofeng.utils.aes.AESUtils;
+
 /**
  * 
  * @ClassName:  EncryptMessage   
@@ -21,7 +23,7 @@ public class EncryptMessage {
 	 */
 	public static String encrypt(String str,String key) throws InvalidAlgorithmParameterException {
 		String string = "";
-		string = SymmetricEncoder.encrypt(str,key);
+		string = AESUtils.encrypt(str,key);
 		return string;
 	}
 	
@@ -34,7 +36,7 @@ public class EncryptMessage {
 	 */
 	public static String decrypt(String str,String key) throws InvalidAlgorithmParameterException {
 		String string = "";
-		string = SymmetricEncoder.decrypt(str,key);
+		string = AESUtils.decrypt(str,key);
 		return string;
 	}
 }

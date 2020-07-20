@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.xiaofeng.utils.UserToken;
+import com.xiaofeng.utils.user.UserToken;
 
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Data;
@@ -19,8 +19,9 @@ import lombok.Data;
 public class UserInfoContext {
 	// 存用户信息
 	private static Map<String, UserToken> userMap = new ConcurrentHashMap<String, UserToken>();
-
-	// 存储访问用户session
+	//存储用户value:web session和key:netty的session
+	public static Map<String,String> sessionMap = new ConcurrentHashMap<String, String>();
+	// 存储访问用户session 
 	//public static Map<String, ChannelHandlerContext> USER_SESSION = new ConcurrentHashMap<String, ChannelHandlerContext>();
 	
 

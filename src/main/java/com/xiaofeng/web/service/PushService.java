@@ -14,7 +14,7 @@ import com.xiaofeng.netty.server.DynMessage;
 import com.xiaofeng.utils.EncryptMessage;
 import com.xiaofeng.utils.MessageVo;
 import com.xiaofeng.utils.Result;
-import com.xiaofeng.utils.UserToken;
+import com.xiaofeng.utils.user.UserToken;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -37,7 +37,7 @@ public class PushService {
 		messageVo.put("group_count", currentUsers.size());// 当前在线人数
 		messageVo.put("gourp_users", currentUsers);// 当前在线成员
 
-		DynMessage.broadcast(groupId, com.xiaofeng.utils.StringUtils.toJsonEncrypt(messageVo,"1538663015386630"));
+		DynMessage.broadcast(groupId, com.xiaofeng.utils.string.StringUtils.toJsonEncrypt(messageVo,"1538663015386630"));
 	}
 
 }

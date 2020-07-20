@@ -1,4 +1,4 @@
-package com.xiaofeng.utils;
+package com.xiaofeng.utils.user;
 
 import java.util.concurrent.ConcurrentHashMap;
 

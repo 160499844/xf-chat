@@ -9,10 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.xiaofeng.utils.Group;
-import com.xiaofeng.utils.SymmetricEncoder;
-import com.xiaofeng.utils.User;
-import com.xiaofeng.utils.UserToken;
+import com.xiaofeng.utils.aes.AESUtils;
+import com.xiaofeng.utils.user.Group;
+import com.xiaofeng.utils.user.User;
+import com.xiaofeng.utils.user.UserToken;
 
 import io.netty.channel.ChannelHandlerContext;
 
@@ -158,7 +158,7 @@ public class GroupContext {
 	public static String getGroupKey(String groupId) {
 		String key = GroupContext.GROUP_KEYS.get(groupId);
 		if(StringUtils.isEmpty(key)) {
-			key = SymmetricEncoder.generateDesKey();
+			key = AESUtils.generateDesKey();
 			GroupContext.GROUP_KEYS.put(groupId, key);
 		}
 		return key;

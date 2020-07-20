@@ -7,6 +7,7 @@ D:\resource\java\xf-websocket\src\main\java\com\xiaofeng\global\UserInfoContext.
 D:\resource\java\xf-websocket\src\main\java\com\xiaofeng\web\controller\PushController.java
 D:\resource\java\xf-websocket\src\main\java\com\xiaofeng\utils\StringUtils.java
 D:\resource\java\xf-websocket\src\main\java\com\xiaofeng\netty\server\NettyServer.java
+D:\resource\java\xf-websocket\src\main\java\com\xiaofeng\web\controller\FileController.java
 D:\resource\java\xf-websocket\src\main\java\com\XfChatApplication.java
 D:\resource\java\xf-websocket\src\main\java\com\xiaofeng\websocket\utils\MsgUtils.java
 D:\resource\java\xf-websocket\src\main\java\com\xiaofeng\utils\EncryptMessage.java

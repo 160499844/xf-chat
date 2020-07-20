@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.xiaofeng.global.UserInfoContext;
-import com.xiaofeng.utils.UserToken;
+import com.xiaofeng.utils.user.UserToken;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
