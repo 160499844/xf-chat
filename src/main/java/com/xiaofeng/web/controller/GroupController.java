@@ -72,6 +72,9 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public Result<String> create(String groupId,String groupName, String password) throws Exception {
+		if(StringUtils.isEmpty(password) || password.length()!=6 || !StringUtils.isNumeric(password)) {
+			throw new BaseException("请输入6位数字口令");
+		}
 		String url = projectPattern + "index.html?code=";// 分享的链接
 		// 创建群组信息
 		String encrypt = RSAEncrypt.encrypt(groupId, RSAEncrypt.PUBLICKEY_STRING);
