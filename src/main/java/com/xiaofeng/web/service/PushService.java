@@ -11,14 +11,18 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.netty.server.DynMessage;
+import com.xiaofeng.netty.server.handler.TextWebSocketFrameHandler;
 import com.xiaofeng.utils.EncryptMessage;
 import com.xiaofeng.utils.MessageVo;
 import com.xiaofeng.utils.Result;
+import com.xiaofeng.utils.exception.BaseException;
+import com.xiaofeng.utils.user.GroupToken;
 import com.xiaofeng.utils.user.UserToken;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @Service
 public class PushService {
 
@@ -26,18 +30,27 @@ public class PushService {
 	 * 推送消息
 	 * 
 	 * @param txt
+	 * @throws InvalidAlgorithmParameterException 
 	 */
 
-	public void pushMessage(String groupId, String txt) {
-		// 组装返回对象
+	public void pushMessage(String groupId, String txt) throws InvalidAlgorithmParameterException {
 		// 组装返回对象
 		MessageVo messageVo = new MessageVo();
-		messageVo.setContent(txt);
-		List<UserToken> currentUsers = GroupContext.getGroupUsers(groupId);
-		messageVo.put("group_count", currentUsers.size());// 当前在线人数
-		messageVo.put("gourp_users", currentUsers);// 当前在线成员
-
-		DynMessage.broadcast(groupId, com.xiaofeng.utils.string.StringUtils.toJsonEncrypt(messageVo,"1538663015386630"));
+		Integer groupCount = GroupContext.getGroupCount(groupId);
+		messageVo.put("group_count", groupCount);// 当前在线人数
+		GroupToken groupToken = GroupContext.GROUP_KEYS.get(groupId);
+		if(groupToken!=null) {
+			String msg = EncryptMessage.encrypt(txt, groupToken.getAesKey());
+			messageVo.setContent(msg);
+			messageVo.setGroupId(groupId);
+			messageVo.setType("T");
+			messageVo.setName("系统消息");
+			messageVo.setMsg(msg);
+			log.info(String.format("广播消息(%s):%s", groupId,txt));
+			DynMessage.broadcast(groupId, com.xiaofeng.utils.string.StringUtils.toJson(messageVo));
+		}else {
+			throw new BaseException("操作失败,组标识无效!");
+		}
 	}
 
 }

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("group")
 public class GroupController {
 
+	//项目地址
+	@Value("${project.pattern}")
+	private String projectPattern;
 	/**
 	 * 校验群 组密码
 	 * 
@@ -58,7 +62,7 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public Result<String> create(String groupId, String password) throws Exception {
-		String url = "http://127.0.0.1:8000/index.html?code=";// 分享的链接
+		String url = projectPattern + "index.html?code=";// 分享的链接
 		// 创建群组信息
 		String encrypt = RSAEncrypt.encrypt(groupId, RSAEncrypt.PUBLICKEY_STRING);
 		url += com.xiaofeng.utils.string.StringUtils.encodeBase64String(encrypt.getBytes());
@@ -88,16 +92,20 @@ public class GroupController {
 	 */
 	@RequestMapping(value = "/getGroupInfo")
 	public Result<Map<String, String>> getGroupInfo(String code) throws Exception {
-		byte[] decodeBase64 = com.xiaofeng.utils.string.StringUtils.decodeBase64(code);
-		code = new String(decodeBase64, "utf-8");
-		log.info("解密:" + code);
 		Map<String, String> map = new HashMap<String, String>();
-		String groupId = RSAEncrypt.decrypt(code, RSAEncrypt.PRIVATE_STRING);
-		GroupToken groupToken = GroupContext.GROUP_KEYS.get(groupId);
-		// 返回小组公钥
-		map.put("key", groupToken.getAesKey());
-		map.put("n", groupId);
-		// 返回小组aeskey
+		try {
+			byte[] decodeBase64 = com.xiaofeng.utils.string.StringUtils.decodeBase64(code);
+			code = new String(decodeBase64, "utf-8");
+			log.info("解密:" + code);
+			String groupId = RSAEncrypt.decrypt(code, RSAEncrypt.PRIVATE_STRING);
+			GroupToken groupToken = GroupContext.GROUP_KEYS.get(groupId);
+			// 返回小组公钥
+			map.put("key", groupToken.getAesKey());
+			map.put("n", groupId);
+			// 返回小组aeskey
+		} catch (Exception e) {
+			log.error("解密失败{}",e.getMessage());
+		}
 		return new Result<Map<String, String>>(map);
 	}
 }

@@ -1,5 +1,7 @@
 package com.xiaofeng.web.controller;
 
+import java.security.InvalidAlgorithmParameterException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +22,19 @@ public class PushController {
 
 	@Autowired
 	private PushService pushService;
-	
+	/**
+	 * 
+	 * @Title: pushTxt   
+	 * @Description: 系统推送
+	 * @param: @param groupId 群标识
+	 * @param: @param txt 推送文本
+	 * @param: @return
+	 * @param: @throws InvalidAlgorithmParameterException      
+	 * @return: Result      
+	 * @throws
+	 */
 	@RequestMapping("push")
-	public Result pushTxt(String groupId,String txt) {
+	public Result pushTxt(String groupId,String txt) throws InvalidAlgorithmParameterException {
 		if(StringUtils.isEmpty(groupId)) {
 			groupId = DynMessage.DEFAULT_GROUP;
 		}

@@ -8,6 +8,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.global.UserInfoContext;
@@ -18,6 +21,7 @@ import com.xiaofeng.utils.MessageVo;
 import com.xiaofeng.utils.user.GroupToken;
 import com.xiaofeng.utils.user.User;
 import com.xiaofeng.utils.user.UserToken;
+import com.xiaofeng.web.service.PushService;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -30,8 +34,10 @@ import lombok.extern.slf4j.Slf4j;
  * @author xiaofeng
  *
  */
+
 @Slf4j
 public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
+	
 
 	// 读到客户端的内容并且向客户端去写内容
 	@Override
@@ -43,9 +49,9 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		UserToken user = UserInfoContext.getUser(userId);
 		MessageVo messageVo = com.xiaofeng.utils.string.StringUtils.jsonToMessageVo(message);
 		
-		
-		GroupToken groupToken = GroupContext.GROUP_KEYS.get(messageVo.getGroupId());
-		messageVo.setMsg(EncryptMessage.decrypt(messageVo.getMsg(),groupToken.getAesKey()));
+		//获取小组消息解密key
+		//GroupToken groupToken = GroupContext.GROUP_KEYS.get(messageVo.getGroupId());
+		//messageVo.setMsg(EncryptMessage.decrypt(messageVo.getMsg(),groupToken.getAesKey()));
 		
 		String content = messageVo.getMsg();
 		user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId()) ? user.getGroupId() : messageVo.getGroupId());
@@ -57,13 +63,17 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		
 		//保存用户session映射关系key netty sesion value springboot session
 		if(StringUtils.isEmpty(user.getSessionId())) {
-			//第一次加入发送消息
+			//第一次加入群聊
 			user.setSessionId(messageVo.getSessionId());
 			//加入小组
 			GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
 			UserInfoContext.sessionMap.put(userId,messageVo.getSessionId());
 			//小组人数+1
 			GroupContext.groupAddCount(user.getGroupId());
+			
+			//发送系统消息
+			PushService pushService = new PushService();
+			pushService.pushMessage(user.getGroupId(), String.format("欢迎%s加入群组", user.getUserName()));
 		}
 		/**
 		 * writeAndFlush接收的参数类型是Object类型，但是一般我们都是要传入管道中传输数据的类型，比如我们当前的demo
@@ -76,7 +86,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		messageVo.put("group_count", groupCount);// 当前在线人数
 
 		// 广播给组成员
-		String jsonString = com.xiaofeng.utils.string.StringUtils.toJsonEncrypt(messageVo,groupToken.getAesKey());
+		String jsonString = com.xiaofeng.utils.string.StringUtils.toJson(messageVo);
 		DynMessage.broadcast(user.getGroupId(), jsonString);
 	}
 

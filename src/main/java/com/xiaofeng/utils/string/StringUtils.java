@@ -61,15 +61,16 @@ public class StringUtils extends RandomUtil {
 	 * @Title: toDecodeJson @Description: 将对象加密转成字符串 @param: @param
 	 * obj @param: @return @return: String @throws
 	 */
-	public static String toJsonEncrypt(MessageVo obj, String key) {
+	public static String toJson(MessageVo obj) {
 		String result = "";
-		try {
-			String msg = EncryptMessage.encrypt(obj.getMsg(), key);
-			obj.setMsg(msg);
-			result = JSONObject.toJSONString(obj);
+		result = JSONObject.toJSONString(obj);
+		/*try {
+			//String msg = EncryptMessage.encrypt(obj.getMsg(), key);
+			//obj.setMsg(msg);
+			//result = JSONObject.toJSONString(obj);
 		} catch (InvalidAlgorithmParameterException e) {
 			e.printStackTrace();
-		}
+		}*/
 		return result;
 	}
 
