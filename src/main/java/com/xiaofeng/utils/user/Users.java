@@ -14,10 +14,6 @@ import lombok.Data;
  * @param <T>
  */
 @Data
-public class User<T> extends HashSet<T>{
+public class Users<T> extends HashSet<T>{
 	
-
-	public void addUser(String userId,ChannelHandlerContext ctx) {
-		
-	}
 }

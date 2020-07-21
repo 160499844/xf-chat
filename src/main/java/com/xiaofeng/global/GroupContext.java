@@ -9,10 +9,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.xiaofeng.entity.Group;
+import com.xiaofeng.entity.GroupToken;
 import com.xiaofeng.utils.aes.AESUtils;
-import com.xiaofeng.utils.user.Group;
-import com.xiaofeng.utils.user.GroupToken;
-import com.xiaofeng.utils.user.User;
+import com.xiaofeng.utils.user.Groups;
+import com.xiaofeng.utils.user.Users;
 import com.xiaofeng.utils.user.UserToken;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -28,9 +29,10 @@ public class GroupContext {
 	// 存储组成员
 	// public static Map<String, Set<Map<String, ChannelHandlerContext>>> USER_GROUP
 	// = new ConcurrentHashMap<>();
-	public static Group<String, User<Map<String, ChannelHandlerContext>>> USER_GROUP = new Group<>();
-	public static Group<String,Integer> GROUP_COUNTS =  new Group<>();//群成员数量
-	public static Group<String,GroupToken> GROUP_KEYS = new Group<>();//小组口令
+	public static Groups<String, Users<Map<String, ChannelHandlerContext>>> USER_GROUP = new Groups<>();
+	///public static Groups<String,Integer> GROUP_COUNTS =  new Groups<>();//群成员数量
+	////public static Groups<String,GroupToken> GROUP_KEYS = new Groups<>();//小组口令
+	public static Groups<String,Group> GROUPS = new Groups<>();//小组管理
 
 	public static List<UserToken> getGroupUsers(String groupId) {
 		List<UserToken> list = new ArrayList<UserToken>();
@@ -64,11 +66,11 @@ public class GroupContext {
 	 * groupId @param: @return @return:
 	 * Set<Map<String,ChannelHandlerContext>> @throws
 	 */
-	public static User<Map<String, ChannelHandlerContext>> getGroup(String groupId) {
-		User<Map<String, ChannelHandlerContext>> groupList = USER_GROUP.get(groupId);
+	public static Users<Map<String, ChannelHandlerContext>> getGroup(String groupId) {
+		Users<Map<String, ChannelHandlerContext>> groupList = USER_GROUP.get(groupId);
 		if (groupList == null) {
 			// 创建新小组
-			groupList = new User<Map<String, ChannelHandlerContext>>();
+			groupList = new Users<Map<String, ChannelHandlerContext>>();
 			Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
 			groupList.add(userGroup);
 			USER_GROUP.put(groupId, groupList);
@@ -86,7 +88,7 @@ public class GroupContext {
 	 * @throws
 	 */
 	public synchronized static void groupAddUser(String groupId, String userId, ChannelHandlerContext ctx) {
-		User<Map<String, ChannelHandlerContext>> groupList = GroupContext.getGroup(groupId);
+		Users<Map<String, ChannelHandlerContext>> groupList = GroupContext.getGroup(groupId);
 		Set<Map<String, ChannelHandlerContext>> tempList = new HashSet<Map<String, ChannelHandlerContext>>();
 		for (Map<String, ChannelHandlerContext> allUser : groupList) {
 			if (!allUser.containsKey(userId)) {
@@ -111,10 +113,12 @@ public class GroupContext {
 	 * @throws
 	 */
 	public synchronized static Integer groupReduceCount(String groupId) {
-		Integer groupCount = GroupContext.GROUP_COUNTS.get(groupId);
+		//Integer groupCount = GroupContext.GROUP_COUNTS.get(groupId);
+		Integer groupCount = GroupContext.GROUPS.get(groupId).getCurrentCount();
 		if(groupCount!=null) {
 			groupCount = groupCount - 1;
-			GroupContext.GROUP_COUNTS.put(groupId, groupCount);
+			//GroupContext.GROUP_COUNTS.put(groupId, groupCount);
+			GroupContext.GROUPS.get(groupId).setCurrentCount(groupCount);
 		}
 		return groupCount;
 	}
@@ -128,13 +132,15 @@ public class GroupContext {
 	 * @throws
 	 */
 	public synchronized static Integer groupAddCount(String groupId) {
-		Integer groupCount = GroupContext.GROUP_COUNTS.get(groupId);
+		//Integer groupCount = GroupContext.GROUP_COUNTS.get(groupId);
+		Integer groupCount = GroupContext.GROUPS.get(groupId).getCurrentCount();
 		if(groupCount!=null) {
 			groupCount = groupCount + 1;
 		}else {
 			groupCount = 1;
 		}
-		GroupContext.GROUP_COUNTS.put(groupId, groupCount);
+		//GroupContext.GROUP_COUNTS.put(groupId, groupCount);
+		GroupContext.GROUPS.get(groupId).setCurrentCount(groupCount);
 		return groupCount;
 	}
 	/**
@@ -147,7 +153,12 @@ public class GroupContext {
 	 * @throws
 	 */
 	public static Integer getGroupCount(String groupId) {
-		return GroupContext.GROUP_COUNTS.get(groupId)==null?0:GroupContext.GROUP_COUNTS.get(groupId);
+		Group group = GroupContext.GROUPS.get(groupId);
+		if(group==null) {
+			return 0;
+		}
+		Integer currentCount = group.getCurrentCount();
+		return currentCount;
 	}
 	/**
 	 * 

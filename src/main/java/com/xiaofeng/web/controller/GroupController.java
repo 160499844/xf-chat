@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.xiaofeng.entity.Group;
+import com.xiaofeng.entity.GroupToken;
 import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.utils.RSAEncrypt;
 import com.xiaofeng.utils.Result;
 import com.xiaofeng.utils.aes.AESUtils;
-import com.xiaofeng.utils.user.GroupToken;
+import com.xiaofeng.utils.exception.BaseException;
 
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
@@ -45,10 +47,18 @@ public class GroupController {
 	@RequestMapping(value = "/checkPassword", method = RequestMethod.POST)
 	public Result<Boolean> checkPassword(String groupId, String password) {
 		boolean c = false;
-		GroupToken groupToken = GroupContext.GROUP_KEYS.get(groupId);
+		//GroupToken groupToken = GroupContext.GROUP_KEYS.get(groupId);
+		Group group = GroupContext.GROUPS.get(groupId);
+		if(group==null) {
+			//小组不存在,直接返回
+			return new Result<Boolean>(c);
+		}
+		GroupToken groupToken = group.getToken();
+		//校验小组口令
 		if (groupToken != null && groupToken.getKey().equals(password)) {
 			c = true;
 		}
+		//返回结果
 		return new Result<Boolean>(c);
 	}
 
@@ -66,7 +76,14 @@ public class GroupController {
 		// 创建群组信息
 		String encrypt = RSAEncrypt.encrypt(groupId, RSAEncrypt.PUBLICKEY_STRING);
 		url += com.xiaofeng.utils.string.StringUtils.encodeBase64String(encrypt.getBytes());
-		GroupContext.GROUP_KEYS.put(groupId, new GroupToken(password, AESUtils.generateDesKey(), encrypt));
+		GroupToken groupToken = new GroupToken(password, AESUtils.generateDesKey(), encrypt);
+//		GroupContext.GROUP_KEYS.put(groupId,groupToken );
+		//创建小组
+		Group group = new Group();
+		group.setGroupId(groupId);
+		group.setToken(groupToken);
+		group.setGroupName("");
+		GroupContext.GROUPS.put(groupId,group);
 		return new Result<String>(url);
 	}
 
@@ -98,7 +115,9 @@ public class GroupController {
 			code = new String(decodeBase64, "utf-8");
 			log.info("解密:" + code);
 			String groupId = RSAEncrypt.decrypt(code, RSAEncrypt.PRIVATE_STRING);
-			GroupToken groupToken = GroupContext.GROUP_KEYS.get(groupId);
+			//GroupToken groupToken = GroupContext.GROUP_KEYS.get(groupId);
+			Group group = GroupContext.GROUPS.get(groupId);
+			GroupToken groupToken = group.getToken();
 			// 返回小组公钥
 			map.put("key", groupToken.getAesKey());
 			map.put("n", groupId);

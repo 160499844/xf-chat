@@ -13,7 +13,7 @@ import io.netty.channel.ChannelHandlerContext;
  * @param <V>
  * @date:   2020年7月16日 下午4:16:38
  */
-public class Group<K, V> extends ConcurrentHashMap<K,V>{
+public class Groups<K, V> extends ConcurrentHashMap<K,V>{
 
-	
+
 }

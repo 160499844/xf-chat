@@ -12,14 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.xiaofeng.entity.GroupToken;
 import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.global.UserInfoContext;
 import com.xiaofeng.netty.server.DynMessage;
 import com.xiaofeng.utils.DateUtils;
 import com.xiaofeng.utils.EncryptMessage;
 import com.xiaofeng.utils.MessageVo;
-import com.xiaofeng.utils.user.GroupToken;
-import com.xiaofeng.utils.user.User;
+import com.xiaofeng.utils.user.Users;
 import com.xiaofeng.utils.user.UserToken;
 import com.xiaofeng.web.service.PushService;
 

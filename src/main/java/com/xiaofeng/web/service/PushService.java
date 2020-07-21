@@ -9,6 +9,7 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xiaofeng.entity.GroupToken;
 import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.netty.server.DynMessage;
 import com.xiaofeng.netty.server.handler.TextWebSocketFrameHandler;
@@ -16,7 +17,6 @@ import com.xiaofeng.utils.EncryptMessage;
 import com.xiaofeng.utils.MessageVo;
 import com.xiaofeng.utils.Result;
 import com.xiaofeng.utils.exception.BaseException;
-import com.xiaofeng.utils.user.GroupToken;
 import com.xiaofeng.utils.user.UserToken;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -38,7 +38,7 @@ public class PushService {
 		MessageVo messageVo = new MessageVo();
 		Integer groupCount = GroupContext.getGroupCount(groupId);
 		messageVo.put("group_count", groupCount);// 当前在线人数
-		GroupToken groupToken = GroupContext.GROUP_KEYS.get(groupId);
+		GroupToken groupToken = GroupContext.GROUPS.get(groupId).getToken();
 		if(groupToken!=null) {
 			String msg = EncryptMessage.encrypt(txt, groupToken.getAesKey());
 			messageVo.setContent(msg);

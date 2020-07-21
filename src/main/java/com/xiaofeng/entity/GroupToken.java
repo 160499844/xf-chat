@@ -1,4 +1,4 @@
-package com.xiaofeng.utils.user;
+package com.xiaofeng.entity;
 
 import lombok.Data;
 
