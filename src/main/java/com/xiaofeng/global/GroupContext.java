@@ -115,7 +115,7 @@ public class GroupContext {
 	public synchronized static Integer groupReduceCount(String groupId) {
 		//Integer groupCount = GroupContext.GROUP_COUNTS.get(groupId);
 		Integer groupCount = GroupContext.GROUPS.get(groupId).getCurrentCount();
-		if(groupCount!=null) {
+		if(groupCount!=null && groupCount  > 0 ) {
 			groupCount = groupCount - 1;
 			//GroupContext.GROUP_COUNTS.put(groupId, groupCount);
 			GroupContext.GROUPS.get(groupId).setCurrentCount(groupCount);

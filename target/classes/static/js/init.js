@@ -11,6 +11,22 @@ var PUBLIC_KEY = '';
 var PRIVATE_KEY = '';
 var socket;
 var encrypt = new JSEncrypt();
+//初始化
+init();
+
+function init(){
+	$.ajax({
+		"async" : false,
+		"url" : "user/getSession",
+		"type" : "POST",
+			"data" : {},
+		"dataType" : "json",
+		"success" : function(data) {
+			var session = data.content;
+			setSession(session);
+		}
+	});
+}
 /**
  * aes解密
  * 
@@ -133,6 +149,7 @@ function messageElement(messageVo) {
 	var html = "";
 	var name = messageVo.name;
 	var msg = AESdecrypt(messageVo.msg);
+	console.log("解密服务器广播消息",msg);
 	var className = "im-chat-user";
 	/*
 	 * if(name===userName){ className = "im-chat-mine"; }
@@ -156,6 +173,8 @@ function messageElement(messageVo) {
 		html += "<img data-action='zoom' src='"+msg+"'/>"
 		
 		//html += "<img  data-preview-src='' data-preview-group='1' src='"+messageVo.msg+"'/>"
+	}else if("S" === type){
+		html = "<div class='sys-message-div'><div class='im-chat-user sys-message-info'><cite><i>"+msg+"</i></cite></div></div>";
 	}
 	html += "</div></li>";
 	$("#msg_list").append(html);
@@ -165,11 +184,16 @@ function messageElement(messageVo) {
 }
 // 发送数据
 function send(message,type) {
+	var msg;
 	if("" === type){
 		type = 'T';
 	}
-	var msg = AESencrypt(message);
-	console.log("加密后msg:", msg);
+	if("T" === type){
+		 msg = AESencrypt(message);
+	}else{
+		msg = message;
+	}
+	//msg = AESencrypt(message);
 	var obj = {
 		"sessionId" : sessionId,
 		"msg" : msg,

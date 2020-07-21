@@ -55,16 +55,17 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		
 		String content = messageVo.getMsg();
 		user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId()) ? user.getGroupId() : messageVo.getGroupId());
-		user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName().trim());
+		user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName().trim().substring(0,5));
 		
 		messageVo.setName(user.getUserName());
 		content = String.format("%s(%s):%s", user.getUserName(), DateUtils.getNowDateToString(), messageVo.getMsg());
 		log.info(content);
 		
 		//保存用户session映射关系key netty sesion value springboot session
-		if(StringUtils.isEmpty(user.getSessionId())) {
+		if(StringUtils.isEmpty(user.getSessionId()) && StringUtils.isNotEmpty(messageVo.getSessionId())) {
 			//第一次加入群聊
-			user.setSessionId(messageVo.getSessionId());
+			//user.setSessionId(messageVo.getSessionId());
+			UserInfoContext.updateSessionId(userId,messageVo.getSessionId());
 			//加入小组
 			GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
 			UserInfoContext.sessionMap.put(userId,messageVo.getSessionId());

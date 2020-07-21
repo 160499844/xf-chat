@@ -21,6 +21,24 @@
 <link rel="stylesheet" type="text/css" href="/css/mui.min.css">
 <link rel="stylesheet" type="text/css" href="/css/mui.imageviewer.css">
 <link rel="stylesheet" type="text/css" href="/css/chat-im.css">
+<style type="text/css">
+.sys-message-info {
+	padding-left:0px;
+	width: 100%;
+	text-align: center;
+}
+.sys-message-info cite{
+	left:0px;
+	position:static;
+	text-align:center;
+}
+.sys-message-info cite i{
+	padding-left:0px;
+}
+.sys-message-div {
+	min-height:30px;
+}
+</style>
 </head>
 
 <body contextmenu="return false;">
@@ -32,6 +50,7 @@
       <span id="title"></span>
     </header>
 		<ul id="msg_list" style="margin-top: 50px;height: 90%;">
+			<!-- <div class='sys-message-div'><div class='im-chat-user sys-message-info'><cite><i>系统消息:加入群聊</i></cite></div></div> -->
 		</ul>
 	</div>
 
@@ -546,6 +565,9 @@
 		return currentdate;
 	}
 </script>
+
+<script src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>
+<script type="text/javascript" src="/js/init.js"></script>
 <script>
 layui.use('upload', function(){
   var upload = layui.upload;
@@ -555,6 +577,7 @@ layui.use('upload', function(){
     elem: '#test1' //绑定元素
     ,url: '/file/upload' //上传接口
     ,acceptMime: 'image/*'
+    ,data:{"groupId":groupId}
     ,done: function(res){
       //上传完毕回调
     	console.log("文件上传调用地址:", res.content);
@@ -566,8 +589,6 @@ layui.use('upload', function(){
   });
 });
 </script>
-<script src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>
-<script type="text/javascript" src="/js/init.js"></script>
 <!-- <script type="text/javascript" src="/js/jsencrypt.js"></script> -->
 <script type="text/javascript">
 	$(function(){

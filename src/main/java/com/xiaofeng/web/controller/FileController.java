@@ -5,6 +5,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.xiaofeng.entity.Group;
+import com.xiaofeng.global.GroupContext;
+import com.xiaofeng.utils.EncryptMessage;
 import com.xiaofeng.utils.Result;
 import com.xiaofeng.utils.exception.BaseException;
 import com.xiaofeng.utils.file.FileUploadUtils;
@@ -30,7 +33,7 @@ public class FileController {
 	 * @throws Exception 
 	 */
 	@RequestMapping("upload")
-	private Result<String> upload(MultipartFile file) throws Exception {
+	private Result<String> upload(MultipartFile file,String groupId) throws Exception {
 		log.info(" >>> 文件上传入口  <<< ");
 		if(file==null)
 			throw new BaseException("请上传文件");
@@ -39,7 +42,18 @@ public class FileController {
 		fileUploadUtils.setSuffixes(new String[] { ".png", ".jpeg", ".jpg", ".gif", ".docx", ".doc", ".xlsx", ".pdf","mp4","mp3" });
 		fileUploadUtils.setUploadPath(uploadPath);
 		fileUploadUtils.save();
-		return new Result(fileUploadUtils.getUploadPath());
+		String urlString = fileUploadUtils.getUploadPath();
+		String tagetUrl = "";
+		//加密链接
+		try {
+			Group group = GroupContext.GROUPS.get(groupId);
+			String aesKey = group.getToken().getAesKey();
+			tagetUrl = EncryptMessage.encrypt(urlString, aesKey);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return new Result(tagetUrl);
 	}
 	
 }

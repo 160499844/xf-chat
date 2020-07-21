@@ -43,7 +43,7 @@ public class PushService {
 			String msg = EncryptMessage.encrypt(txt, groupToken.getAesKey());
 			messageVo.setContent(msg);
 			messageVo.setGroupId(groupId);
-			messageVo.setType("T");
+			messageVo.setType("S");
 			messageVo.setName("系统消息");
 			messageVo.setMsg(msg);
 			log.info(String.format("广播消息(%s):%s", groupId,txt));

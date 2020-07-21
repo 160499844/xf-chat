@@ -106,9 +106,9 @@
 			var code = GetQueryValue("code");
 			console.log("userName",userName);
 			var check= false;
-			if(userName === "") {
-				console.log("昵称不允许为空");
-			    mui.toast("昵称不允许为空");
+			if(userName === "" || userName.length ==0 || userName.length > 5) {
+				console.log("昵称长度限制1~5个字符之间");
+			    mui.toast("昵称长度限制1~5个字符之间");
 			    check = false;
 			}else{
 				check = true;
@@ -137,26 +137,12 @@
 <!-- <script type="text/javascript" src="/js/jsencrypt.js"></script> -->
 <script type="text/javascript">
 	$(function(){
-		//初始化
-		init();
 		var code = GetQueryValue("code");
 		console.log("code",code);
 		var content = getGroupName(code);
 		$("#groupId").val(content.n);
 		
 	});
-	function init(){
-		$.ajax({
-			"async" : false,
-			"url" : "user/getSession",
-			"type" : "POST",
-  			"data" : {},
-			"dataType" : "json",
-			"success" : function(data) {
-				var session = data.content;
-				setSession(session);
-			}
-		});
-	}
+	
 </script>
 </html>

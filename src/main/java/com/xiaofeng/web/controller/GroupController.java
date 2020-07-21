@@ -71,7 +71,7 @@ public class GroupController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public Result<String> create(String groupId, String password) throws Exception {
+	public Result<String> create(String groupId,String groupName, String password) throws Exception {
 		String url = projectPattern + "index.html?code=";// 分享的链接
 		// 创建群组信息
 		String encrypt = RSAEncrypt.encrypt(groupId, RSAEncrypt.PUBLICKEY_STRING);
@@ -82,7 +82,7 @@ public class GroupController {
 		Group group = new Group();
 		group.setGroupId(groupId);
 		group.setToken(groupToken);
-		group.setGroupName("");
+		group.setGroupName(groupName);
 		GroupContext.GROUPS.put(groupId,group);
 		return new Result<String>(url);
 	}
