@@ -79,10 +79,10 @@
 		<div style="height: 30%;"></div>
 		<div id="starForm">
 			<form class="mui-input-group">
-				<!-- <div class="mui-input-row">
+				 <div class="mui-input-row">
 					<label>房间号</label> <input type="text" class="mui-input-clear"
-						placeholder="房间号" id="groupId" value="default">
-				</div> -->
+						placeholder="房间号" id="groupId" disabled="disabled" value="default">
+				</div>
 				<div class="mui-input-row">
 					<label>昵称</label> <input type="text" class="mui-input-clear"
 						placeholder="我的昵称" id="userName">
@@ -141,8 +141,8 @@
 		init();
 		var code = GetQueryValue("code");
 		console.log("code",code);
-		getGroupName(code);
-		
+		var content = getGroupName(code);
+		$("#groupId").val(content.n);
 		
 	});
 	function init(){

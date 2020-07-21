@@ -236,6 +236,7 @@ function setSession(s){
 }
 
 function getGroupName(code){
+	var content;
 	$.ajax({
 		"async" : false,
 		"url" : "group/getGroupInfo",
@@ -243,12 +244,12 @@ function getGroupName(code){
 			"data" : {"code":code},
 		"dataType" : "json",
 		"success" : function(data) {
-			var content = data.content.key;
+			content = data.content;
 			//CryptoJS.enc.Utf8.parse(1538663015386630);
-			console.log("content:",content);
-			key = CryptoJS.enc.Utf8.parse(content);
+			key = CryptoJS.enc.Utf8.parse(content.key);
 			console.log("key:",key);
 			//修改groupId
 		}
 	});
+	return content;
 }
