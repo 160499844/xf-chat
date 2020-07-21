@@ -33,14 +33,20 @@ public class PushService {
 	 * @throws InvalidAlgorithmParameterException 
 	 */
 
-	public void pushMessage(String groupId, String txt) throws InvalidAlgorithmParameterException {
+	public void pushMessage(String groupId, String txt)  {
 		// 组装返回对象
 		MessageVo messageVo = new MessageVo();
 		Integer groupCount = GroupContext.getGroupCount(groupId);
 		messageVo.put("group_count", groupCount);// 当前在线人数
 		GroupToken groupToken = GroupContext.GROUPS.get(groupId).getToken();
 		if(groupToken!=null) {
-			String msg = EncryptMessage.encrypt(txt, groupToken.getAesKey());
+			String msg = "";
+			try {
+				msg = EncryptMessage.encrypt(txt, groupToken.getAesKey());
+			} catch (InvalidAlgorithmParameterException e) {
+				log.error("广播aes加密失败!");
+				e.printStackTrace();
+			}
 			messageVo.setContent(msg);
 			messageVo.setGroupId(groupId);
 			messageVo.setType("S");

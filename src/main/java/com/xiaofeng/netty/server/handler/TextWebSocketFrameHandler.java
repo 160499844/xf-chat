@@ -38,8 +38,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 	
-
-	// 读到客户端的内容并且向客户端去写内容
+	//广播消息对象
+	PushService pushService = new PushService();
+	//消息交互
+	//接收客户端发送的消息
+	//读到客户端的内容并且向客户端去写内容
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
 		// 获取前端传递信息
@@ -53,38 +56,11 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		//GroupToken groupToken = GroupContext.GROUP_KEYS.get(messageVo.getGroupId());
 		//messageVo.setMsg(EncryptMessage.decrypt(messageVo.getMsg(),groupToken.getAesKey()));
 		
-		String content = messageVo.getMsg();
 		user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId()) ? user.getGroupId() : messageVo.getGroupId());
-		user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName().trim().substring(0,5));
+		user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName().trim());
 		
-		messageVo.setName(user.getUserName());
-		content = String.format("%s(%s):%s", user.getUserName(), DateUtils.getNowDateToString(), messageVo.getMsg());
-		log.info(content);
-		
-		//保存用户session映射关系key netty sesion value springboot session
-		if(StringUtils.isEmpty(user.getSessionId()) && StringUtils.isNotEmpty(messageVo.getSessionId())) {
-			//第一次加入群聊
-			//user.setSessionId(messageVo.getSessionId());
-			UserInfoContext.updateSessionId(userId,messageVo.getSessionId());
-			//加入小组
-			GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
-			UserInfoContext.sessionMap.put(userId,messageVo.getSessionId());
-			//小组人数+1
-			GroupContext.groupAddCount(user.getGroupId());
-			
-			//发送系统消息
-			PushService pushService = new PushService();
-			pushService.pushMessage(user.getGroupId(), String.format("欢迎%s加入群组", user.getUserName()));
-		}
-		/**
-		 * writeAndFlush接收的参数类型是Object类型，但是一般我们都是要传入管道中传输数据的类型，比如我们当前的demo
-		 * 传输的就是TextWebSocketFrame类型的数据
-		 */
-		// 组装返回对象
-		messageVo.setContent(content);
-		Integer groupCount = GroupContext.getGroupCount(user.getGroupId());
-		//GroupContext.getGroupUsers(groupId);
-		messageVo.put("group_count", groupCount);// 当前在线人数
+		CustomHandle handle = new CustomHandleImpl();
+		handle.messageHandle(messageVo, user,ctx);
 
 		// 广播给组成员
 		String jsonString = com.xiaofeng.utils.string.StringUtils.toJson(messageVo);
@@ -119,6 +95,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		 * GroupContext.USER_GROUP.put(groupId, groupList); //小组人数+1
 		 * GroupContext.groupAddCount(user.getGroupId());
 		 */
+		
 	}
 
 	/**
@@ -143,6 +120,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 			}
 		}
 		log.info("离开用户：" + userId);
+		pushService.pushMessage(user.getGroupId(), String.format(user.getUserName() + "离开了", user.getUserName()));
 
 	}
 
