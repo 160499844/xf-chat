@@ -51,23 +51,34 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		// 获取前端传递信息
 		String userId = ctx.channel().id().asLongText();
 		String message = msg.text();
+		boolean isBroadCase = true;
 		// 更新用户信息
 		UserToken user = UserInfoContext.getUser(userId);
-		MessageVo messageVo = com.xiaofeng.utils.string.StringUtils.jsonToMessageVo(message);
+		MessageVo messageVo ;
+		try {
+			messageVo = com.xiaofeng.utils.string.StringUtils.jsonToMessageVo(message);
+		} catch (Exception e) {
+			messageVo = new MessageVo();
+			isBroadCase = false;
+			log.error("消息解密失败{}",e);
+			e.printStackTrace();
+		}
 		
 		//获取小组消息解密key
 		//GroupToken groupToken = GroupContext.GROUP_KEYS.get(messageVo.getGroupId());
 		//messageVo.setMsg(EncryptMessage.decrypt(messageVo.getMsg(),groupToken.getAesKey()));
 		
-		user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId()) ? user.getGroupId() : messageVo.getGroupId());
-		user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName().trim());
-		
-		CustomHandle handle = new CustomHandleImpl();
-		handle.messageHandle(messageVo, user,ctx);
 
 		// 广播给组成员
-		String jsonString = com.xiaofeng.utils.string.StringUtils.toJson(messageVo);
-		DynMessage.broadcast(user.getGroupId(), jsonString);
+		if(isBroadCase) {
+			user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId()) ? user.getGroupId() : messageVo.getGroupId());
+			user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName().trim());
+			
+			CustomHandle handle = new CustomHandleImpl();
+			handle.messageHandle(messageVo, user,ctx);
+			String jsonString = com.xiaofeng.utils.string.StringUtils.toJson(messageVo);
+			DynMessage.broadcast(user.getGroupId(), jsonString);
+		}
 	}
 
 	// 用户加入
@@ -86,18 +97,6 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		user.setIp(ip);
 		user.setUserId(userId);
 		UserInfoContext.addUser(userId, user);
-		/*
-		 * Random random = new Random(); user.setUserName("访客" + random.nextInt(1000));
-		 * UserInfoContext.addUser(userId, user); // 获取组id String groupId =
-		 * user.getGroupId(); User<Map<String, ChannelHandlerContext>> groupList =
-		 * GroupContext.USER_GROUP.get(groupId); if (groupList == null) { groupList =
-		 * new User<Map<String, ChannelHandlerContext>>();
-		 * 
-		 * } Map<String, ChannelHandlerContext> map = new ConcurrentHashMap<String,
-		 * ChannelHandlerContext>(); map.put(userId, ctx); // 加入组中 groupList.add(map);
-		 * GroupContext.USER_GROUP.put(groupId, groupList); //小组人数+1
-		 * GroupContext.groupAddCount(user.getGroupId());
-		 */
 		
 	}
 
@@ -116,14 +115,14 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		
 		UserInfoContext.remove(userId);//删除用户信息
 		//删除登录信息
-		Set<Map<String, ChannelHandlerContext>> list = GroupContext.USER_GROUP.get(user.getGroupId());
-		Iterator<Map<String, ChannelHandlerContext>> iterator = list.iterator();
-		while (iterator.hasNext()) {
-			Map<String, ChannelHandlerContext> next = iterator.next();
-			if (next.containsKey(userId)) {
-				iterator.remove();
-			}
-		}
+//		Set<Map<String, ChannelHandlerContext>> list = GroupContext.USER_GROUP.get(user.getGroupId());
+//		Iterator<Map<String, ChannelHandlerContext>> iterator = list.iterator();
+//		while (iterator.hasNext()) {
+//			Map<String, ChannelHandlerContext> next = iterator.next();
+//			if (next.containsKey(userId)) {
+//				iterator.remove();
+//			}
+//		}
 		log.info("离开用户：" + userId);
 		pushService.pushMessage(user.getGroupId(), String.format(user.getUserName() + "离开了", user.getUserName()));
 

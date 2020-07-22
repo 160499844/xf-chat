@@ -53,7 +53,9 @@ public class GroupContext {
 
 	/**
 	 * 
-	 * @Title: create @Description: 创建群组 @param: @param groupId @return:
+	 * @Title: create
+	 * @Description: 创建群组 
+	 * @param: @param groupId @return:
 	 * void @throws
 	 */
 	public static void create(String groupId) {
@@ -62,8 +64,11 @@ public class GroupContext {
 
 	/**
 	 * 
-	 * @Title: getGroup @Description: 获取小组 @param: @param
-	 * groupId @param: @return @return:
+	 * @Title: getGroup 
+	 * @Description: 获取小组 
+	 * @param: @param
+	 * groupId @param: 
+	 * @return @return:
 	 * Set<Map<String,ChannelHandlerContext>> @throws
 	 */
 	public static Users<Map<String, ChannelHandlerContext>> getGroup(String groupId) {

@@ -43,7 +43,7 @@ public class GroupRepository {
 		if (find.size()>0) {
 			return find.get(0);
 		} else {
-			throw new BaseException("小组不存在!");
+			throw new BaseException("小组["+groupId+"]不存在!");
 		}
 	}
 	/**
