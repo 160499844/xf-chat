@@ -32,7 +32,7 @@ public class GroupContext {
 	public static Groups<String, Users<Map<String, ChannelHandlerContext>>> USER_GROUP = new Groups<>();
 	///public static Groups<String,Integer> GROUP_COUNTS =  new Groups<>();//群成员数量
 	////public static Groups<String,GroupToken> GROUP_KEYS = new Groups<>();//小组口令
-	public static Groups<String,Group> GROUPS = new Groups<>();//小组管理
+	//public static Groups<String,Group> GROUPS = new Groups<>();//小组管理
 
 	public static List<UserToken> getGroupUsers(String groupId) {
 		List<UserToken> list = new ArrayList<UserToken>();
@@ -111,7 +111,7 @@ public class GroupContext {
 	 * @param: @param groupId      
 	 * @return: void      
 	 * @throws
-	 */
+	 *//*
 	public synchronized static Integer groupReduceCount(String groupId) {
 		//Integer groupCount = GroupContext.GROUP_COUNTS.get(groupId);
 		Integer groupCount = GroupContext.GROUPS.get(groupId).getCurrentCount();
@@ -122,7 +122,7 @@ public class GroupContext {
 		}
 		return groupCount;
 	}
-	/**
+	*//**
 	 * 
 	 * @Title: groupAddCount   
 	 * @Description: 增加组成员数量 
@@ -130,7 +130,7 @@ public class GroupContext {
 	 * @param: @return      
 	 * @return: Integer      
 	 * @throws
-	 */
+	 *//*
 	public synchronized static Integer groupAddCount(String groupId) {
 		//Integer groupCount = GroupContext.GROUP_COUNTS.get(groupId);
 		Integer groupCount = GroupContext.GROUPS.get(groupId).getCurrentCount();
@@ -142,8 +142,8 @@ public class GroupContext {
 		//GroupContext.GROUP_COUNTS.put(groupId, groupCount);
 		GroupContext.GROUPS.get(groupId).setCurrentCount(groupCount);
 		return groupCount;
-	}
-	/**
+	}*/
+/*	*//**
 	 * 
 	 * @Title: getGroupCount   
 	 * @Description: 获取小组成员数量
@@ -151,7 +151,7 @@ public class GroupContext {
 	 * @param: @return      
 	 * @return: Integer      
 	 * @throws
-	 */
+	 *//*
 	public static Integer getGroupCount(String groupId) {
 		Group group = GroupContext.GROUPS.get(groupId);
 		if(group==null) {
@@ -160,7 +160,7 @@ public class GroupContext {
 		Integer currentCount = group.getCurrentCount();
 		return currentCount;
 	}
-	/**
+*/	/**
 	 * 
 	 * @Title: getGroupKey   
 	 * @Description:  获取小组密钥

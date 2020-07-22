@@ -1,12 +1,11 @@
 package com.xiaofeng.web.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,11 +15,12 @@ import com.xiaofeng.entity.Group;
 import com.xiaofeng.entity.GroupToken;
 import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.utils.RSAEncrypt;
+import com.xiaofeng.utils.RedisUtil;
 import com.xiaofeng.utils.Result;
 import com.xiaofeng.utils.aes.AESUtils;
 import com.xiaofeng.utils.exception.BaseException;
+import com.xiaofeng.web.repository.GroupRepository;
 
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -37,6 +37,24 @@ public class GroupController {
 	//项目地址
 	@Value("${project.pattern}")
 	private String projectPattern;
+	@Autowired
+	private GroupRepository groupRepository;
+	@Autowired
+	private RedisUtil redisUtil;
+	
+
+	@RequestMapping(value = "/test")
+	public Result<List<Group>> test() {
+		Group group = new Group();
+		String groupId = com.xiaofeng.utils.string.StringUtils.getUUID();
+		group.setGroupId(groupId);
+		group.setGroupName("测试");
+		GroupToken token = new GroupToken("123", AESUtils.generateDesKey(), "fdsfdf");
+		group.setToken(token);
+		groupRepository.saveGroup(group);
+		Group findGroup = groupRepository.findByGroupId(groupId);
+		return new Result<List<Group>>(findGroup);
+	}
 	/**
 	 * 校验群 组密码
 	 * 
@@ -48,7 +66,8 @@ public class GroupController {
 	public Result<Boolean> checkPassword(String groupId, String password) {
 		boolean c = false;
 		//GroupToken groupToken = GroupContext.GROUP_KEYS.get(groupId);
-		Group group = GroupContext.GROUPS.get(groupId);
+		//Group group = GroupContext.GROUPS.get(groupId);
+		Group group = groupRepository.findByGroupId(groupId);
 		if(group==null) {
 			//小组不存在,直接返回
 			return new Result<Boolean>(c);
@@ -86,23 +105,11 @@ public class GroupController {
 		group.setGroupId(groupId);
 		group.setToken(groupToken);
 		group.setGroupName(groupName);
-		GroupContext.GROUPS.put(groupId,group);
+		groupRepository.saveGroup(group);
+		//GroupContext.GROUPS.put(groupId,group);
 		return new Result<String>(url);
 	}
 
-	/**
-	 * 加入群组
-	 * 
-	 * @param groupId
-	 * @param password
-	 * @return
-	 */
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public void add(String groupId, String username) {
-		// 小组人数+1
-		GroupContext.groupAddCount(groupId);
-
-	}
 
 	/**
 	 * 解密编码
@@ -119,7 +126,8 @@ public class GroupController {
 			log.info("解密:" + code);
 			String groupId = RSAEncrypt.decrypt(code, RSAEncrypt.PRIVATE_STRING);
 			//GroupToken groupToken = GroupContext.GROUP_KEYS.get(groupId);
-			Group group = GroupContext.GROUPS.get(groupId);
+		//	Group group = GroupContext.GROUPS.get(groupId);
+			Group group = groupRepository.findByGroupId(groupId);
 			GroupToken groupToken = group.getToken();
 			// 返回小组公钥
 			map.put("key", groupToken.getAesKey());

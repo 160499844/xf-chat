@@ -1,5 +1,6 @@
 package com.xiaofeng.web.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +12,7 @@ import com.xiaofeng.utils.EncryptMessage;
 import com.xiaofeng.utils.Result;
 import com.xiaofeng.utils.exception.BaseException;
 import com.xiaofeng.utils.file.FileUploadUtils;
+import com.xiaofeng.web.repository.GroupRepository;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -22,7 +24,10 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("file")
 public class FileController {
-
+	
+	
+	@Autowired
+	private GroupRepository groupRepository;
 	//上传文件保存路径
 	@Value(value = "${file.upload.path}")
 	private String uploadPath;
@@ -46,7 +51,8 @@ public class FileController {
 		String tagetUrl = "";
 		//加密链接
 		try {
-			Group group = GroupContext.GROUPS.get(groupId);
+			//Group group = GroupContext.GROUPS.get(groupId);
+			Group group = groupRepository.findByGroupId(groupId);
 			String aesKey = group.getToken().getAesKey();
 			tagetUrl = EncryptMessage.encrypt(urlString, aesKey);
 		} catch (Exception e) {

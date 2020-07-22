@@ -1,12 +1,17 @@
 package com.xiaofeng.netty.server.handler;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.global.UserInfoContext;
 import com.xiaofeng.utils.DateUtils;
 import com.xiaofeng.utils.MessageVo;
+import com.xiaofeng.utils.SpringBeanUtil;
 import com.xiaofeng.utils.user.UserToken;
+import com.xiaofeng.web.service.GroupService;
 import com.xiaofeng.web.service.PushService;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -54,7 +59,9 @@ public class CustomHandleImpl implements CustomHandle {
 		 */
 		// 组装返回对象
 		messageVo.setContent(content);
-		Integer groupCount = GroupContext.getGroupCount(user.getGroupId());
+	//	Integer groupCount = GroupContext.getGroupCount(user.getGroupId());
+		GroupService groupService = SpringBeanUtil.getBean(GroupService.class);
+		Integer groupCount = groupService.getGroupCount(user.getGroupId());
 		messageVo.put("group_count", groupCount);// 当前在线人数
 		return messageVo;
 	}
@@ -70,10 +77,12 @@ public class CustomHandleImpl implements CustomHandle {
 			GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
 			UserInfoContext.sessionMap.put(user.getUserId(),mSessionId);
 			//小组人数+1
-			GroupContext.groupAddCount(user.getGroupId());
+			//GroupContext.groupAddCount(user.getGroupId());
+			GroupService groupService = SpringBeanUtil.getBean(GroupService.class);
+			groupService.groupAddCount(user.getGroupId());
 			
 			//发送系统消息
-			PushService pushService = new PushService();
+			PushService pushService = SpringBeanUtil.getBean(PushService.class);
 			pushService.pushMessage(user.getGroupId(), String.format("欢迎%s加入群组", user.getUserName()));
 		}
 	}

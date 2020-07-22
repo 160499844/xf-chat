@@ -1,31 +1,27 @@
 package com.xiaofeng.web.service;
 
 import java.security.InvalidAlgorithmParameterException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.xiaofeng.entity.GroupToken;
-import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.netty.server.DynMessage;
-import com.xiaofeng.netty.server.handler.TextWebSocketFrameHandler;
 import com.xiaofeng.utils.EncryptMessage;
 import com.xiaofeng.utils.MessageVo;
-import com.xiaofeng.utils.Result;
 import com.xiaofeng.utils.exception.BaseException;
-import com.xiaofeng.utils.user.UserToken;
+import com.xiaofeng.web.repository.GroupRepository;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class PushService {
-
+	
+	
+	@Autowired
+	private GroupRepository groupRepository;
+	@Autowired
+	private GroupService groupService;
 	/**
 	 * 推送消息
 	 * 
@@ -36,9 +32,11 @@ public class PushService {
 	public void pushMessage(String groupId, String txt)  {
 		// 组装返回对象
 		MessageVo messageVo = new MessageVo();
-		Integer groupCount = GroupContext.getGroupCount(groupId);
+		//Integer groupCount = GroupContext.getGroupCount(groupId);
+		Integer groupCount = groupService.getGroupCount(groupId);
 		messageVo.put("group_count", groupCount);// 当前在线人数
-		GroupToken groupToken = GroupContext.GROUPS.get(groupId).getToken();
+		//GroupToken groupToken = GroupContext.GROUPS.get(groupId).getToken();
+		GroupToken groupToken = groupRepository.findByGroupId(groupId).getToken();
 		if(groupToken!=null) {
 			String msg = "";
 			try {
