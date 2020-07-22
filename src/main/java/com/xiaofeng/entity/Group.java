@@ -1,6 +1,7 @@
 package com.xiaofeng.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -23,7 +24,10 @@ public class Group implements Serializable{
 	private String groupName;//组名称
 	private Integer max = 999;//最大成员数量
 	private Integer currentCount = 0;//当前成员数量
+	private Date createDt = new Date();//创建时间
 	
 	private GroupToken token;//权限校验字段，敏感
+	
+	
 	
 }

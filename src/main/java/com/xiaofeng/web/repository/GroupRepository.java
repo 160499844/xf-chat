@@ -1,17 +1,23 @@
 package com.xiaofeng.web.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.ExecutableRemoveOperation.ExecutableRemove;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
+import com.mongodb.client.result.DeleteResult;
 import com.xiaofeng.entity.Group;
+import com.xiaofeng.netty.server.handler.TextWebSocketFrameHandler;
 import com.xiaofeng.utils.exception.BaseException;
 
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @Component
 public class GroupRepository {
 
@@ -70,5 +76,22 @@ public class GroupRepository {
 		Update update = new Update();
 		update.set("currentCount", count);
 		mongoTemplate.upsert(query, update, "chat_group");
+	}
+	/**
+	 * 
+	 * @Title: clearGroups   
+	 * @Description: 清除全部群组信息
+	 * @param:       
+	 * @return: void      
+	 * @throws
+	 */
+	public void clearGroups() {
+		Query query = Query.query(Criteria.where("createDt").lt(new Date()));
+		List<Group> findAllAndRemove = mongoTemplate.findAllAndRemove(query, Group.class);
+		log.info("执行清除数据!");
+		for (Group group : findAllAndRemove) {
+			log.info(group.toString());
+		}
+		log.info("清空全部群组信息完毕!");
 	}
 }
