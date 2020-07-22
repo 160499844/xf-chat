@@ -346,7 +346,7 @@ footer .chat-icon {
 }
 
 .im-chat-mine .im-chat-text {
-    margin-left: 0;
+    margin-left: 50px;
     text-align: left;
     background-color: #A0E75A;
     color: #353535;

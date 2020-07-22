@@ -94,7 +94,19 @@ public class GroupController {
 		if(StringUtils.isEmpty(password) || password.length()!=6 || !StringUtils.isNumeric(password)) {
 			throw new BaseException("请输入6位数字口令");
 		}
-		String url = projectPattern + "index.html?code=";// 分享的链接
+		String url = projectPattern + "chat_index.html?code=";// 分享的链接
+		//判断群组是否存在，如果群组存在不可以创建，如果存在并且人数为零可以创建
+		try {
+			Group exGroup = groupRepository.findByGroupId(groupId);
+			Integer currentCount = exGroup.getCurrentCount();
+			if(currentCount>0) {
+				throw new BaseException("该群聊已经存在!");
+			}
+		} catch (Exception e) {
+			
+		}
+		
+		
 		// 创建群组信息
 		String encrypt = RSAEncrypt.encrypt(groupId, RSAEncrypt.PUBLICKEY_STRING);
 		url += com.xiaofeng.utils.string.StringUtils.encodeBase64String(encrypt.getBytes());

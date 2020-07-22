@@ -1,7 +1,7 @@
 var key; // 秘钥
 var sessionId = "";
 var userName = "";
-var groupId = "test";
+var groupId = "";
 userName = GetQueryValue("userName");
 var qrCode = GetQueryValue("code");
 
@@ -125,7 +125,6 @@ function socketInit(){
 		mui.toast("当前环境不支持加密通信");
 	}
 	
-	getGroupName(qrCode);
 }
 /**
  * 更新组信息
@@ -184,6 +183,11 @@ function messageElement(messageVo) {
 }
 // 发送数据
 function send(message,type) {
+	//限制内容长度
+	if(message.length>1000){
+		message = message.substring(1000);
+	}
+	
 	var msg;
 	if("" === type){
 		type = 'T';
@@ -272,6 +276,8 @@ function getGroupName(code){
 			//CryptoJS.enc.Utf8.parse(1538663015386630);
 			key = CryptoJS.enc.Utf8.parse(content.key);
 			console.log("key:",key);
+			groupId = content.n;
+			$("#groupidinput").val(groupId);
 			//修改groupId
 		}
 	});

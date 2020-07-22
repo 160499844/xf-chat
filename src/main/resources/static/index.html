@@ -81,14 +81,14 @@
 			<form class="mui-input-group">
 				 <div class="mui-input-row">
 					<label>房间号</label> <input type="text" class="mui-input-clear"
-						placeholder="房间号" id="groupId" disabled="disabled" value="default">
+						placeholder="房间号" id="groupId" >
 				</div>
 				<div class="mui-input-row">
-					<label>昵称</label> <input type="text" class="mui-input-clear"
-						placeholder="我的昵称" id="userName">
+					<label>口令</label> <input type="password" class="mui-input-clear"
+						placeholder="请输入6位数字" id="password">
 				</div>
 				<div class="mui-button-row">
-					<button type="button" id="starChat" class="mui-btn mui-btn-primary">开始聊天</button>
+					<button type="button" id="starChat" class="mui-btn mui-btn-primary">创建群聊</button>
 				</div>
 			</form>
 		</div>
@@ -98,33 +98,52 @@
 <script src="/js/jquery-2.2.4.min.js"></script>
 <script src="/js/mui.js"></script>
 <script type="text/javascript">
+
+	var f = false;
 	mui.init();
 	(function($) {
 		document.getElementById('starChat').addEventListener('tap', function() {
 			//打开关于页面
-			var userName= document.getElementById('userName').value;
-			var code = GetQueryValue("code");
-			console.log("userName",userName);
-			var check= false;
-			if(userName === "" || userName.length ==0 || userName.length > 5) {
-				console.log("昵称长度限制1~5个字符之间");
-			    mui.toast("昵称长度限制1~5个字符之间");
-			    check = false;
-			}else{
+			var groupId = document.getElementById('groupId').value;
+			var password = document.getElementById('password').value;
+			var check = false;
+			if (password.length != 6) {
+				mui.toast("只能输入6位数字口令");
+				check = false;
+			} else {
 				check = true;
 			}
-			console.log("昵称不允许为空",check);
-			if(check){
-				var url = 'chat.html?userName=' + userName + '&code=' + code;
-				console.log("url",url);
-				mui.openWindow({
-					url : url,
-					id : 'info',
-					extras : {}
+			if (check && f==false) {
+				//创建聊天室
+				$.ajax({
+					"async" : false,
+					"url" : "group/create",
+					"type" : "POST",
+					"data" : {
+						"groupId" : groupId,
+						"password" : password
+					},
+					"dataType" : "json",
+					"success" : function(data) {
+						console.log('data', data);
+						var link = data.content;
+						copyToClip(link,"创建成功,链接已复制");
+						f = true;
+					}
 				});
 			}
 		});
 	})(mui);
+	//复制到剪切板
+	function copyToClip(content, message) {
+		var aux = document.createElement("input");
+		aux.setAttribute("value", content);
+		document.body.appendChild(aux);
+		aux.select();
+		document.execCommand("copy");
+		document.body.removeChild(aux);
+		mui.toast(message);
+	}
 </script>
 <script src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>
 <script type="text/javascript" src="/js/CryptoJS-master/rollups/aes.js"></script>
@@ -134,15 +153,4 @@
 	src="/js/CryptoJS-master/components/pad-nopadding.js"></script>
 <script type="text/javascript" src="/js/init.js"></script>
 
-<!-- <script type="text/javascript" src="/js/jsencrypt.js"></script> -->
-<script type="text/javascript">
-	$(function(){
-		var code = GetQueryValue("code");
-		console.log("code",code);
-		var content = getGroupName(code);
-		$("#groupId").val(content.n);
-		
-	});
-	
-</script>
 </html>

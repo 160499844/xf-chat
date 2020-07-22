@@ -40,7 +40,7 @@ public class GroupRepository {
 	public Group findByGroupId(String groupId) {
 		Query query = new Query(Criteria.where("groupId").is(groupId));
 		List<Group> find = mongoTemplate.find(query, Group.class);
-		if (find != null) {
+		if (find.size()>0) {
 			return find.get(0);
 		} else {
 			throw new BaseException("小组不存在!");

@@ -37,6 +37,7 @@
 }
 .sys-message-div {
 	min-height:30px;
+	position: relative;
 }
 </style>
 </head>
@@ -50,7 +51,7 @@
       <span id="title"></span>
     </header>
 		<ul id="msg_list" style="margin-top: 50px;height: 90%;">
-			<!-- <div class='sys-message-div'><div class='im-chat-user sys-message-info'><cite><i>系统消息:加入群聊</i></cite></div></div> -->
+			<!-- <div class='sys-message-div'><div class='im-chat-user sys-message-info'><cite><i id="sysMsg">系统消息:加入群聊</i></cite></div></div> -->
 		</ul>
 	</div>
 
@@ -195,7 +196,7 @@
 			</li>
 		</ul>
 	</div>
-
+	<input type="hidden" id="groupidinput">
 </body>
 <script src="/js/jquery-2.2.4.min.js"></script>
 <script src="/js/mui.js"></script>
@@ -235,6 +236,13 @@
 									//sendMsg(that.val(), 0);
 									send(imContent($("#msg_text").val()
 											|| '&nbsp;'),"T");
+									//清空
+									$("#msg_text").val('');
+									showSendBtn();
+
+									//滚动条到最底部(还有其他方法吗？)
+									document.getElementById("msg_list").scrollTop = msgList.scrollHeight
+											+ msgList.offsetHeight;
 								}
 							},
 							"input propertychange" : function(e) {
@@ -422,7 +430,7 @@
 		
 		$(".returnIndex").on("tap", function() {
 			mui.openWindow({
-				url : 'index.html',
+				url : 'chat_index.html',
 				id : 'index'
 			});
 		});
@@ -475,7 +483,7 @@
 									|| '&nbsp;'),"T");
 
 							//清空
-							$("#msg_text").val('')
+							$("#msg_text").val('');
 							showSendBtn();
 
 							//滚动条到最底部(还有其他方法吗？)
@@ -568,16 +576,36 @@
 
 <script src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>
 <script type="text/javascript" src="/js/init.js"></script>
+<!-- <script type="text/javascript" src="/js/jsencrypt.js"></script> -->
+<script type="text/javascript">
+	$(function(){
+		mui.prompt('','请输入口令','口令',['校验'],function(e){
+			var password = e.value;
+			if(checkPassword(password)){
+				check = true;
+				var groupDetails = getGroupName(qrCode);
+				socketInit();
+				
+			}else{
+				mui.toast("口令无效");
+			}
+		},'div');
+		document.querySelector('.mui-popup-input input').type='password'
+	})
+</script>
 <script>
 layui.use('upload', function(){
   var upload = layui.upload;
-   
   //执行实例
   var uploadInst = upload.render({
     elem: '#test1' //绑定元素
     ,url: '/file/upload' //上传接口
     ,acceptMime: 'image/*'
-    ,data:{"groupId":groupId}
+    ,data:{
+    	"groupId":function(){
+    	    return $('#groupidinput').val();
+    	  },
+    }
     ,done: function(res){
       //上传完毕回调
     	console.log("文件上传调用地址:", res.content);
@@ -588,20 +616,5 @@ layui.use('upload', function(){
     }
   });
 });
-</script>
-<!-- <script type="text/javascript" src="/js/jsencrypt.js"></script> -->
-<script type="text/javascript">
-	$(function(){
-		mui.prompt('','请输入口令','口令',['校验'],function(e){
-			var password = e.value;
-			if(checkPassword(password)){
-				check = true;
-				socketInit();
-				
-			}else{
-				mui.toast("口令无效");
-			}
-		},'div');
-	})
 </script>
 </html>
