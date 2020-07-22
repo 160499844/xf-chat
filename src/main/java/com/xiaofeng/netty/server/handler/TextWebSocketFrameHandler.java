@@ -9,6 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +21,10 @@ import com.xiaofeng.netty.server.DynMessage;
 import com.xiaofeng.utils.DateUtils;
 import com.xiaofeng.utils.EncryptMessage;
 import com.xiaofeng.utils.MessageVo;
+import com.xiaofeng.utils.SpringBeanUtil;
 import com.xiaofeng.utils.user.Users;
 import com.xiaofeng.utils.user.UserToken;
+import com.xiaofeng.web.service.GroupService;
 import com.xiaofeng.web.service.PushService;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -36,10 +40,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 
 @Slf4j
+@Configuration
 public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 	
-	//广播消息对象
-	PushService pushService = new PushService();
 	//消息交互
 	//接收客户端发送的消息
 	//读到客户端的内容并且向客户端去写内容
@@ -105,9 +108,11 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
 		String userId = ctx.channel().id().asLongText();
 		UserToken user = UserInfoContext.getUser(userId);
-		
+		GroupService groupService = SpringBeanUtil.getBean(GroupService.class);
+		PushService pushService = SpringBeanUtil.getBean(PushService.class);
 		//小组人数-1
-		GroupContext.groupReduceCount(user.getGroupId());
+		//GroupContext.groupReduceCount(user.getGroupId());
+		groupService.groupReduceCount(user.getGroupId());
 		
 		UserInfoContext.remove(userId);//删除用户信息
 		//删除登录信息

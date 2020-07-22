@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+<meta name="format-detection"
+	content="telephone=no,email=no,date=no,address=no">
+<title>首页</title>
+<link rel="stylesheet" type="text/css" href="/css/mui.min.css">
+<style type="text/css">
+.mui-content>.mui-table-view:first-child {
+	margin-top: 0;
+}
+/***群聊列表***/
+.chat-list .wechat-avatar {
+	float: left;
+	margin-right: 0.62999rem;
+	line-height: 3rem;
+	max-width: 3rem;
+	height: 3rem;
+}
+
+.chat-list .wechat-avatar .mui-row {
+	background-color: #dddee0;
+	padding: 0.15rem;
+	border-radius: 0.2rem;
+	margin-left: -0.05rem;
+	margin-right: -0.05rem;
+}
+
+.chat-list .wechat-avatar .mui-row [class*=mui-col-xs-] {
+	padding: 0.05rem;
+}
+
+.chat-list .wechat-avatar .mui-row [class*=mui-col-xs-] img {
+	max-width: 100%;
+	width: 100%;
+	display: block;
+}
+
+.chat-list .wechat-avatar, .chat-list .wechat-avatar>img {
+	border-radius: 50%;
+}
+
+.chat-list .mui-media-body>.time {
+	float: right;
+	font-size: 0.9rem;
+	color: #999999;
+}
+
+.chat-list .mui-media-body>p {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	font-size: 0.9rem;
+	color: #999999;
+}
+
+.mui-content {
+	height: 100%;
+	width: 100%;
+ 	background-image: url(images/bc.jpg); 
+	background-size: cover;
+	position: absolute;
+	overflow: hidden;
+}
+
+#starForm {
+	padding:10px;
+	background: #FFF;
+	opacity: 0.8;
+}
+</style>
+</head>
+
+<body>
+	<div class="mui-content">
+		<div style="height: 30%;"></div>
+		<div id="starForm">
+			<form class="mui-input-group">
+				 <div class="mui-input-row">
+					<label>房间号</label> <input type="text" class="mui-input-clear"
+						placeholder="房间号" id="groupId" disabled="disabled" value="default">
+				</div>
+				<div class="mui-input-row">
+					<label>口令</label> <input type="text" class="mui-input-clear"
+						placeholder="请输入6位数字" id="password">
+				</div>
+				<div class="mui-button-row">
+					<button type="button" id="starChat" class="mui-btn mui-btn-primary">创建群聊</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<footer> </footer>
+</body>
+<script src="/js/jquery-2.2.4.min.js"></script>
+<script src="/js/mui.js"></script>
+<script type="text/javascript">
+
+
+	mui.init();
+	(function($) {
+		document.getElementById('starChat').addEventListener('tap', function() {
+			//打开关于页面
+			var groupId = document.getElementById('groupId').value;
+			var password = document.getElementById('password').value;
+			var check = false;
+			if (password.length != 6) {
+				mui.toast("只能输入6位数字口令");
+				check = false;
+			} else {
+				check = true;
+			}
+			if (check) {
+				//创建聊天室
+				$.ajax({
+					"async" : false,
+					"url" : "group/create",
+					"type" : "POST",
+					"data" : {
+						"groupId" : groupId,
+						"password" : password
+					},
+					"dataType" : "json",
+					"success" : function(data) {
+						console.log('data', data);
+						var link = data.content;
+						copyToClip(link,"链接已复制")
+					}
+				});
+			}
+		});
+	})(mui);
+	//复制到剪切板
+	function copyToClip(content, message) {
+		var aux = document.createElement("input");
+		aux.setAttribute("value", content);
+		document.body.appendChild(aux);
+		aux.select();
+		document.execCommand("copy");
+		document.body.removeChild(aux);
+		mui.toast(message);
+	}
+</script>
+<script src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>
+<script type="text/javascript" src="/js/CryptoJS-master/rollups/aes.js"></script>
+<script type="text/javascript"
+	src="/js/CryptoJS-master/components/mode-ecb.js"></script>
+<script type="text/javascript"
+	src="/js/CryptoJS-master/components/pad-nopadding.js"></script>
+<script type="text/javascript" src="/js/init.js"></script>
+
+</html>
