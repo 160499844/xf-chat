@@ -206,6 +206,9 @@
 <link href="/css/zoom.css" rel="stylesheet">
 <script  type="text/javascript" src="/js/zoom.js"></script>
 <script type="text/javascript">
+	var faces = new Map();
+
+	
 	var msgList = document.getElementById("msg_list");
 	var boxMsgText = document.getElementById("msg_text");
 	mui.init();
@@ -358,6 +361,9 @@
 
 		//绑定表情点击事件
 		$(".face-content").find('.face-list>li').on('tap', function() {
+			console.log('this',this);
+			console.log('firstChild.src',this.firstChild.src);
+			faces.set(this.title,this.firstChild.src);
 			focusInsert(boxMsgText, 'face' + this.title + ' ');
 			showSendBtn();
 		});
@@ -479,8 +485,7 @@
 							//追加内容
 							//msgList.insertAdjacentHTML('beforeEnd', html);
 							
-							send(imContent($("#msg_text").val()
-									|| '&nbsp;'),"T");
+							send(imContent($("#msg_text").val()|| '&nbsp;'),"T");
 
 							//清空
 							$("#msg_text").val('');
@@ -536,7 +541,7 @@
 						/face\[([^\s\[\]]+?)\]/g,
 						function(face) { //转义表情
 							var alt = face.replace(/^face/g, '');
-							return '<img alt="'+ alt +'" title="'+ alt +'" src="' + faces[alt] + '">';
+							return '<img alt="'+ alt +'" title="'+ alt +'" src="' + faces.get(alt) + '">';
 						})
 				.replace(
 						/a\([\s\S]+?\)\[[\s\S]*?\]/g,
