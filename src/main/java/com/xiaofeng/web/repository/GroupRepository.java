@@ -34,7 +34,8 @@ public class GroupRepository {
 	}
 
 	/**
-	 * @Title: findByGroupId @Description: 根据组id查询群聊信息 @param: @param
+	 * @Title: findByGroupId 
+	 * @Description: 根据组id查询群聊信息 @param: @param
 	 * groupId @param: @return @return: Group @throws
 	 */
 	public Group findByGroupId(String groupId) {
@@ -42,9 +43,10 @@ public class GroupRepository {
 		List<Group> find = mongoTemplate.find(query, Group.class);
 		if (find.size()>0) {
 			return find.get(0);
-		} else {
+		} /*else {
 			throw new BaseException("小组["+groupId+"]不存在!");
-		}
+		}*/
+		return null;
 	}
 	/**
 	 * 

@@ -60,7 +60,7 @@
 .mui-content {
 	height: 100%;
 	width: 100%;
- 	background-image: url(images/bc.jpg); 
+ 	/* background-image: url(images/bc.jpg);  */
 	background-size: cover;
 	position: absolute;
 	overflow: hidden;
@@ -103,6 +103,7 @@
 		document.getElementById('starChat').addEventListener('tap', function() {
 			//打开关于页面
 			var userName= document.getElementById('userName').value;
+			var groupId= document.getElementById('groupId').value;
 			var code = GetQueryValue("code");
 			console.log("userName",userName);
 			var check= false;
@@ -112,15 +113,20 @@
 			    check = false;
 			}else{
 				check = true;
+				//使用临时用户名
+				updateUserName(userName);
 			}
 			console.log("昵称不允许为空",check);
 			if(check){
 				var url = 'chat.html?userName=' + userName + '&code=' + code;
-				console.log("url",url);
 				mui.openWindow({
 					url : url,
 					id : 'info',
-					extras : {}
+					extras : {
+					},
+					waiting: {
+						autoShow: false
+					}
 				});
 			}
 		});

@@ -83,10 +83,10 @@ public class HttpHandler extends ChannelInboundHandlerAdapter {
 				//ChannelHandlerContext channelHandlerContext = UserInfoContext.USER_SESSION.get(userId);
 				
 				//增加用户信息
-				UserToken u = new UserToken();
-				u.setUserId(userId);
-				u.setUserName(parmMap.get("userName"));
-				UserInfoContext.addUser(userId, u);
+//				UserToken u = new UserToken();
+//				u.setUserId(userId);
+//				u.setUserName(parmMap.get("userName"));
+//				UserInfoContext.addUser(userId, u);
 				response(ctx, "成功");
 			} finally {
 				req.release();

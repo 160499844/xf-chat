@@ -15,7 +15,7 @@ import lombok.Data;
 @Data
 public class UserToken implements Serializable{
 	
-	//每个用户分配一个id
+/*	//每个用户分配一个id
 	private String sessionId;
 	//用户id
 	private String userId;
@@ -27,7 +27,7 @@ public class UserToken implements Serializable{
 	private String ip;
 	
 	private String key;//密钥
-	
+*/	
 	
 	
 	

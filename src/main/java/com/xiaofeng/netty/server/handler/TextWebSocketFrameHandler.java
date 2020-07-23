@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.xiaofeng.entity.GroupToken;
+import com.xiaofeng.entity.UserEntity;
 import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.global.UserInfoContext;
 import com.xiaofeng.netty.server.DynMessage;
@@ -26,6 +27,7 @@ import com.xiaofeng.utils.user.Users;
 import com.xiaofeng.utils.user.UserToken;
 import com.xiaofeng.web.service.GroupService;
 import com.xiaofeng.web.service.PushService;
+import com.xiaofeng.web.service.UserService;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -53,7 +55,9 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		String message = msg.text();
 		boolean isBroadCase = true;
 		// 更新用户信息
-		UserToken user = UserInfoContext.getUser(userId);
+		//UserToken user = UserInfoContext.getUser(userId);
+		UserService userService = SpringBeanUtil.getBean(UserService.class);
+		UserEntity user = userService.getUserByUserId(userId);
 		MessageVo messageVo ;
 		try {
 			messageVo = com.xiaofeng.utils.string.StringUtils.jsonToMessageVo(message);
@@ -91,12 +95,19 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		String userId = ctx.channel().id().asLongText();
 		// 打印出channel唯一值，asLongText方法是channel的id的全名
 		log.info(String.format("连接用户:%s,ip:%s", userId, ip));
-		// UserInfoContext.USER_SESSION.put(userId, ctx);
-
-		UserToken user = UserInfoContext.getUser(userId);
+		
+		UserService userService = SpringBeanUtil.getBean(UserService.class);
+		UserEntity user = new UserEntity();
 		user.setIp(ip);
 		user.setUserId(userId);
-		UserInfoContext.addUser(userId, user);
+		userService.saveUser(user);
+		
+		// UserInfoContext.USER_SESSION.put(userId, ctx);
+
+	/*	UserToken user = UserInfoContext.getUser(userId);
+		user.setIp(ip);
+		user.setUserId(userId);
+		UserInfoContext.addUser(userId, user);*/
 		
 	}
 
@@ -106,9 +117,11 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 	@Override
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
 		String userId = ctx.channel().id().asLongText();
-		UserToken user = UserInfoContext.getUser(userId);
+		//UserToken user = UserInfoContext.getUser(userId);
+		UserService userService = SpringBeanUtil.getBean(UserService.class);
 		GroupService groupService = SpringBeanUtil.getBean(GroupService.class);
 		PushService pushService = SpringBeanUtil.getBean(PushService.class);
+		UserEntity user = userService.getUserByUserId(userId);
 		//小组人数-1
 		//GroupContext.groupReduceCount(user.getGroupId());
 		groupService.groupReduceCount(user.getGroupId());

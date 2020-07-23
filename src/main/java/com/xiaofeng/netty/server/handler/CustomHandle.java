@@ -1,5 +1,6 @@
 package com.xiaofeng.netty.server.handler;
 
+import com.xiaofeng.entity.UserEntity;
 import com.xiaofeng.utils.MessageVo;
 import com.xiaofeng.utils.user.UserToken;
 
@@ -17,6 +18,6 @@ public interface CustomHandle {
 	 * @param ctx 
 	 * @return
 	 */
-	Object messageHandle(MessageVo vo,UserToken user, ChannelHandlerContext ctx);
+	Object messageHandle(MessageVo vo,UserEntity user, ChannelHandlerContext ctx);
 	
 }

@@ -87,8 +87,8 @@ function socketInit(){
 	// 如果浏览器支持WebSocket
 	if (window.WebSocket) {
 		// 参数就是与服务器连接的地址
-		//socket = new WebSocket("ws://127.0.0.1:8888/ws");
-		socket = new WebSocket("ws://y-xiaofeng.top:8900/ws");
+		socket = new WebSocket("ws://127.0.0.1:8900/ws");
+		//socket = new WebSocket("ws://y-xiaofeng.top:8900/ws");
 		// 客户端收到服务器消息的时候就会执行这个回调方法
 		socket.onmessage = function(event) {
 			// var ta = document.getElementById("responseText");
@@ -228,28 +228,27 @@ function checkPassword(password){
 		"url" : "group/checkPassword",
 		"type" : "POST",
 			"data" : {
-				"groupId":groupId,
 				"password":password
 				
 			},
 		"dataType" : "json",
 		"success" : function(data) {
 			var result = data.content;
-			c = result;
+			if(result==true){
+				c = true;
+			}
 		}
 	});
 	return c;
 }
 //获取公钥
-function getPrivateKey(){
+/*function getPrivateKey(){
 	$.ajax({
 		"async" : false,
 		"url" : "group/checkPassword",
 		"type" : "POST",
 			"data" : {
-				"groupId":groupId,
 				"password":password
-				
 			},
 		"dataType" : "json",
 		"success" : function(data) {
@@ -258,9 +257,28 @@ function getPrivateKey(){
 		}
 	});
 	return "";
-}
+}*/
 function setSession(s){
 	sessionId = s;
+}
+/**
+ * 临时用户名
+ * @param userName
+ * @returns
+ */
+function updateUserName(userName){
+	$.ajax({
+		"async" : false,
+		"url" : "user/updateInfo",
+		"type" : "POST",
+			"data" : {
+				"userName":userName
+				
+			},
+		"dataType" : "json",
+		"success" : function(data) {
+		}
+	});
 }
 
 function getGroupName(code){
@@ -270,8 +288,8 @@ function getGroupName(code){
 		"url" : "group/getGroupInfo",
 		"type" : "POST",
 			"data" : {"code":code},
-		"dataType" : "json",
-		"success" : function(data) {
+			"dataType" : "json",
+			"success" : function(data) {
 			content = data.content;
 			//CryptoJS.enc.Utf8.parse(1538663015386630);
 			key = CryptoJS.enc.Utf8.parse(content.key);

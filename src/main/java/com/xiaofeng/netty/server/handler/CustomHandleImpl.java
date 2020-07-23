@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.xiaofeng.entity.UserEntity;
 import com.xiaofeng.global.GroupContext;
 import com.xiaofeng.global.UserInfoContext;
 import com.xiaofeng.utils.DateUtils;
@@ -13,6 +14,7 @@ import com.xiaofeng.utils.SpringBeanUtil;
 import com.xiaofeng.utils.user.UserToken;
 import com.xiaofeng.web.service.GroupService;
 import com.xiaofeng.web.service.PushService;
+import com.xiaofeng.web.service.UserService;
 
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +31,7 @@ public class CustomHandleImpl implements CustomHandle {
 	 * 处理消息
 	 */
 	@Override
-	public Object messageHandle(MessageVo messageVo,UserToken user, ChannelHandlerContext ctx) {
+	public Object messageHandle(MessageVo messageVo,UserEntity user, ChannelHandlerContext ctx) {
 		
 		String content = messageVo.getMsg();
 		messageVo.setName(user.getUserName());
@@ -68,11 +70,13 @@ public class CustomHandleImpl implements CustomHandle {
 	/**
 	 * 第一次加入群聊
 	 */
-	private void firstJoinGroup(String sessionId,String mSessionId,UserToken user, ChannelHandlerContext ctx) {
+	private void firstJoinGroup(String sessionId,String mSessionId,UserEntity user, ChannelHandlerContext ctx) {
 		if(StringUtils.isEmpty(sessionId) && StringUtils.isNotEmpty(mSessionId)) {
 			//第一次加入群聊
 			//user.setSessionId(messageVo.getSessionId());
-			UserInfoContext.updateSessionId(user.getUserId(),mSessionId);
+			user.setSessionId(mSessionId);
+			UserService userService = SpringBeanUtil.getBean(UserService.class);
+			userService.updateSessionId(user);
 			//加入小组
 			GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
 			UserInfoContext.sessionMap.put(user.getUserId(),mSessionId);

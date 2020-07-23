@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,7 +66,19 @@ public class GroupController {
 	 * @return
 	 */
 	@RequestMapping(value = "/checkPassword", method = RequestMethod.POST)
-	public Result<Boolean> checkPassword(String groupId, String password) {
+	public Result<Boolean> checkPassword(String password,HttpServletRequest request) {
+		//判断当前登录用户是否点击过分享链接,如果点击过session中会有群组groupId
+		HttpSession session = request.getSession();
+		if(session==null) {
+			throw new BaseException("当前会话已过期!");
+		}
+		Object attribute = session.getAttribute("groupId");
+		String groupId = "";
+		if(attribute!=null) {
+			groupId= (String) attribute;
+		}else {
+			throw new BaseException("当前会话已过期!");
+		}
 		boolean c = false;
 		//GroupToken groupToken = GroupContext.GROUP_KEYS.get(groupId);
 		//Group group = GroupContext.GROUPS.get(groupId);
@@ -130,7 +145,7 @@ public class GroupController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/getGroupInfo")
-	public Result<Map<String, String>> getGroupInfo(String code) throws Exception {
+	public Result<Map<String, String>> getGroupInfo(String code,HttpServletRequest request) throws Exception {
 		Map<String, String> map = new HashMap<String, String>();
 		try {
 			byte[] decodeBase64 = com.xiaofeng.utils.string.StringUtils.decodeBase64(code);
@@ -144,6 +159,10 @@ public class GroupController {
 			// 返回小组公钥
 			map.put("key", groupToken.getAesKey());
 			map.put("n", groupId);
+			//存到session中
+			HttpSession session = request.getSession();
+			session.setAttribute("groupId", groupId);
+			session.setAttribute("aesKey", groupId);
 			// 返回小组aeskey
 		} catch (Exception e) {
 			log.error("解密失败{}",e.getMessage());

@@ -34,4 +34,22 @@ public class UserController {
 		String id = session.getId();
 		return new Result<String>(id);
 	}
+	
+	/**
+	 * 
+	 * @Title: updateInfo   
+	 * @Description: 更新当前用户名
+	 * @param: @param request
+	 * @param: @param userName
+	 * @param: @return      
+	 * @return: Result<String>      
+	 * @throws
+	 */
+	@RequestMapping(value = "/updateInfo", method = RequestMethod.POST)
+	public Result<String> updateInfo(HttpServletRequest request,String userName) {
+		HttpSession session = request.getSession();
+		session.setAttribute("userName", userName);
+		return new Result<String>();
+	}
+	
 }

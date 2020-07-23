@@ -62,13 +62,13 @@ public class UserInfoContext {
 	 * @param userId 
 	 * @param sessionId
 	 */
-	public static void updateSessionId(String userId,String sessionId) {
+	/*public static void updateSessionId(String userId,String sessionId) {
 		UserToken userToken = userMap.get(userId);
 		if(userToken!=null) {
 			userToken.setSessionId(sessionId);
 		}
 		
-	}
+	}*/
 	public static UserToken delUser(String userId) {
 		return userMap.remove(userId);
 	}
