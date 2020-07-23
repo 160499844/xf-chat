@@ -10,6 +10,7 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 import com.xiaofeng.netty.server.NettyServer;
 import com.xiaofeng.utils.SpringBeanUtil;
 import com.xiaofeng.web.repository.GroupRepository;
+import com.xiaofeng.web.repository.UserRepository;
 
 @SpringBootApplication
 public class XfChatApplication {
@@ -42,6 +43,8 @@ public class XfChatApplication {
 		//清空MongoDB群组数据
 		GroupRepository bean = SpringBeanUtil.getBean(GroupRepository.class);
 		bean.clearGroups();
+		UserRepository userRepository = SpringBeanUtil.getBean(UserRepository.class);
+		userRepository.clearUsers();
 	}
 	
 }

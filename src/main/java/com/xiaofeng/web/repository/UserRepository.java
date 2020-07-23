@@ -99,4 +99,21 @@ public class UserRepository {
 		update.set(key, value);
 		mongoTemplate.upsert(query, update, "chat_user");
 	}
+	
+	 /* 
+	 * @Title: clearGroups   
+	 * @Description: 清除全部用户信息
+	 * @param:       
+	 * @return: void      
+	 * @throws
+	 */
+	public void clearUsers() {
+		Query query = Query.query(Criteria.where("createDt").lt(new Date()));
+		List<UserEntity> findAllAndRemove = mongoTemplate.findAllAndRemove(query, UserEntity.class);
+		log.info("执行清除数据!");
+		for (UserEntity group : findAllAndRemove) {
+			log.info(group.toString());
+		}
+		log.info("清空全部用户信息完毕!");
+	}
 }
