@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.xiaofeng.entity.Group;
 import com.xiaofeng.entity.GroupToken;
 import com.xiaofeng.global.GroupContext;
+import com.xiaofeng.global.UtilConstants;
 import com.xiaofeng.utils.RSAEncrypt;
 import com.xiaofeng.utils.RedisUtil;
 import com.xiaofeng.utils.Result;
@@ -48,7 +49,7 @@ public class GroupController {
 	private RedisUtil redisUtil;
 	
 
-	@RequestMapping(value = "/test")
+	/*@RequestMapping(value = "/test")
 	public Result<List<Group>> test() {
 		Group group = new Group();
 		String groupId = com.xiaofeng.utils.string.StringUtils.getUUID();
@@ -59,7 +60,7 @@ public class GroupController {
 		groupRepository.saveGroup(group);
 		Group findGroup = groupRepository.findByGroupId(groupId);
 		return new Result<List<Group>>(findGroup);
-	}
+	}*/
 	/**
 	 * 校验群 组密码
 	 * 
@@ -74,7 +75,7 @@ public class GroupController {
 		if(session==null) {
 			throw new BaseException("当前会话已过期!");
 		}
-		Object attribute = session.getAttribute("groupId");
+		Object attribute = session.getAttribute(UtilConstants.SESSION_GROUP_ID);
 		String groupId = "";
 		if(attribute!=null) {
 			groupId= (String) attribute;
@@ -93,6 +94,8 @@ public class GroupController {
 		//校验小组口令
 		if (groupToken != null && groupToken.getKey().equals(password)) {
 			c = true;
+			//添加标志
+			session.setAttribute(UtilConstants.SESSION_GROUP_PASSWORD, password);
 		}
 		//返回结果
 		return new Result<Boolean>(c);
@@ -111,12 +114,15 @@ public class GroupController {
 		if(StringUtils.isEmpty(password) || password.length()!=6 || !StringUtils.isNumeric(password)) {
 			throw new BaseException("请输入6位数字口令");
 		}
-		String url = projectPattern + "chat_index.html?code=";// 分享的链接
-		//判断群组是否存在，如果群组存在不可以创建，如果存在并且人数为零可以创建
+		if(StringUtils.isEmpty(groupId) || groupId.length()>10) {
+			throw new BaseException("群组名称不合法");
+		}
+		String url = projectPattern + UtilConstants.SESSION_GROUP_INDEX_URL;// 分享的链接
 		try {
+			//判断群组是否存在，如果群组存在不可以创建，如果存在并且人数为零可以创建
 			Group exGroup = groupRepository.findByGroupId(groupId);
-			Integer currentCount = exGroup.getCurrentCount();
-			if(currentCount>0) {
+			//Integer currentCount = exGroup.getCurrentCount();
+			if(exGroup!=null) {
 				throw new BaseException("该群聊已经存在!");
 			}
 		} catch (Exception e) {
@@ -149,6 +155,7 @@ public class GroupController {
 	@RequestMapping(value = "/getGroupInfo")
 	public Result<Map<String, String>> getGroupInfo(String code,HttpServletRequest request) throws Exception {
 		Map<String, String> map = new HashMap<String, String>();
+		HttpSession session = request.getSession();
 		try {
 			byte[] decodeBase64 = com.xiaofeng.utils.string.StringUtils.decodeBase64(code);
 			code = new String(decodeBase64, "utf-8");
@@ -158,15 +165,45 @@ public class GroupController {
 		//	Group group = GroupContext.GROUPS.get(groupId);
 			Group group = groupRepository.findByGroupId(groupId);
 			GroupToken groupToken = group.getToken();
+			//验证密码
+			Object password = session.getAttribute(UtilConstants.SESSION_GROUP_PASSWORD);
+			if(password==null || !groupToken.getKey().equals(password.toString())){
+				throw new BaseException("没有权限进入");
+			}
 			// 返回小组公钥
 			map.put("key", groupToken.getAesKey());
 			map.put("n", groupId);
 			map.put("websocket", projectWebSocketPattern);
-			//存到session中
-			HttpSession session = request.getSession();
-			session.setAttribute("groupId", groupId);
-			session.setAttribute("aesKey", groupId);
+			session.setAttribute(UtilConstants.SESSION_GROUP_AES_KEY, groupId);
 			// 返回小组aeskey
+		} catch (Exception e) {
+			log.error("解密失败{}",e.getMessage());
+		}
+		return new Result<Map<String, String>>(map);
+	}
+	/**
+	 * 
+	 * @Title: getGroupName   
+	 * @Description:获取小组基本资料
+	 * @param: @param code
+	 * @param: @param request
+	 * @param: @return
+	 * @param: @throws Exception      
+	 * @return: Result<Map<String,String>>      
+	 * @throws
+	 */
+	@RequestMapping(value = "/getGroupName")
+	public Result<Map<String, String>> getGroupName(String code,HttpServletRequest request) throws Exception {
+		Map<String, String> map = new HashMap<String, String>();
+		HttpSession session = request.getSession();
+		try {
+			byte[] decodeBase64 = com.xiaofeng.utils.string.StringUtils.decodeBase64(code);
+			code = new String(decodeBase64, "utf-8");
+			//log.info("解密:" + code);
+			String groupId = RSAEncrypt.decrypt(code, RSAEncrypt.PRIVATE_STRING);
+			map.put("n", groupId);
+			//存到session中
+			session.setAttribute(UtilConstants.SESSION_GROUP_ID, groupId);
 		} catch (Exception e) {
 			log.error("解密失败{}",e.getMessage());
 		}

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.xiaofeng.global.UtilConstants;
 import com.xiaofeng.utils.Result;
 
 /**
@@ -48,7 +49,7 @@ public class UserController {
 	@RequestMapping(value = "/updateInfo", method = RequestMethod.POST)
 	public Result<String> updateInfo(HttpServletRequest request,String userName) {
 		HttpSession session = request.getSession();
-		session.setAttribute("userName", userName);
+		session.setAttribute(UtilConstants.SESSION_USER_NAME, userName);
 		return new Result<String>();
 	}
 	

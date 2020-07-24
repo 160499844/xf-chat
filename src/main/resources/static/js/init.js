@@ -280,8 +280,7 @@ function updateUserName(userName){
 		}
 	});
 }
-
-function getGroupName(code){
+function getGroupInfo(code){
 	var content;
 	$.ajax({
 		"async" : false,
@@ -294,6 +293,26 @@ function getGroupName(code){
 			//CryptoJS.enc.Utf8.parse(1538663015386630);
 			key = CryptoJS.enc.Utf8.parse(content.key);
 			console.log("key:",key);
+			groupId = content.n;
+			$("#groupidinput").val(groupId);
+			//修改groupId
+		}
+	});
+	return content;
+}
+function getGroupName(code){
+	var content;
+	$.ajax({
+		"async" : false,
+		"url" : "group/getGroupName",
+		"type" : "POST",
+			"data" : {"code":code},
+			"dataType" : "json",
+			"success" : function(data) {
+			content = data.content;
+			//CryptoJS.enc.Utf8.parse(1538663015386630);
+			//key = CryptoJS.enc.Utf8.parse(content.key);
+			//console.log("key:",key);
 			groupId = content.n;
 			$("#groupidinput").val(groupId);
 			//修改groupId

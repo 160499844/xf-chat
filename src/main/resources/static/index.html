@@ -113,6 +113,10 @@
 			} else {
 				check = true;
 			}
+			if (groupId.length === 0 || groupId.length > 10) {
+				mui.toast("群组名称不合法");
+				check = false;
+			}
 			if (check && f==false) {
 				//创建聊天室
 				$.ajax({

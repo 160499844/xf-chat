@@ -35,8 +35,8 @@ public class CustomHandleImpl implements CustomHandle {
 		
 		String content = messageVo.getMsg();
 		messageVo.setName(user.getUserName());
-		content = String.format("%s(%s):%s", user.getUserName(), DateUtils.getNowDateToString(), messageVo.getMsg());
-		log.info(content);
+		//content = String.format("%s(%s):%s", user.getUserName(), DateUtils.getNowDateToString(), messageVo.getMsg());
+		//log.info(content);
 		
 		//保存用户session映射关系key netty sesion value springboot session
 //		if(StringUtils.isEmpty(user.getSessionId()) && StringUtils.isNotEmpty(messageVo.getSessionId())) {
@@ -87,6 +87,7 @@ public class CustomHandleImpl implements CustomHandle {
 			
 			//发送系统消息
 			PushService pushService = SpringBeanUtil.getBean(PushService.class);
+			String name = user.getUserName().length()>5?user.getUserName().substring(0,5) + "...":user.getUserName();
 			pushService.pushMessage(user.getGroupId(), String.format("欢迎%s加入群组", user.getUserName()));
 		}
 	}

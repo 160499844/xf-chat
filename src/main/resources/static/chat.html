@@ -588,7 +588,7 @@
 			var password = e.value;
 			if(checkPassword(password)){
 				check = true;
-				var groupDetails = getGroupName(qrCode);
+				var groupDetails = getGroupInfo(qrCode);
 				console.log("准备创建连接",groupDetails);
 				socketInit(groupDetails.websocket);
 				

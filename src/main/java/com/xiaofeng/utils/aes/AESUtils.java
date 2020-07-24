@@ -170,7 +170,7 @@ public class AESUtils {
             sb.append(str.charAt(number));
         }
         String key = sb.toString();
-        System.out.println("随机密钥:"+key);
+        System.out.println("生成随机密钥:"+key);
         return key;  
     }
 	
