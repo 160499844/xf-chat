@@ -60,14 +60,14 @@
 .mui-content {
 	height: 100%;
 	width: 100%;
- 	/* background-image: url(images/bc.jpg);  */
+	background-image: url(images/bc.jpg);
 	background-size: cover;
 	position: absolute;
 	overflow: hidden;
 }
 
 #starForm {
-	padding:10px;
+	padding: 10px;
 	background: #FFF;
 	opacity: 0.8;
 }
@@ -76,10 +76,14 @@
 
 <body>
 	<div class="mui-content">
+		<header class="mui-bar mui-bar-nav">
+			<!-- <a class="mui-icon mui-icon-home returnIndex"></a> <span id="title"></span>&nbsp; -->
+			<a class="mui-icon mui-icon-paperplane createhtml"></a> <span id="title"></span>
+		</header>
 		<div style="height: 30%;"></div>
 		<div id="starForm">
 			<form class="mui-input-group">
-				 <div class="mui-input-row">
+				<div class="mui-input-row">
 					<label>房间号</label> <input type="text" class="mui-input-clear"
 						placeholder="房间号" id="groupId" disabled="disabled" value="default">
 				</div>
@@ -100,39 +104,43 @@
 <script type="text/javascript">
 	mui.init();
 	(function($) {
-		document.getElementById('starChat').addEventListener('tap', function() {
-			//打开关于页面
-			var userName= document.getElementById('userName').value;
-			var groupId= document.getElementById('groupId').value;
-			var code = GetQueryValue("code");
-			console.log("userName",userName);
-			var check= false;
-			if(userName === "" || userName.length ==0 || userName.length > 5) {
-				console.log("昵称长度限制1~5个字符之间");
-			    mui.toast("昵称长度限制1~5个字符之间");
-			    check = false;
-			}else{
-				check = true;
-				//使用临时用户名
-				updateUserName(userName);
-			}
-			console.log("昵称不允许为空",check);
-			if(check){
-				var url = 'chat.html?userName=' + userName + '&code=' + code;
-				mui.openWindow({
-					url : url,
-					id : 'info',
-					extras : {
-					},
-					waiting: {
-						autoShow: false
+		document.getElementById('starChat').addEventListener(
+				'tap',
+				function() {
+					//打开关于页面
+					var userName = document.getElementById('userName').value;
+					var groupId = document.getElementById('groupId').value;
+					var code = GetQueryValue("code");
+					console.log("userName", userName);
+					var check = false;
+					if (userName === "" || userName.length == 0
+							|| userName.length > 5) {
+						console.log("昵称长度限制1~5个字符之间");
+						mui.toast("昵称长度限制1~5个字符之间");
+						check = false;
+					} else {
+						check = true;
+						//使用临时用户名
+						updateUserName(userName);
+					}
+					console.log("昵称不允许为空", check);
+					if (check) {
+						var url = 'chat.html?userName=' + userName + '&code='
+								+ code;
+						mui.openWindow({
+							url : url,
+							id : 'info',
+							extras : {},
+							waiting : {
+								autoShow : false
+							}
+						});
 					}
 				});
-			}
-		});
 	})(mui);
 </script>
-<script src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>
+<script
+	src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>
 <script type="text/javascript" src="/js/CryptoJS-master/rollups/aes.js"></script>
 <script type="text/javascript"
 	src="/js/CryptoJS-master/components/mode-ecb.js"></script>
@@ -142,13 +150,24 @@
 
 <!-- <script type="text/javascript" src="/js/jsencrypt.js"></script> -->
 <script type="text/javascript">
-	$(function(){
+	$(function() {
+		$(".returnIndex").on("tap", function() {
+			mui.openWindow({
+				url : 'chat_index.html',
+				id : 'index'
+			});
+		});
+		$(".createhtml").on("tap", function() {
+			mui.openWindow({
+				url : 'index.html',
+				id : 'index'
+			});
+		});
 		var code = GetQueryValue("code");
-		console.log("code",code);
+		console.log("code", code);
 		var content = getGroupName(code);
 		$("#groupId").val(content.n);
-		
+
 	});
-	
 </script>
 </html>

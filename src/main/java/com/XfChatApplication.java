@@ -42,8 +42,8 @@ public class XfChatApplication {
 	 */
 	private static void init() {
 		//清空MongoDB群组数据
-		//GroupRepository bean = SpringBeanUtil.getBean(GroupRepository.class);
-		//bean.clearGroups();
+		GroupRepository bean = SpringBeanUtil.getBean(GroupRepository.class);
+		bean.clearGroups();
 		UserRepository userRepository = SpringBeanUtil.getBean(UserRepository.class);
 		userRepository.clearUsers();
 	}

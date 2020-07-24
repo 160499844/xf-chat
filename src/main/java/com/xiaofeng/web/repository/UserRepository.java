@@ -110,10 +110,9 @@ public class UserRepository {
 	public void clearUsers() {
 		Query query = Query.query(Criteria.where("createDt").lt(new Date()));
 		List<UserEntity> findAllAndRemove = mongoTemplate.findAllAndRemove(query, UserEntity.class);
-		log.info("执行清除数据!");
 		for (UserEntity group : findAllAndRemove) {
 			log.info(group.toString());
 		}
-		log.info("清空全部用户信息完毕!");
+		log.info("用户数据初始化!");
 	}
 }

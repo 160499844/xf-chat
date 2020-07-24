@@ -60,7 +60,7 @@
 .mui-content {
 	height: 100%;
 	width: 100%;
- /* 	background-image: url(images/bc.jpg);  */
+  	background-image: url(images/bc.jpg);
 	background-size: cover;
 	position: absolute;
 	overflow: hidden;
@@ -76,6 +76,10 @@
 
 <body>
 	<div class="mui-content">
+		<header class="mui-bar mui-bar-nav">
+			<!-- <a class="mui-icon mui-icon-home returnIndex"></a> <span id="title"></span>&nbsp; -->
+			<a class="mui-icon mui-icon-paperplane createhtml"></a> <span id="title"></span>
+		</header>
 		<div style="height: 30%;"></div>
 		<div id="starForm">
 			<form class="mui-input-group">
@@ -88,7 +92,10 @@
 						placeholder="请输入6位数字" id="password">
 				</div>
 				<div class="mui-button-row">
-					<button type="button" id="starChat" class="mui-btn mui-btn-primary">创建群聊</button>
+					<button type="button" style="width: 90%;" id="starChat" data-loading-icon="mui-spinner mui-spinner-custom" class="mui-btn mui-btn-primary">创建群聊</button>
+				</div>
+				<div class="mui-button-row"  id="openChatDiv">
+					<button type="button" id="openChat" style="width: 90%;" class="mui-btn mui-btn-warning">打开群聊</button>
 				</div>
 			</form>
 		</div>
@@ -100,9 +107,12 @@
 <script type="text/javascript">
 
 	var f = false;
+	var link = '/';
 	mui.init();
 	(function($) {
-		document.getElementById('starChat').addEventListener('tap', function() {
+		removeElement("openChatDiv");
+		document.getElementById('starChat').addEventListener('tap', function(e) {
+			// mui(this).button('创建中');
 			//打开关于页面
 			var groupId = document.getElementById('groupId').value;
 			var password = document.getElementById('password').value;
@@ -130,14 +140,48 @@
 					"dataType" : "json",
 					"success" : function(data) {
 						console.log('data', data);
-						var link = data.content;
-						copyToClip(link,"创建成功,链接已复制");
+						if(data.code==0){
+							link = data.content;
+							showOtherDiv("openChatDiv")
+							copyToClip(link,"创建成功,链接已复制,可以粘贴给朋友加入该群聊");
+						}else{
+							mui.toast(data.content);
+							removeElement("openChatDiv");
+						}
 						f = true;
+						//mui(this).button('reset');
 					}
 				});
 			}
 		});
 	})(mui);
+	$(function(){
+		$("#openChat").on("tap",function(e) {
+			console.log("打开链接",link);
+				window.location.href = link; 
+			}) ;
+		$(".returnIndex").on("tap", function() {
+			mui.openWindow({
+				url : 'chat_index.html',
+				id : 'index'
+			});
+		});
+		$(".createhtml").on("tap", function() {
+			mui.openWindow({
+				url : 'index.html',
+				id : 'index'
+			});
+		});
+	});
+	function removeElement(id) {
+		document.getElementById(id).style.display = "none";
+	}
+	function showOtherDiv(id) {
+		//获取要显示的div对象
+		var otherDiv = document.getElementById(id);
+		//显示
+		otherDiv.style.display = "block";
+	}
 	//复制到剪切板
 	function copyToClip(content, message) {
 		var aux = document.createElement("input");
@@ -147,6 +191,7 @@
 		document.execCommand("copy");
 		document.body.removeChild(aux);
 		mui.toast(message);
+		mui.alert("",message);
 	}
 </script>
 <script src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>

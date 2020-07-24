@@ -14,6 +14,8 @@ var encrypt = new JSEncrypt();
 //初始化
 init();
 
+
+
 function init(){
 	$.ajax({
 		"async" : false,

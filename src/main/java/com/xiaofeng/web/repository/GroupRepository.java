@@ -88,12 +88,17 @@ public class GroupRepository {
 	 * @throws
 	 */
 	public void clearGroups() {
+//		Query query = Query.query(Criteria.where("createDt").lt(new Date()));
+//		List<Group> findAllAndRemove = mongoTemplate.findAllAndRemove(query, Group.class);
+//		log.info("执行清除数据!");
+//		for (Group group : findAllAndRemove) {
+//			log.info(group.toString());
+//		}
+//		log.info("清空全部群组信息完毕!");
 		Query query = Query.query(Criteria.where("createDt").lt(new Date()));
-		List<Group> findAllAndRemove = mongoTemplate.findAllAndRemove(query, Group.class);
-		log.info("执行清除数据!");
-		for (Group group : findAllAndRemove) {
-			log.info(group.toString());
-		}
-		log.info("清空全部群组信息完毕!");
+		Update update = new Update();
+		update.set("currentCount", 0);
+		mongoTemplate.upsert(query, update, "chat_group");
+		log.info("小组成员初始化!");
 	}
 }

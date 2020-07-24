@@ -43,6 +43,9 @@ public class GroupService {
 	 */
 	public Integer groupReduceCount(String groupId) {
 		Group group = groupRepository.findByGroupId(groupId);
+		if(group==null) {
+			return 0;
+		}
 		Integer groupCount = group.getCurrentCount();
 		if(groupCount!=null && groupCount  > 0 ) {
 			groupCount = groupCount - 1;
