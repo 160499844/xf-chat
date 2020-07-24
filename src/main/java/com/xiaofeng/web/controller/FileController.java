@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.xiaofeng.entity.Group;
-import com.xiaofeng.global.GroupContext;
+import com.xiaofeng.global.UtilConstants;
 import com.xiaofeng.utils.EncryptMessage;
+import com.xiaofeng.utils.RedisUtil;
 import com.xiaofeng.utils.Result;
 import com.xiaofeng.utils.exception.BaseException;
 import com.xiaofeng.utils.file.FileUploadUtils;
@@ -25,15 +26,20 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("file")
 public class FileController {
 	
-	
+	private String sepa = java.io.File.separator;
 	@Autowired
 	private GroupRepository groupRepository;
 	//上传文件保存路径
 	@Value(value = "${file.upload.path}")
 	private String uploadPath;
+	@Autowired
+	private RedisUtil redisUtil;
 	
 	/**
 	 * 文件上传
+	 * 使用redis临时存储,设置有效期1天
+	 * key加密的访问路径，使用aesKey加密
+	 * value真实的物理文件路径,使用流读取文件
 	 * @return
 	 * @throws Exception 
 	 */
@@ -55,6 +61,11 @@ public class FileController {
 			Group group = groupRepository.findByGroupId(groupId);
 			String aesKey = group.getToken().getAesKey();
 			tagetUrl = EncryptMessage.encrypt(urlString, aesKey);
+			String locPath = uploadPath + sepa + urlString;
+			locPath = EncryptMessage.encrypt(locPath, aesKey);
+			//存到redis中
+			redisUtil.set(tagetUrl, locPath ,UtilConstants.REDIS_TIMEOUT);
+			log.info("文件保存成功");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

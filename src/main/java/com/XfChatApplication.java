@@ -2,6 +2,7 @@ package com;
 
 import java.net.InetSocketAddress;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -15,11 +16,12 @@ import com.xiaofeng.web.repository.UserRepository;
 @EnableMongoPlus
 @SpringBootApplication
 public class XfChatApplication {
+	
 
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();    //获取开始时间
 		SpringApplication.run(XfChatApplication.class, args);
-		init();
+		//init();
 		 //启动服务端
         NettyServer nettyServer = new NettyServer();
         long endTime = System.currentTimeMillis();    //获取结束时间
@@ -32,20 +34,4 @@ public class XfChatApplication {
 	public ServerEndpointExporter serverEndpointExporter() {
 	   return new ServerEndpointExporter();
 	}
-	/**
-	 * 
-	 * @Title: init   
-	 * @Description: 初始化
-	 * @param:       
-	 * @return: void      
-	 * @throws
-	 */
-	private static void init() {
-		//清空MongoDB群组数据
-		GroupRepository bean = SpringBeanUtil.getBean(GroupRepository.class);
-		bean.clearGroups();
-		UserRepository userRepository = SpringBeanUtil.getBean(UserRepository.class);
-		userRepository.clearUsers();
-	}
-	
 }

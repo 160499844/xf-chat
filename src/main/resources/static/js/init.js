@@ -164,7 +164,7 @@ function messageElement(messageVo) {
 	html += "<div class='"
 		+ className
 		+ "'>"
-		+ "<img src='http://tva1.sinaimg.cn/crop.0.0.180.180.180/86b15b6cjw1e8qgp5bmzyj2050050aa8.jpg' />"
+		+ "<img src='images/demo9.jpg' />"
 		+ "<cite><i>" + messageVo.time + "</i>&nbsp;" + messageVo.name
 		+ "</cite>" + "</div>";
 	html += "<div class='im-chat-text'>";

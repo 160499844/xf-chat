@@ -31,7 +31,24 @@ public class RedisUtil {
 			returnResource(jedisPool, jedis);
 		}
 	}
-
+	/**
+	 * 向Redis中存值,设置过期时间
+	 * @param key
+	 * @param value
+	 * @param seconds
+	 * @return
+	 */
+	public String set(String key, String value,int seconds) {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+			return jedis.setex(key, seconds, value);
+		} catch (Exception e) {
+			return "0";
+		} finally {
+			returnResource(jedisPool, jedis);
+		}
+	}
 	/**
 	 * 根据传入Key获取指定Value
 	 */
