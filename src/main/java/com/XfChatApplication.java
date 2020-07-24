@@ -7,11 +7,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
+import com.spring4all.mongodb.EnableMongoPlus;
 import com.xiaofeng.netty.server.NettyServer;
 import com.xiaofeng.utils.SpringBeanUtil;
 import com.xiaofeng.web.repository.GroupRepository;
 import com.xiaofeng.web.repository.UserRepository;
-
+@EnableMongoPlus
 @SpringBootApplication
 public class XfChatApplication {
 

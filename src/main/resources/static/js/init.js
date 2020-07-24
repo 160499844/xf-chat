@@ -83,12 +83,12 @@ function GetQueryValue(queryName) {
  * 初始化
  * @returns
  */
-function socketInit(){
+function socketInit(url){
 	// 如果浏览器支持WebSocket
 	if (window.WebSocket) {
 		// 参数就是与服务器连接的地址
-		//socket = new WebSocket("ws://127.0.0.1:8900/ws");
-		socket = new WebSocket("ws://y-xiaofeng.top:8900/ws");
+		socket = new WebSocket(url);
+		//socket = new WebSocket("ws://y-xiaofeng.top:8900/ws");
 		// 客户端收到服务器消息的时候就会执行这个回调方法
 		socket.onmessage = function(event) {
 			// var ta = document.getElementById("responseText");

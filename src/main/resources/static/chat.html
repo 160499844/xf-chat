@@ -589,7 +589,8 @@
 			if(checkPassword(password)){
 				check = true;
 				var groupDetails = getGroupName(qrCode);
-				socketInit();
+				console.log("准备创建连接",groupDetails);
+				socketInit(groupDetails.websocket);
 				
 			}else{
 				mui.toast("口令无效");

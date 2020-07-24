@@ -40,6 +40,8 @@ public class GroupController {
 	//项目地址
 	@Value("${project.pattern}")
 	private String projectPattern;
+	@Value("${project.websocket.pattern}")
+	private String projectWebSocketPattern;
 	@Autowired
 	private GroupRepository groupRepository;
 	@Autowired
@@ -159,6 +161,7 @@ public class GroupController {
 			// 返回小组公钥
 			map.put("key", groupToken.getAesKey());
 			map.put("n", groupId);
+			map.put("websocket", projectWebSocketPattern);
 			//存到session中
 			HttpSession session = request.getSession();
 			session.setAttribute("groupId", groupId);
