@@ -16,6 +16,10 @@ import com.xiaofeng.utils.file.FileUploadUtils;
 import com.xiaofeng.web.repository.GroupRepository;
 
 import lombok.extern.slf4j.Slf4j;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 /**
  * 文件处理
  * @author xiaofeng
@@ -44,7 +48,7 @@ public class FileController {
 	 * @throws Exception 
 	 */
 	@RequestMapping("upload")
-	private Result<String> upload(MultipartFile file,String groupId) throws Exception {
+	private Result<String> upload(MultipartFile file, String groupId, HttpServletRequest request) throws Exception {
 		log.info(" >>> 文件上传入口  <<< ");
 		if(file==null)
 			throw new BaseException("请上传文件");
@@ -57,6 +61,13 @@ public class FileController {
 		String tagetUrl = "";
 		//加密链接
 		try {
+			HttpSession session = request.getSession();
+			Object grouIdObj = session.getAttribute(UtilConstants.SESSION_GROUP_ID);
+			if(grouIdObj==null){
+				throw new BaseException("当前会话已经过期");
+			}else{
+				groupId = grouIdObj.toString();
+			}
 			//Group group = GroupContext.GROUPS.get(groupId);
 			Group group = groupRepository.findByGroupId(groupId);
 			String aesKey = group.getToken().getAesKey();

@@ -41,7 +41,7 @@ public class PushService {
 			Integer groupCount = groupService.getGroupCount(groupId);
 			messageVo.put("group_count", groupCount);// 当前在线人数
 			//GroupToken groupToken = GroupContext.GROUPS.get(groupId).getToken();
-			log.info(String.format("广播消息(%s)开始广播", groupId));
+			//log.info(String.format("广播消息(%s)开始广播", groupId));
 			Group findByGroupId = groupRepository.findByGroupId(groupId);
 			if(findByGroupId!=null) {
 				
@@ -59,7 +59,7 @@ public class PushService {
 					messageVo.setType("S");
 					messageVo.setName("系统消息");
 					messageVo.setMsg(msg);
-					log.info(String.format("广播消息(%s):%s", groupId,txt));
+					//log.info(String.format("广播消息(%s):%s", groupId,txt));
 					DynMessage.broadcast(groupId, com.xiaofeng.utils.string.StringUtils.toJson(messageVo));
 				}else {
 					throw new BaseException("操作失败,组标识无效!");

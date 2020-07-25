@@ -1,214 +1,216 @@
 <!DOCTYPE html>
 <html lang="zh_CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport"
-	content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
-<meta name="format-detection"
-	content="telephone=no,email=no,date=no,address=no">
-<title>聊天窗口</title>
-<script type="text/javascript" src="/js/CryptoJS-master/rollups/aes.js"></script>
-<script type="text/javascript"
-	src="/js/CryptoJS-master/components/mode-ecb.js"></script>
-<script type="text/javascript"
-	src="/js/CryptoJS-master/components/pad-nopadding.js"></script>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		  content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection"
+		  content="telephone=no,email=no,date=no,address=no">
+	<title>聊天窗口</title>
+	<script type="text/javascript" src="/js/CryptoJS-master/rollups/aes.js"></script>
+	<script type="text/javascript"
+			src="/js/CryptoJS-master/components/mode-ecb.js"></script>
+	<script type="text/javascript"
+			src="/js/CryptoJS-master/components/pad-nopadding.js"></script>
 
 
-<script src="/js/layui.all.js"></script>
+	<script src="/js/layui.all.js"></script>
 
-<link rel="stylesheet" href="/css/layui.css">
-<link rel="stylesheet" href="/css/layui.mobile.css">
-<link rel="stylesheet" type="text/css" href="/css/mui.min.css">
-<link rel="stylesheet" type="text/css" href="/css/mui.imageviewer.css">
-<link rel="stylesheet" type="text/css" href="/css/chat-im.css">
-<style type="text/css">
-.sys-message-info {
-	padding-left:0px;
-	width: 100%;
-	text-align: center;
-}
-.sys-message-info cite{
-	left:0px;
-	position:static;
-	text-align:center;
-}
-.sys-message-info cite i{
-	padding-left:0px;
-}
-.sys-message-div {
-	min-height:30px;
-	position: relative;
-}
-</style>
+<!--	<link rel="stylesheet" href="/css/layui.css">-->
+<!--	<link rel="stylesheet" href="/css/layui.mobile.css">-->
+	<link rel="stylesheet" type="text/css" href="/css/mui.min.css">
+	<link rel="stylesheet" type="text/css" href="/css/mui.imageviewer.css">
+	<link rel="stylesheet" type="text/css" href="/css/chat-im.css">
+	<style type="text/css">
+		.sys-message-info {
+			padding-left:0px;
+			width: 100%;
+			text-align: center;
+		}
+		.sys-message-info cite{
+			left:0px;
+			position:static;
+			text-align:center;
+		}
+		.sys-message-info cite i{
+			padding-left:0px;
+		}
+		.sys-message-div {
+			min-height:30px;
+			position: relative;
+		}
+	</style>
 </head>
 
 <body contextmenu="return false;">
-	
-	<!-- 聊天内容列表 -->
-	<div class="im-chat-main" style="height: 100%;">
+
+<!-- 聊天内容列表 -->
+<div class="im-chat-main" style="height: 100%;">
 	<header class="mui-bar mui-bar-nav">
-      <a class="mui-icon mui-icon-back returnIndex"></a>
-      <span id="title"></span>
-    </header>
-		<ul id="msg_list" style="margin-top: 50px;height: 90%;">
-			<!-- <div class='sys-message-div'><div class='im-chat-user sys-message-info'><cite><i id="sysMsg">系统消息:加入群聊</i></cite></div></div> -->
-		</ul>
+		<a class="mui-icon mui-icon-back returnIndex"></a>
+		<span id="title"></span>
+	</header>
+	<div class="layui-progress" lay-showPercent="true">
+		<div class="layui-progress-bar layui-bg-red" lay-percent="1/3"></div>
 	</div>
+	<ul id="msg_list" style="margin-top: 50px;height: 90%;">
+		<!-- <div class='sys-message-div'><div class='im-chat-user sys-message-info'><cite><i id="sysMsg">系统消息:加入群聊</i></cite></div></div> -->
+	</ul>
+</div>
 
-	<!-- 底部 -->
-	<footer>
-		<div class="footer-left">
-			<i class="mui-icon chat-icon chat-icon-voice"></i>
-		</div>
-		<div class="footer-center">
-			<textarea id="msg_text" type="text" class="input-text"></textarea>
-			<div class="mui-btn mui-btn-outlined voice-btn">按住 说话</div>
-		</div>
-		<div class="footer-right">
-			<i class="mui-icon chat-icon chat-icon-face"
-				style="margin-right: 0.2rem; padding-left: 10px;"></i> <i
-				class="mui-icon chat-icon chat-icon-add-more" style="width: 46px;"></i>
-			<div class="mui-btn mui-btn-success mui-hidden" id="sendMessage">发送</div>
-		</div>
-	</footer>
 
-	<!--表情内容-->
-	<div id="face-content" class="mui-content face-content">
-		<div id="Gallery" class="mui-slider">
-			<div class="mui-slider-group">
-				<div class="mui-slider-item">
-					<ul class="clear face-list">
-						<li title="[微笑]"><img src="/images/face/0.gif"></li>
-						<li title="[嘻嘻]"><img src="/images/face/1.gif"></li>
-						<li title="[哈哈]"><img src="/images/face/2.gif"></li>
-						<li title="[可爱]"><img src="/images/face/3.gif"></li>
-						<li title="[可怜]"><img src="/images/face/4.gif"></li>
-						<li title="[挖鼻]"><img src="/images/face/5.gif"></li>
-						<li title="[吃惊]"><img src="/images/face/6.gif"></li>
-						<li title="[害羞]"><img src="/images/face/7.gif"></li>
-						<li title="[挤眼]"><img src="/images/face/8.gif"></li>
-						<li title="[闭嘴]"><img src="/images/face/9.gif"></li>
-						<li title="[鄙视]"><img src="/images/face/10.gif"></li>
-						<li title="[爱你]"><img src="/images/face/11.gif"></li>
-						<li title="[泪]"><img src="/images/face/12.gif"></li>
-						<li title="[偷笑]"><img src="/images/face/13.gif"></li>
-						<li title="[亲亲]"><img src="/images/face/14.gif"></li>
-						<li title="[生病]"><img src="/images/face/15.gif"></li>
-						<li title="[太开心]"><img src="/images/face/16.gif"></li>
-						<li title="[白眼]"><img src="/images/face/17.gif"></li>
-						<li title="[右哼哼]"><img src="/images/face/18.gif"></li>
-						<li title="[左哼哼]"><img src="/images/face/19.gif"></li>
-						<li title="[嘘]"><img src="/images/face/20.gif"></li>
-					</ul>
-				</div>
-				<div class="mui-slider-item">
-					<ul class="clear face-list">
-						<li title="[衰]"><img src="/images/face/21.gif"></li>
-						<li title="[委屈]"><img src="/images/face/22.gif"></li>
-						<li title="[吐]"><img src="/images/face/23.gif"></li>
-						<li title="[哈欠]"><img src="/images/face/24.gif"></li>
-						<li title="[抱抱]"><img src="/images/face/25.gif"></li>
-						<li title="[怒]"><img src="/images/face/26.gif"></li>
-						<li title="[疑问]"><img src="/images/face/27.gif"></li>
-						<li title="[馋嘴]"><img src="/images/face/28.gif"></li>
-						<li title="[拜拜]"><img src="/images/face/29.gif"></li>
-						<li title="[思考]"><img src="/images/face/30.gif"></li>
-						<li title="[汗]"><img src="/images/face/31.gif"></li>
-						<li title="[困]"><img src="/images/face/32.gif"></li>
-						<li title="[睡]"><img src="/images/face/33.gif"></li>
-						<li title="[钱]"><img src="/images/face/34.gif"></li>
-						<li title="[失望]"><img src="/images/face/35.gif"></li>
-						<li title="[酷]"><img src="/images/face/36.gif"></li>
-						<li title="[色]"><img src="/images/face/37.gif"></li>
-						<li title="[哼]"><img src="/images/face/38.gif"></li>
-						<li title="[鼓掌]"><img src="/images/face/39.gif"></li>
-						<li title="[晕]"><img src="/images/face/40.gif"></li>
-						<li title="[悲伤]"><img src="/images/face/41.gif"></li>
-					</ul>
-				</div>
-				<div class="mui-slider-item">
-					<ul class="clear face-list">
-						<li title="[抓狂]"><img src="/images/face/42.gif"></li>
-						<li title="[黑线]"><img src="/images/face/43.gif"></li>
-						<li title="[阴险]"><img src="/images/face/44.gif"></li>
-						<li title="[怒骂]"><img src="/images/face/45.gif"></li>
-						<li title="[互粉]"><img src="/images/face/46.gif"></li>
-						<li title="[心]"><img src="/images/face/47.gif"></li>
-						<li title="[伤心]"><img src="/images/face/48.gif"></li>
-						<li title="[猪头]"><img src="/images/face/49.gif"></li>
-						<li title="[熊猫]"><img src="/images/face/50.gif"></li>
-						<li title="[兔子]"><img src="/images/face/51.gif"></li>
-						<li title="[ok]"><img src="/images/face/52.gif"></li>
-						<li title="[耶]"><img src="/images/face/53.gif"></li>
-						<li title="[good]"><img src="/images/face/54.gif"></li>
-						<li title="[NO]"><img src="/images/face/55.gif"></li>
-						<li title="[赞]"><img src="/images/face/56.gif"></li>
-						<li title="[来]"><img src="/images/face/57.gif"></li>
-						<li title="[弱]"><img src="/images/face/58.gif"></li>
-						<li title="[草泥马]"><img src="/images/face/59.gif"></li>
-						<li title="[神马]"><img src="/images/face/60.gif"></li>
-						<li title="[囧]"><img src="/images/face/61.gif"></li>
-						<li title="[浮云]"><img src="/images/face/62.gif"></li>
-					</ul>
-				</div>
-				<div class="mui-slider-item">
-					<ul class="clear face-list">
-						<li title="[给力]"><img src="/images/face/63.gif"></li>
-						<li title="[围观]"><img src="/images/face/64.gif"></li>
-						<li title="[威武]"><img src="/images/face/65.gif"></li>
-						<li title="[奥特曼]"><img src="/images/face/66.gif"></li>
-						<li title="[礼物]"><img src="/images/face/67.gif"></li>
-						<li title="[钟]"><img src="/images/face/68.gif"></li>
-						<li title="[话筒]"><img src="/images/face/69.gif"></li>
-						<li title="[蜡烛]"><img src="/images/face/70.gif"></li>
-						<li title="[蛋糕]"><img src="/images/face/71.gif"></li>
-						<li title="[二哈]"><img src="/images/face/72.gif"></li>
-					</ul>
-				</div>
+<!-- 底部 -->
+<footer>
+	<div class="footer-left">
+		<i class="mui-icon chat-icon chat-icon-voice"></i>
+	</div>
+	<div class="footer-center">
+		<textarea id="msg_text" type="text" class="input-text"></textarea>
+		<div class="mui-btn mui-btn-outlined voice-btn">按住 说话</div>
+	</div>
+	<div class="footer-right">
+		<i class="mui-icon chat-icon chat-icon-face"
+		   style="margin-right: 0.2rem; padding-left: 10px;"></i> <i
+			class="mui-icon chat-icon chat-icon-add-more" style="width: 46px;"></i>
+		<div class="mui-btn mui-btn-success mui-hidden" id="sendMessage">发送</div>
+	</div>
+</footer>
+
+<!--表情内容-->
+<div id="face-content" class="mui-content face-content">
+	<div id="Gallery" class="mui-slider">
+		<div class="mui-slider-group">
+			<div class="mui-slider-item">
+				<ul class="clear face-list">
+					<li title="[微笑]"><img src="/images/face/0.gif"></li>
+					<li title="[嘻嘻]"><img src="/images/face/1.gif"></li>
+					<li title="[哈哈]"><img src="/images/face/2.gif"></li>
+					<li title="[可爱]"><img src="/images/face/3.gif"></li>
+					<li title="[可怜]"><img src="/images/face/4.gif"></li>
+					<li title="[挖鼻]"><img src="/images/face/5.gif"></li>
+					<li title="[吃惊]"><img src="/images/face/6.gif"></li>
+					<li title="[害羞]"><img src="/images/face/7.gif"></li>
+					<li title="[挤眼]"><img src="/images/face/8.gif"></li>
+					<li title="[闭嘴]"><img src="/images/face/9.gif"></li>
+					<li title="[鄙视]"><img src="/images/face/10.gif"></li>
+					<li title="[爱你]"><img src="/images/face/11.gif"></li>
+					<li title="[泪]"><img src="/images/face/12.gif"></li>
+					<li title="[偷笑]"><img src="/images/face/13.gif"></li>
+					<li title="[亲亲]"><img src="/images/face/14.gif"></li>
+					<li title="[生病]"><img src="/images/face/15.gif"></li>
+					<li title="[太开心]"><img src="/images/face/16.gif"></li>
+					<li title="[白眼]"><img src="/images/face/17.gif"></li>
+					<li title="[右哼哼]"><img src="/images/face/18.gif"></li>
+					<li title="[左哼哼]"><img src="/images/face/19.gif"></li>
+					<li title="[嘘]"><img src="/images/face/20.gif"></li>
+				</ul>
 			</div>
-			<div class="mui-slider-indicator">
-				<div class="mui-indicator mui-active"></div>
-				<div class="mui-indicator"></div>
-				<div class="mui-indicator"></div>
-				<div class="mui-indicator"></div>
+			<div class="mui-slider-item">
+				<ul class="clear face-list">
+					<li title="[衰]"><img src="/images/face/21.gif"></li>
+					<li title="[委屈]"><img src="/images/face/22.gif"></li>
+					<li title="[吐]"><img src="/images/face/23.gif"></li>
+					<li title="[哈欠]"><img src="/images/face/24.gif"></li>
+					<li title="[抱抱]"><img src="/images/face/25.gif"></li>
+					<li title="[怒]"><img src="/images/face/26.gif"></li>
+					<li title="[疑问]"><img src="/images/face/27.gif"></li>
+					<li title="[馋嘴]"><img src="/images/face/28.gif"></li>
+					<li title="[拜拜]"><img src="/images/face/29.gif"></li>
+					<li title="[思考]"><img src="/images/face/30.gif"></li>
+					<li title="[汗]"><img src="/images/face/31.gif"></li>
+					<li title="[困]"><img src="/images/face/32.gif"></li>
+					<li title="[睡]"><img src="/images/face/33.gif"></li>
+					<li title="[钱]"><img src="/images/face/34.gif"></li>
+					<li title="[失望]"><img src="/images/face/35.gif"></li>
+					<li title="[酷]"><img src="/images/face/36.gif"></li>
+					<li title="[色]"><img src="/images/face/37.gif"></li>
+					<li title="[哼]"><img src="/images/face/38.gif"></li>
+					<li title="[鼓掌]"><img src="/images/face/39.gif"></li>
+					<li title="[晕]"><img src="/images/face/40.gif"></li>
+					<li title="[悲伤]"><img src="/images/face/41.gif"></li>
+				</ul>
+			</div>
+			<div class="mui-slider-item">
+				<ul class="clear face-list">
+					<li title="[抓狂]"><img src="/images/face/42.gif"></li>
+					<li title="[黑线]"><img src="/images/face/43.gif"></li>
+					<li title="[阴险]"><img src="/images/face/44.gif"></li>
+					<li title="[怒骂]"><img src="/images/face/45.gif"></li>
+					<li title="[互粉]"><img src="/images/face/46.gif"></li>
+					<li title="[心]"><img src="/images/face/47.gif"></li>
+					<li title="[伤心]"><img src="/images/face/48.gif"></li>
+					<li title="[猪头]"><img src="/images/face/49.gif"></li>
+					<li title="[熊猫]"><img src="/images/face/50.gif"></li>
+					<li title="[兔子]"><img src="/images/face/51.gif"></li>
+					<li title="[ok]"><img src="/images/face/52.gif"></li>
+					<li title="[耶]"><img src="/images/face/53.gif"></li>
+					<li title="[good]"><img src="/images/face/54.gif"></li>
+					<li title="[NO]"><img src="/images/face/55.gif"></li>
+					<li title="[赞]"><img src="/images/face/56.gif"></li>
+					<li title="[来]"><img src="/images/face/57.gif"></li>
+					<li title="[弱]"><img src="/images/face/58.gif"></li>
+					<li title="[草泥马]"><img src="/images/face/59.gif"></li>
+					<li title="[神马]"><img src="/images/face/60.gif"></li>
+					<li title="[囧]"><img src="/images/face/61.gif"></li>
+					<li title="[浮云]"><img src="/images/face/62.gif"></li>
+				</ul>
+			</div>
+			<div class="mui-slider-item">
+				<ul class="clear face-list">
+					<li title="[给力]"><img src="/images/face/63.gif"></li>
+					<li title="[围观]"><img src="/images/face/64.gif"></li>
+					<li title="[威武]"><img src="/images/face/65.gif"></li>
+					<li title="[奥特曼]"><img src="/images/face/66.gif"></li>
+					<li title="[礼物]"><img src="/images/face/67.gif"></li>
+					<li title="[钟]"><img src="/images/face/68.gif"></li>
+					<li title="[话筒]"><img src="/images/face/69.gif"></li>
+					<li title="[蜡烛]"><img src="/images/face/70.gif"></li>
+					<li title="[蛋糕]"><img src="/images/face/71.gif"></li>
+					<li title="[二哈]"><img src="/images/face/72.gif"></li>
+				</ul>
 			</div>
 		</div>
+		<div class="mui-slider-indicator">
+			<div class="mui-indicator mui-active"></div>
+			<div class="mui-indicator"></div>
+			<div class="mui-indicator"></div>
+			<div class="mui-indicator"></div>
+		</div>
 	</div>
+</div>
 
-	<!-- 更多弹出内容 -->
-	<div class="mui-content more-content">
+<!-- 更多弹出内容 -->
+<div class="mui-content more-content">
 	<!-- <input id="upload" type="file" accept="image/*" class="abc"> -->
-		<ul class="mui-table-view mui-grid-view mui-grid-9">
-			<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"
-				data-type="images"><span class="mui-icon mui-icon-image" id="test1"></span>
-				<div class="mui-media-body">图片</div></li>
-			<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-				<span class="mui-icon mui-icon-eye"></span>
-				<div class="mui-media-body">小视频</div>
-			</li>
-			<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-				<span class="mui-icon mui-icon-location"></span>
-				<div class="mui-media-body">位置</div>
-			</li>
-			<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
-				<span class="mui-icon mui-icon-contact"></span>
-				<div class="mui-media-body">名片</div>
-			</li>
-		</ul>
-	</div>
-	<input type="hidden" id="groupidinput">
+	<ul class="mui-table-view mui-grid-view mui-grid-9">
+		<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3"
+			data-type="images"><span class="mui-icon mui-icon-image" id="file"></span>
+			<div class="mui-media-body">图片</div></li>
+		<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+			<span class="mui-icon mui-icon-eye"></span>
+			<div class="mui-media-body">小视频</div>
+		</li>
+		<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+			<span class="mui-icon mui-icon-location"></span>
+			<div class="mui-media-body">位置</div>
+		</li>
+		<li class="mui-table-view-cell mui-media mui-col-xs-3 mui-col-sm-3">
+			<span class="mui-icon mui-icon-contact"></span>
+			<div class="mui-media-body">名片</div>
+		</li>
+	</ul>
+</div>
+<input type="hidden" id="groupidinput">
 </body>
 <script src="/js/jquery-2.2.4.min.js"></script>
 <script src="/js/mui.js"></script>
 <script src="/js/mui.imageViewer.js"></script>
-<!-- <script src="/js/mui.zoom.js"></script>
-<script src="/js/mui.previewimage.js"></script> -->
 <link href="/css/zoom.css" rel="stylesheet">
 <script  type="text/javascript" src="/js/zoom.js"></script>
 <script type="text/javascript">
 	var faces = new Map();
 
-	
+
 	var msgList = document.getElementById("msg_list");
 	var boxMsgText = document.getElementById("msg_text");
 	mui.init();
@@ -234,33 +236,33 @@
 
 		//输入框事件绑定
 		$("#msg_text").on({"keydown" : function(e) {
-								var that = this;
-								if (e.ctrlKey && e.keyCode == 13) {
-									//sendMsg(that.val(), 0);
-									send(imContent($("#msg_text").val()
-											|| '&nbsp;'),"T");
-									//清空
-									$("#msg_text").val('');
-									showSendBtn();
+				var that = this;
+				if (e.ctrlKey && e.keyCode == 13) {
+					//sendMsg(that.val(), 0);
+					send(imContent($("#msg_text").val()
+							|| '&nbsp;'),"T");
+					//清空
+					$("#msg_text").val('');
+					showSendBtn();
 
-									//滚动条到最底部(还有其他方法吗？)
-									document.getElementById("msg_list").scrollTop = msgList.scrollHeight
-											+ msgList.offsetHeight;
-								}
-							},
-							"input propertychange" : function(e) {
-								showSendBtn();
-							},
-							"focus" : function() {
-								if ($(".more-content").css('display') != 'none') {
-									$(".more-content").hide();
-									$("footer").css("bottom", "0");
-									$(".im-chat-main").css("padding-bottom",
-											"50px");
-									document.getElementById("msg_list").scrollTop = msgList.scrollHeight
-											+ msgList.offsetHeight;
-								}
-							}
+					//滚动条到最底部(还有其他方法吗？)
+					document.getElementById("msg_list").scrollTop = msgList.scrollHeight
+							+ msgList.offsetHeight;
+				}
+			},
+			"input propertychange" : function(e) {
+				showSendBtn();
+			},
+			"focus" : function() {
+				if ($(".more-content").css('display') != 'none') {
+					$(".more-content").hide();
+					$("footer").css("bottom", "0");
+					$(".im-chat-main").css("padding-bottom",
+							"50px");
+					document.getElementById("msg_list").scrollTop = msgList.scrollHeight
+							+ msgList.offsetHeight;
+				}
+			}
 		});
 
 		//语音按钮事件
@@ -433,14 +435,14 @@
 		$(".mui-icon-contact").on("tap", function() {
 			mui.toast("该功能正在开发中，敬请期待");
 		});
-		
+
 		$(".returnIndex").on("tap", function() {
 			mui.openWindow({
 				url : 'chat_index.html',
 				id : 'index'
 			});
 		});
-		
+
 		//点击消息列表，关闭键盘
 		$("#msg_list")
 				.on(
@@ -484,7 +486,7 @@
 
 							//追加内容
 							//msgList.insertAdjacentHTML('beforeEnd', html);
-							
+
 							send(imContent($("#msg_text").val()|| '&nbsp;'),"T");
 
 							//清空
@@ -519,7 +521,7 @@
 			result.text = str;
 		} else {
 			result = [ val.substring(0, obj.selectionStart), str,
-					val.substr(obj.selectionEnd) ];
+				val.substr(obj.selectionEnd) ];
 			obj.focus();
 			obj.value = result.join('');
 		}
@@ -531,8 +533,8 @@
 		var html = function(end) {
 			return new RegExp(
 					'\\n*\\['
-							+ (end || '')
-							+ '(pre|div|p|table|thead|th|tbody|tr|td|ul|li|ol|li|dl|dt|dd|h2|h3|h4|h5)([\\s\\S]*?)\\]\\n*',
+					+ (end || '')
+					+ '(pre|div|p|table|thead|th|tbody|tr|td|ul|li|ol|li|dl|dt|dd|h2|h3|h4|h5)([\\s\\S]*?)\\]\\n*',
 					'g');
 		};
 		content = (content || '')
@@ -554,7 +556,7 @@
 									+ (text || href) + '</a>';
 						}).replace(html(), '\<$1 $2\>').replace(html('/'),
 						'\</$1\>') //转移代码
-				.replace(/\n/g, '<br>') //转义换行 
+				.replace(/\n/g, '<br>') //转义换行
 		return content;
 	}
 	/**
@@ -591,7 +593,7 @@
 				var groupDetails = getGroupInfo(qrCode);
 				console.log("准备创建连接",groupDetails);
 				socketInit(groupDetails.websocket);
-				
+
 			}else{
 				mui.toast("口令无效");
 			}
@@ -599,28 +601,63 @@
 		document.querySelector('.mui-popup-input input').type='password'
 	})
 </script>
+<script src="js/upload.js"></script>
 <script>
-layui.use('upload', function(){
-  var upload = layui.upload;
-  //执行实例
-  var uploadInst = upload.render({
-    elem: '#test1' //绑定元素
-    ,url: '/file/upload' //上传接口
-    ,acceptMime: 'image/*'
-    ,data:{
-    	"groupId":function(){
-    	    return $('#groupidinput').val();
-    	  },
-    }
-    ,done: function(res){
-      //上传完毕回调
-    	console.log("文件上传调用地址:", res.content);
-    	send(res.content,"P");
-    }
-    ,error: function(){
-      //请求异常回调
-    }
-  });
-});
+	var element;
+	layui.use('element', function(){
+		element = layui.element;
+	});
+	layui.use('upload', function(){
+		var upload = layui.upload;
+		var layer = layui.layer;
+
+		//执行实例
+		var uploadInst = upload.render({
+			elem: '#file' //绑定元素
+			,url: '/file/t' //上传接口
+			,accept:'images'
+			,acceptMime: 'image/*'
+			,exts:'jpg|png|gif|bmp|jpeg'
+			,size:'10240'
+			,data:{
+				"groupId":function(){
+					return $('#groupidinput').val();
+				},
+			}
+			,progress: function(n, elem){
+				var percent = n + '%' //获取进度百分比
+				console.log("进度",percent)
+				element.progress('demo', percent); //可配合 layui 进度条元素使用
+
+				//以下系 layui 2.5.6 新增
+				console.log(elem); //得到当前触发的元素 DOM 对象。可通过该元素定义的属性值匹配到对应的进度条。
+			}
+			//选择文件后回调函数
+			,choose: function(obj){
+				//var files = obj.pushFile();
+				//var file = files[-1];
+				//将每次选择的文件追加到文件队列
+				obj.preview(function(index, file, result){
+					UpladFile("",file);
+				});
+
+			}
+			//上传前回调
+			,before:function (obj) {
+				layer.load();
+				console.log("开始执行文件上传")
+			}
+			,done: function(res){
+				//上传完毕回调
+				console.log("文件上传调用地址:", res.content);
+				send(res.content,"P");
+				layer.closeAll('loading'); //关闭loading
+			}
+			,error: function(){
+				//请求异常回调
+				layer.closeAll('loading'); //关闭loading
+			}
+		});
+	});
 </script>
 </html>
