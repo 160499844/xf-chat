@@ -296,6 +296,7 @@ function getGroupInfo(code){
 			key = CryptoJS.enc.Utf8.parse(content.key);
 			console.log("key:",key);
 			groupId = content.n;
+			userName = content.userName;
 			$("#groupidinput").val(groupId);
 			//修改groupId
 		}

@@ -1,6 +1,8 @@
 package com.xiaofeng.web.repository;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,10 +97,18 @@ public class GroupRepository {
 //			log.info(group.toString());
 //		}
 //		log.info("清空全部群组信息完毕!");
-		Query query = Query.query(Criteria.where("createDt").lt(new Date()));
-		Update update = new Update();
-		update.set("currentCount", 0);
-		mongoTemplate.upsert(query, update, "chat_group");
+		//查询所有的组
+		List<Group> all = mongoTemplate.findAll(Group.class);
+		Iterator<Group> iterator = all.iterator();
+		while (iterator.hasNext()){
+			Group next = iterator.next();
+			String id = next.getGroupId();
+			Query query = Query.query(Criteria.where("groupId").is(id));
+			Update update = new Update();
+			update.set("currentCount", 0);
+			mongoTemplate.upsert(query, update, "chat_group");
+		}
+
 		log.info("小组成员初始化!");
 	}
 }

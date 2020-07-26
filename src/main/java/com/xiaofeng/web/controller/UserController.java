@@ -50,6 +50,7 @@ public class UserController {
 	public Result<String> updateInfo(HttpServletRequest request,String userName) {
 		HttpSession session = request.getSession();
 		session.setAttribute(UtilConstants.SESSION_USER_NAME, userName);
+
 		return new Result<String>();
 	}
 	

@@ -1,6 +1,8 @@
 package com.xiaofeng.web.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,5 +80,27 @@ public class UserService {
 	 */
 	public void updateSessionId(UserEntity user) {
 		userRepository.editCol(user.getUserId(),"sessionId",user.getSessionId());
+	}
+
+	/**
+	 * 更新字段
+	 * @param userId
+	 * @param key
+	 * @param value
+	 */
+	public void UpdateKeyValues(String userId,String key,String value){
+		userRepository.editCol(userId,key,value);
+	}
+
+	/**
+	 * 更新用户对象
+	 * @param user
+	 */
+	public void updateUser(UserEntity user) {
+		userRepository.editCol(user.getUserId(),"sessionId",user.getSessionId());
+		Map<String ,Object> map = new HashMap<>();
+		map.put("groupId",user.getGroupId());
+		map.put("userName",user.getUserName());
+		userRepository.editCols(user.getUserId(),map);
 	}
 }

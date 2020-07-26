@@ -2,6 +2,7 @@ package com.xiaofeng.web.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.ExecutableRemoveOperation.ExecutableRemove;
@@ -99,7 +100,22 @@ public class UserRepository {
 		update.set(key, value);
 		mongoTemplate.upsert(query, update, "chat_user");
 	}
-	
+
+	/**
+	 * 更新字段
+	 * @param userId
+	 * @param parames
+	 */
+	public void editCols(String userId, Map<String,Object> parames) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("userId").is(userId));
+		Update update = new Update();
+		for(String key : parames.keySet()){
+			update.set(key, parames.get(key));
+		}
+
+		mongoTemplate.upsert(query, update, "chat_user");
+	}
 	 /* 
 	 * @Title: clearGroups   
 	 * @Description: 清除全部用户信息

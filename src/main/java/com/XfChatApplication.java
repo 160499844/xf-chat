@@ -30,8 +30,8 @@ public class XfChatApplication {
 	}
 	
 	
-	@Bean
-	public ServerEndpointExporter serverEndpointExporter() {
-	   return new ServerEndpointExporter();
-	}
+//	@Bean
+//	public ServerEndpointExporter serverEndpointExporter() {
+//	   return new ServerEndpointExporter();
+//	}
 }

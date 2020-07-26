@@ -50,6 +50,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 	//读到客户端的内容并且向客户端去写内容
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
+		long startTime = System.currentTimeMillis();
 		// 获取前端传递信息
 		String userId = ctx.channel().id().asLongText();
 		String message = msg.text();
@@ -83,6 +84,8 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 			String jsonString = com.xiaofeng.utils.string.StringUtils.toJson(messageVo);
 			DynMessage.broadcast(user.getGroupId(), jsonString);
 		}
+		long endTime = System.currentTimeMillis();    //获取结束时间
+		log.info("用户发送消息消耗时间：" + (endTime - startTime) + "ms");    //输出程序运行时间
 	}
 
 	// 用户加入
@@ -94,7 +97,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		String ip = localAddress.toString().replace("/", "");
 		String userId = ctx.channel().id().asLongText();
 		// 打印出channel唯一值，asLongText方法是channel的id的全名
-		log.info(String.format("连接用户:%s,ip:%s", userId, ip));
+		//log.info(String.format("连接用户:%s,ip:%s", userId, ip));
 		
 		UserService userService = SpringBeanUtil.getBean(UserService.class);
 		UserEntity user = new UserEntity();

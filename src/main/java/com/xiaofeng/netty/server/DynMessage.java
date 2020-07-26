@@ -37,7 +37,8 @@ public class DynMessage {
 	 * @throws
 	 */
 	public static void broadcast(String groupId,String msg) {
-		log.info("开始广播");
+		long startTime = System.currentTimeMillis();
+		//log.info("开始广播");
 		Set<Map<String, ChannelHandlerContext>> groups = null;
 		if(StringUtils.isEmpty(groupId)) {
 			//暂不支持
@@ -46,13 +47,15 @@ public class DynMessage {
 			groups = GroupContext.USER_GROUP.get(groupId);
 		}
 		//这种方式效率较高
-		Iterator<Map<String, ChannelHandlerContext>> iterator = groups.iterator();
-		while(iterator.hasNext()){
-			Map<String, ChannelHandlerContext> group = iterator.next();
-			for(ChannelHandlerContext channelHandlerContext: group.values()) {
-				//ChannelHandlerContext channelHandlerContext = map.get(key);
-				channelHandlerContext.channel().writeAndFlush(
-						new TextWebSocketFrame(msg));
+		synchronized (groups){
+			Iterator<Map<String, ChannelHandlerContext>> iterator = groups.iterator();
+			while(iterator.hasNext()){
+				Map<String, ChannelHandlerContext> group = iterator.next();
+				for(ChannelHandlerContext channelHandlerContext: group.values()) {
+					//ChannelHandlerContext channelHandlerContext = map.get(key);
+					channelHandlerContext.channel().writeAndFlush(
+							new TextWebSocketFrame(msg));
+				}
 			}
 		}
 		/*for (Map<String, ChannelHandlerContext> map : groups) {
@@ -64,12 +67,14 @@ public class DynMessage {
 						new TextWebSocketFrame(msg));
 			}
 		}*/
-		log.info("广播完毕");
+		//log.info("广播完毕");
+		long endTime = System.currentTimeMillis();    //获取结束时间
+		log.info("广播消息消耗时间：" + (endTime - startTime)/1000 + "ms,当前群聊人数:" + groups.size());    //输出程序运行时间
 	}
 	/**
 	 * 
 	 * @param groupId
-	 * @param userId
+	 * @param excludeUserId 排除的用户id，该用户不接受广播
 	 * @param msg
 	 */
 	public static void broadcast(String groupId,String excludeUserId,String msg) {

@@ -21,7 +21,7 @@ import com.xiaofeng.websocket.utils.MsgUtils;
  * @author xiaofeng
  * websocket主线程
  */
-@ServerEndpoint("/websocket/{groupId}")
+//@ServerEndpoint("/websocket/{groupId}")
 @Component
 public class WebSocket {
  

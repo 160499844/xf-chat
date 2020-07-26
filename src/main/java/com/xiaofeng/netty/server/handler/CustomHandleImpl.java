@@ -54,7 +54,7 @@ public class CustomHandleImpl implements CustomHandle {
 //			pushService.pushMessage(user.getGroupId(), String.format("欢迎%s加入群组", user.getUserName()));
 //		}
 		
-		firstJoinGroup(user.getSessionId(), messageVo.getSessionId(), user, ctx);
+		firstJoinGroup(user.getSessionId(), messageVo, user, ctx);
 		/**
 		 * writeAndFlush接收的参数类型是Object类型，但是一般我们都是要传入管道中传输数据的类型，比如我们当前的demo
 		 * 传输的就是TextWebSocketFrame类型的数据
@@ -70,13 +70,16 @@ public class CustomHandleImpl implements CustomHandle {
 	/**
 	 * 第一次加入群聊
 	 */
-	private void firstJoinGroup(String sessionId,String mSessionId,UserEntity user, ChannelHandlerContext ctx) {
+	private void firstJoinGroup(String sessionId,MessageVo messageVo,UserEntity user, ChannelHandlerContext ctx) {
+		String mSessionId = messageVo.getSessionId();
 		if(StringUtils.isEmpty(sessionId) && StringUtils.isNotEmpty(mSessionId)) {
 			//第一次加入群聊
 			//user.setSessionId(messageVo.getSessionId());
 			user.setSessionId(mSessionId);
+			user.setUserName(messageVo.getName());
+			user.setGroupId(messageVo.getGroupId());
 			UserService userService = SpringBeanUtil.getBean(UserService.class);
-			userService.updateSessionId(user);
+			userService.updateUser(user);
 			//加入小组
 			GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
 			UserInfoContext.sessionMap.put(user.getUserId(),mSessionId);

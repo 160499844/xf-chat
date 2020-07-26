@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.xiaofeng.web.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +48,8 @@ public class GroupController {
 	private GroupRepository groupRepository;
 	@Autowired
 	private RedisUtil redisUtil;
+	@Autowired
+	private UserService userService;
 	
 
 	/*@RequestMapping(value = "/test")
@@ -63,8 +66,6 @@ public class GroupController {
 	}*/
 	/**
 	 * 校验群 组密码
-	 * 
-	 * @param groupId
 	 * @param password
 	 * @return
 	 */
@@ -96,6 +97,10 @@ public class GroupController {
 			c = true;
 			//添加标志
 			session.setAttribute(UtilConstants.SESSION_GROUP_PASSWORD, password);
+			//更新用户信息
+			//String userName = (String) session.getAttribute(UtilConstants.SESSION_USER_NAME);
+			//userService.UpdateKeyValues(userName,"groupId",groupId);
+			//userService.UpdateKeyValues(userName,"userName",userName);
 		}
 		//返回结果
 		return new Result<Boolean>(c);
@@ -167,12 +172,16 @@ public class GroupController {
 			GroupToken groupToken = group.getToken();
 			//验证密码
 			Object password = session.getAttribute(UtilConstants.SESSION_GROUP_PASSWORD);
-			if(password==null || !groupToken.getKey().equals(password.toString())){
+			Object userNameObj = session.getAttribute(UtilConstants.SESSION_USER_NAME);
+
+
+			if(password==null || userNameObj==null || !groupToken.getKey().equals(password.toString())){
 				throw new BaseException("没有权限进入");
 			}
 			// 返回小组公钥
 			map.put("key", groupToken.getAesKey());
 			map.put("n", groupId);
+			map.put("userName",userNameObj.toString());
 			map.put("websocket", projectWebSocketPattern);
 			session.setAttribute(UtilConstants.SESSION_GROUP_AES_KEY, groupId);
 			// 返回小组aeskey

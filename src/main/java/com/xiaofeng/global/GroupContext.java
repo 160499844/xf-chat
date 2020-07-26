@@ -87,7 +87,7 @@ public class GroupContext {
 	 * @return: void      
 	 * @throws
 	 */
-	public synchronized static void groupAddUser(String groupId, String userId, ChannelHandlerContext ctx) {
+	public static void groupAddUser(String groupId, String userId, ChannelHandlerContext ctx) {
 		Users<Map<String, ChannelHandlerContext>> groupList = GroupContext.getGroup(groupId);
 		Set<Map<String, ChannelHandlerContext>> tempList = new HashSet<Map<String, ChannelHandlerContext>>();
 		for (Map<String, ChannelHandlerContext> allUser : groupList) {
@@ -101,7 +101,9 @@ public class GroupContext {
 		// 更新组成员
 		if (tempList.size() > 0) {
 			//将临时小组加入正式小组中
-			groupList.addAll(tempList);
+			synchronized(groupList){
+				groupList.addAll(tempList);
+			}
 		}
 	}
 }
