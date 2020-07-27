@@ -42,7 +42,7 @@ public class AESUtils {
 
 	//private static String key = "1538663015386630";
 	//private static String key = generateDesKey();
-
+	public static final String key = generateDesKey();
 	/**
 	 * AES 解密操作
 	 *

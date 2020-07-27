@@ -139,6 +139,24 @@ function updateGroupInfo(messageVo){
 	title += "("+messageVo.info.group_count+")";
 	$("#title").html(title);
 }
+function getPic(fileName){
+	var base64;
+	$.ajax({
+		"async" : false,
+		"url" : "file/img",
+		"type" : "GET",
+			"data" : {
+				"fileName":fileName
+				
+			},
+		"dataType" : "json",
+		"success" : function(data) {
+			var result = data.content;
+			base64 = result;
+		}
+	});
+	return base64;
+}
 /**
  * 组装消息组件
  * 
@@ -171,7 +189,9 @@ function messageElement(messageVo) {
 	if ("T" === type) {
 		html += msg;
 	}else if("P" === type){
-		html += "<img data-action='zoom' src='"+msg+"'/>"
+		//请求图片地址
+		var bs64 = getPic(msg);
+		html += "<img data-action='zoom' src='"+bs64+"'/>"
 		
 		//html += "<img  data-preview-src='' data-preview-group='1' src='"+messageVo.msg+"'/>"
 	}else if("S" === type){

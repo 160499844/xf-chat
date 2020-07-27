@@ -11,6 +11,7 @@ import com.xiaofeng.utils.aes.AESUtils;
  * @date:   2020年7月15日 上午11:49:12
  */
 public class EncryptMessage {
+	
 	/**
 	 * @throws InvalidAlgorithmParameterException 
 	 * 

@@ -1,5 +1,10 @@
 package com.xiaofeng.web.controller;
 
+import java.security.InvalidAlgorithmParameterException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,14 +16,14 @@ import com.xiaofeng.global.UtilConstants;
 import com.xiaofeng.utils.EncryptMessage;
 import com.xiaofeng.utils.RedisUtil;
 import com.xiaofeng.utils.Result;
+import com.xiaofeng.utils.SessionUtils;
+import com.xiaofeng.utils.aes.AESUtils;
 import com.xiaofeng.utils.exception.BaseException;
 import com.xiaofeng.utils.file.FileUploadUtils;
+import com.xiaofeng.utils.file.ImgBase64;
 import com.xiaofeng.web.repository.GroupRepository;
 
 import lombok.extern.slf4j.Slf4j;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * 文件处理
@@ -61,22 +66,18 @@ public class FileController {
 		String tagetUrl = "";
 		//加密链接
 		try {
-			HttpSession session = request.getSession();
-			Object grouIdObj = session.getAttribute(UtilConstants.SESSION_GROUP_ID);
-			if(grouIdObj==null){
-				throw new BaseException("当前会话已经过期");
-			}else{
-				groupId = grouIdObj.toString();
-			}
-			//Group group = GroupContext.GROUPS.get(groupId);
+			groupId = SessionUtils.getValue(request, UtilConstants.SESSION_GROUP_ID);
 			Group group = groupRepository.findByGroupId(groupId);
 			String aesKey = group.getToken().getAesKey();
-			tagetUrl = EncryptMessage.encrypt(urlString, aesKey);
+			tagetUrl = EncryptMessage.encrypt(urlString, AESUtils.key);//系统加密
+			log.info("文件上传系统加密路径:"+tagetUrl);
+			tagetUrl = EncryptMessage.encrypt(tagetUrl, aesKey);//正常加密
+			log.info("文件上传正常加密路径:"+tagetUrl);
 			String locPath = uploadPath + sepa + urlString;
-			locPath = EncryptMessage.encrypt(locPath, aesKey);
+			//locPath = EncryptMessage.encrypt(locPath, aesKey);
 			//存到redis中
 			redisUtil.set(tagetUrl, locPath ,UtilConstants.REDIS_TIMEOUT);
-			log.info("文件保存成功");
+			log.info("文件上传真实路径:"+locPath);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -84,4 +85,27 @@ public class FileController {
 		return new Result(tagetUrl);
 	}
 	
+	/**
+	 * @throws InvalidAlgorithmParameterException 
+	 * 
+	 * @Title: dowload   
+	 * @Description: 下载文件
+	 * @param: @param response      
+	 * @return: void      
+	 * @throws
+	 */
+	@RequestMapping("img")
+	public Result<String> dowload(String fileName, HttpServletRequest request,HttpServletResponse response) throws InvalidAlgorithmParameterException {
+		/*String groupId;
+		groupId = SessionUtils.getValue(request, UtilConstants.SESSION_GROUP_ID);
+		Group group = groupRepository.findByGroupId(groupId);
+		String aesKey = group.getToken().getAesKey();*/
+		fileName = EncryptMessage.decrypt(fileName, AESUtils.key);
+		log.info("图片解密:"+ fileName);
+		fileName = uploadPath + sepa + fileName;
+		log.info("图片路径:" + fileName);
+		String imgToBase64 = ImgBase64.imgToBase64(fileName);
+		return new Result<String>(imgToBase64);
+		//DownloadUtils.download(fileName, fileName, response);
+	}
 }

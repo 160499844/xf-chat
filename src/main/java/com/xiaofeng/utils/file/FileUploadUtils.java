@@ -85,7 +85,7 @@ public class FileUploadUtils {
 			this.size = file.getSize();
 			this.uploadFile = file;
 			// 获取文件的后缀名
-			this.suffix = this.name.substring(this.name.lastIndexOf("."));
+			this.suffix = getSuffixUtils(this.name);
 			// 默认文件小小限制
 			this.minSize = 0L;
 			this.maxSize = 50 * 1025 * 1024L;
@@ -94,6 +94,17 @@ public class FileUploadUtils {
 			 * ".png";
 			 */
 		}
+	}
+	/**
+	 * @Title: getSuffixUtils   
+	 * @Description: 获取文件后缀名
+	 * @param: @return      
+	 * @return: String      
+	 * @throws
+	 */
+	public String getSuffixUtils(String name) {
+		name = name.substring(name.lastIndexOf("."));
+		return name;
 	}
 
 	/**
