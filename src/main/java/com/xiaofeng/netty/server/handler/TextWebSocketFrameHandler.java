@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.xiaofeng.global.UtilConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -49,14 +50,13 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 	//接收客户端发送的消息
 	//读到客户端的内容并且向客户端去写内容
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) {
 		long startTime = System.currentTimeMillis();
 		// 获取前端传递信息
 		String userId = ctx.channel().id().asLongText();
 		String message = msg.text();
 		boolean isBroadCase = true;
 		// 更新用户信息
-		//UserToken user = UserInfoContext.getUser(userId);
 		UserService userService = SpringBeanUtil.getBean(UserService.class);
 		UserEntity user = userService.getUserByUserId(userId);
 		MessageVo messageVo ;
@@ -68,10 +68,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 			log.error("消息解密失败{}",e);
 			e.printStackTrace();
 		}
-		
-		//获取小组消息解密key
-		//GroupToken groupToken = GroupContext.GROUP_KEYS.get(messageVo.getGroupId());
-		//messageVo.setMsg(EncryptMessage.decrypt(messageVo.getMsg(),groupToken.getAesKey()));
+
 		
 
 		// 广播给组成员
@@ -91,7 +88,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 	// 用户加入
 	// 每个channel都有一个唯一的id值
 	@Override
-	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+	public void handlerAdded(ChannelHandlerContext ctx){
 		SocketAddress localAddress = ctx.channel().localAddress();
 		
 		String ip = localAddress.toString().replace("/", "");
@@ -105,13 +102,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		user.setUserId(userId);
 		userService.saveUser(user);
 		
-		// UserInfoContext.USER_SESSION.put(userId, ctx);
 
-	/*	UserToken user = UserInfoContext.getUser(userId);
-		user.setIp(ip);
-		user.setUserId(userId);
-		UserInfoContext.addUser(userId, user);*/
-		
 	}
 
 	/**

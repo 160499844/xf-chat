@@ -27,7 +27,7 @@ public class MessageVo {
 	private String msg;//消息实体
 	private String content ;//返回内容
 	private String groupId;//群组id
-	private String name;//昵称
+	private String name;//发送用户昵称
 	private String type;//消息类型 T-文本 P-图片
 	private String dateTime = DateUtils.getNowDateToString();//消息发送时间
 	private String time = DateUtils.getNowDateToString("HH:mm:ss");;//消息发送时间
