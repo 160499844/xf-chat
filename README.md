@@ -10,7 +10,7 @@
 
 #### 软件架构
 软件架构说明
-springboot2.3、netty、websocket
+springboot、netty、websocket、rabbitmq
 
 #### 安装教程
 

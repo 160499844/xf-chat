@@ -11,16 +11,13 @@ import java.util.Date;
 发送者
  */
 @Component
-public class HelloSender {
+public class MessageSender {
 
     @Autowired
     private AmqpTemplate rabbitTemplate;
 
-    public void send() {
-        String s = new Date().toString();
-        String context = "hello " + s;
-        System.out.println("Sender : " + context);
-        this.rabbitTemplate.convertAndSend("hello", context);
+    public void send(Object msg) {
+        this.rabbitTemplate.convertAndSend("hello", msg);
     }
 
 }

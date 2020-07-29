@@ -1,5 +1,6 @@
 package com.xiaofeng.utils;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,7 +15,7 @@ import lombok.Data;
  *
  */
 @Data
-public class MessageVo {
+public class MessageVo implements Serializable {
 	/**
 	 * var obj = {
 				"msg" : message,

@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import com.xiaofeng.queue.HelloSender;
+import com.xiaofeng.queue.MessageSender;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +12,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class RabbitMqHelloTest {
 
     @Autowired
-    private HelloSender helloSender;
+    private MessageSender helloSender;
 
     @Test
     public void hello() throws Exception {
-        helloSender.send();
+        helloSender.send("");
     }
 
 }
