@@ -6,19 +6,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+
+/**
+ * 接收触发事件队列中的事件
+ */
 @Slf4j
 @Component
-@RabbitListener(queues = "hello")
-public class MessageReceiver {
+@RabbitListener(queues = "event_queue")
+public class EventReceiver {
 
     /**
-     * 接收消息
-     * @param messageVo 收到的消息
+     * 接收
+     * @param messageVo 收到的事件
      */
     @RabbitHandler
     public void process(MessageVo messageVo) {
         String jsonString = com.xiaofeng.utils.string.StringUtils.toJson(messageVo);
-        log.info("消息队列收到消息  : " + jsonString);
+        log.info("消息队列收到触发事件  : " + jsonString);
         DynMessage.broadcast(messageVo.getGroupId(), jsonString);
     }
 

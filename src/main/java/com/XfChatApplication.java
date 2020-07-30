@@ -2,6 +2,7 @@ package com;
 
 import java.net.InetSocketAddress;
 
+import com.xiaofeng.queue.MessageRunnable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,6 +25,7 @@ public class XfChatApplication {
 		//init();
 		 //启动服务端
         NettyServer nettyServer = new NettyServer();
+        new Thread(new MessageRunnable()).start();
         long endTime = System.currentTimeMillis();    //获取结束时间
         System.out.println("启动消耗时间:" + ((endTime - startTime)/1000) + "秒");    //输出程序运行时间
         nettyServer.start(new InetSocketAddress("0.0.0.0", 8900));

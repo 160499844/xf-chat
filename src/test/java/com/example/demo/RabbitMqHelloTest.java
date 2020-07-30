@@ -16,7 +16,7 @@ public class RabbitMqHelloTest {
 
     @Test
     public void hello() throws Exception {
-        helloSender.send("");
+        helloSender.sendMsg("");
     }
 
 }

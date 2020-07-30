@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.xiaofeng.entity.UserEntity;
 import com.xiaofeng.global.UserInfoContext;
-import com.xiaofeng.netty.server.DynMessage;
 import com.xiaofeng.utils.MessageVo;
 import com.xiaofeng.utils.SpringBeanUtil;
 import com.xiaofeng.web.service.GroupService;
@@ -73,7 +72,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 
 			//放入消息队列中
 			MessageSender messageSender = SpringBeanUtil.getBean(MessageSender.class);
-			messageSender.send(messageVo);
+			messageSender.sendMsg(messageVo);
 
 //			DynMessage.broadcast(user.getGroupId(), jsonString);
 		}

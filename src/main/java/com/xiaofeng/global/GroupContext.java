@@ -5,8 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.xiaofeng.utils.MessageHandleVo;
 import org.apache.commons.lang3.StringUtils;
 
 import com.xiaofeng.entity.Group;
@@ -28,6 +30,8 @@ public class GroupContext {
 
 	//保存每个用户的ChannelHandlerContext对象
 	public static Groups<String, Users<Map<String, ChannelHandlerContext>>> USER_GROUP = new Groups<>();
+	//临时存放用户和session
+	public static ArrayBlockingQueue<MessageHandleVo> userSession = new ArrayBlockingQueue<MessageHandleVo>(1000,true);
 
 	public static List<UserToken> getGroupUsers(String groupId) {
 		List<UserToken> list = new ArrayList<UserToken>();

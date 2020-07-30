@@ -2,6 +2,7 @@ package com.xiaofeng.web.service;
 
 import java.security.InvalidAlgorithmParameterException;
 
+import com.xiaofeng.queue.MessageSender;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class PushService {
 	private GroupRepository groupRepository;
 	@Autowired
 	private GroupService groupService;
+	@Autowired
+	private MessageSender messageSender;
 	/**
 	 * 推送消息
 	 * 
@@ -60,7 +63,8 @@ public class PushService {
 					messageVo.setName("系统消息");
 					messageVo.setMsg(msg);
 					//log.info(String.format("广播消息(%s):%s", groupId,txt));
-					DynMessage.broadcast(groupId, com.xiaofeng.utils.string.StringUtils.toJson(messageVo));
+					//DynMessage.broadcast(groupId, com.xiaofeng.utils.string.StringUtils.toJson(messageVo));
+					messageSender.sendMsg(messageVo);
 				}else {
 					throw new BaseException("操作失败,组标识无效!");
 				}
