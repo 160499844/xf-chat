@@ -5,6 +5,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.alibaba.fastjson.JSONObject;
+import com.xiaofeng.queue.MessageSender;
+import com.xiaofeng.utils.MessageHandleVo;
 import org.springframework.util.StringUtils;
 
 import com.xiaofeng.global.GroupContext;
@@ -58,16 +61,7 @@ public class DynMessage {
 				}
 			}
 		}
-		/*for (Map<String, ChannelHandlerContext> map : groups) {
-			
-			//这种方式效率较高
-			for(ChannelHandlerContext channelHandlerContext: map.values()) {
-				//ChannelHandlerContext channelHandlerContext = map.get(key);
-				channelHandlerContext.channel().writeAndFlush(
-						new TextWebSocketFrame(msg));
-			}
-		}*/
-		//log.info("广播完毕");
+
 		long endTime = System.currentTimeMillis();    //获取结束时间
 		log.info("广播消息消耗时间：" + (endTime - startTime)/1000 + "ms,当前群聊人数:" + groups.size());    //输出程序运行时间
 	}
@@ -100,6 +94,31 @@ public class DynMessage {
 	 */
 	public static void broadcast(String msg) {
 		broadcast(null,msg);
+	}
+
+	/**
+	 * 将消息推送到消息队列
+	 * @param groupId
+	 * @param msg
+	 * @param messageSender
+	 */
+	public static void broadcast(String groupId, String msg, MessageSender messageSender){
+		Set<Map<String, ChannelHandlerContext>>  groups = GroupContext.USER_GROUP.get(groupId);
+		if(groups!=null){
+			//这种方式效率较高
+			Iterator<Map<String, ChannelHandlerContext>> iterator = groups.iterator();
+			while(iterator.hasNext()){
+				Map<String, ChannelHandlerContext> group = iterator.next();
+				for(ChannelHandlerContext channelHandlerContext: group.values()) {
+
+					MessageHandleVo messageHandleVo = new MessageHandleVo(channelHandlerContext,msg);
+					GroupContext.userSession.offer(messageHandleVo);
+					//推送到消息处理队列
+					//messageSender.sendMsgHandle(1);
+				}
+			}
+		}
+
 	}
 	
 }

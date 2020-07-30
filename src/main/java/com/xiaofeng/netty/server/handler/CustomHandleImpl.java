@@ -35,24 +35,7 @@ public class CustomHandleImpl implements CustomHandle {
 		
 		String content = messageVo.getMsg();
 		messageVo.setName(user.getUserName());
-		//content = String.format("%s(%s):%s", user.getUserName(), DateUtils.getNowDateToString(), messageVo.getMsg());
-		//log.info(content);
-		
-		//保存用户session映射关系key netty sesion value springboot session
-//		if(StringUtils.isEmpty(user.getSessionId()) && StringUtils.isNotEmpty(messageVo.getSessionId())) {
-//			//第一次加入群聊
-//			//user.setSessionId(messageVo.getSessionId());
-//			UserInfoContext.updateSessionId(user.getUserId(),messageVo.getSessionId());
-//			//加入小组
-//			GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
-//			UserInfoContext.sessionMap.put(user.getUserId(),messageVo.getSessionId());
-//			//小组人数+1
-//			GroupContext.groupAddCount(user.getGroupId());
-//			
-//			//发送系统消息
-//			PushService pushService = new PushService();
-//			pushService.pushMessage(user.getGroupId(), String.format("欢迎%s加入群组", user.getUserName()));
-//		}
+
 		
 		firstJoinGroup(user.getSessionId(), messageVo, user, ctx);
 		/**

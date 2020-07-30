@@ -139,6 +139,7 @@ public class GroupController {
 		String encrypt = RSAEncrypt.encrypt(groupId, RSAEncrypt.PUBLICKEY_STRING);
 		url += com.xiaofeng.utils.string.StringUtils.encodeBase64String(encrypt.getBytes());
 		GroupToken groupToken = new GroupToken(password, AESUtils.generateDesKey(), encrypt);
+		groupToken.setLink(url);
 //		GroupContext.GROUP_KEYS.put(groupId,groupToken );
 		//创建小组
 		Group group = new Group();

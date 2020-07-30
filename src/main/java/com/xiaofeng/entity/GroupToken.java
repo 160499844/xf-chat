@@ -17,6 +17,8 @@ public class GroupToken {
 	private String aesKey;//aes key
 	
 	private String publicKey;//消息解密公钥
+
+	private String link;//访问地址
 	
 	public GroupToken() {
 		super();

@@ -1,9 +1,14 @@
 package com.xiaofeng.global;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import com.xiaofeng.utils.MessageHandleVo;
 import org.apache.commons.lang3.StringUtils;
 
 import com.xiaofeng.entity.Group;
@@ -25,6 +30,8 @@ public class GroupContext {
 
 	//保存每个用户的ChannelHandlerContext对象
 	public static Groups<String, Users<Map<String, ChannelHandlerContext>>> USER_GROUP = new Groups<>();
+	//临时存放用户和session
+	public static ArrayBlockingQueue<MessageHandleVo> userSession = new ArrayBlockingQueue<MessageHandleVo>(1000,true);
 
 	public static List<UserToken> getGroupUsers(String groupId) {
 		List<UserToken> list = new ArrayList<UserToken>();
@@ -86,23 +93,21 @@ public class GroupContext {
 	 */
 	public static void groupAddUser(String groupId, String userId, ChannelHandlerContext ctx) {
 		Users<Map<String, ChannelHandlerContext>> groupList = GroupContext.getGroup(groupId);
-		//Set<Map<String, ChannelHandlerContext>> tempList = new HashSet<Map<String, ChannelHandlerContext>>();
-
-//		for (Map<String, ChannelHandlerContext> allUser : groupList) {
-//			if (!allUser.containsKey(userId)) {
-//				//创建临时小组
-//				Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
-//				userGroup.put(userId, ctx);
-//				tempList.add(userGroup);
-//			}
-//		}
-
-		Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
-		userGroup.put(userId, ctx);
+		Set<Map<String, ChannelHandlerContext>> tempList = new HashSet<Map<String, ChannelHandlerContext>>();
+		for (Map<String, ChannelHandlerContext> allUser : groupList) {
+			if (!allUser.containsKey(userId)) {
+				//创建临时小组
+				Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
+				userGroup.put(userId, ctx);
+				tempList.add(userGroup);
+			}
+		}
 		// 更新组成员
-		//将临时小组加入正式小组中
-		synchronized(groupList){
-			groupList.add(userGroup);
+		if (tempList.size() > 0) {
+			//将临时小组加入正式小组中
+			synchronized(groupList){
+				groupList.addAll(tempList);
+			}
 		}
 	}
 }
