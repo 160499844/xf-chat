@@ -72,7 +72,9 @@ public class CustomHandleImpl implements CustomHandle {
 	 */
 	private void firstJoinGroup(String sessionId,MessageVo messageVo,UserEntity user, ChannelHandlerContext ctx) {
 		String mSessionId = messageVo.getSessionId();
+
 		if(StringUtils.isEmpty(sessionId) && StringUtils.isNotEmpty(mSessionId)) {
+			long startTime = System.currentTimeMillis();
 			//第一次加入群聊
 			//user.setSessionId(messageVo.getSessionId());
 			user.setSessionId(mSessionId);
@@ -80,18 +82,25 @@ public class CustomHandleImpl implements CustomHandle {
 			user.setGroupId(messageVo.getGroupId());
 			UserService userService = SpringBeanUtil.getBean(UserService.class);
 			userService.updateUser(user);
+			long endTime = System.currentTimeMillis();    //获取结束时间
+			log.info("加入群聊-更新用户信息耗时：" + (endTime - startTime)/1000 + "ms");    //输出程序运行时间
 			//加入小组
 			GroupContext.groupAddUser(user.getGroupId(),user.getUserId(),ctx);
 			UserInfoContext.sessionMap.put(user.getUserId(),mSessionId);
+			endTime = System.currentTimeMillis();    //获取结束时间
+			log.info("加入群聊-加入小组耗时：" + (endTime - startTime)/1000 + "ms");    //输出程序运行时间
 			//小组人数+1
 			//GroupContext.groupAddCount(user.getGroupId());
 			GroupService groupService = SpringBeanUtil.getBean(GroupService.class);
 			groupService.groupAddCount(user.getGroupId());
-			
+			endTime = System.currentTimeMillis();    //获取结束时间
+			log.info("加入群聊-小组人数增加耗时：" + (endTime - startTime)/1000 + "ms");    //输出程序运行时间
 			//发送系统消息
 			PushService pushService = SpringBeanUtil.getBean(PushService.class);
 			String name = user.getUserName().length()>5?user.getUserName().substring(0,5) + "...":user.getUserName();
 			pushService.pushMessage(user.getGroupId(), String.format("欢迎%s加入群组", user.getUserName()));
+			endTime = System.currentTimeMillis();    //获取结束时间
+			log.info("发送系统消息耗时：" + (endTime - startTime)/1000 + "ms");    //输出程序运行时间
 		}
 	}
 

@@ -1,12 +1,9 @@
 package com.xiaofeng.global;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.apache.commons.lang3.StringUtils;
 
 import com.xiaofeng.entity.Group;
@@ -89,21 +86,23 @@ public class GroupContext {
 	 */
 	public static void groupAddUser(String groupId, String userId, ChannelHandlerContext ctx) {
 		Users<Map<String, ChannelHandlerContext>> groupList = GroupContext.getGroup(groupId);
-		Set<Map<String, ChannelHandlerContext>> tempList = new HashSet<Map<String, ChannelHandlerContext>>();
-		for (Map<String, ChannelHandlerContext> allUser : groupList) {
-			if (!allUser.containsKey(userId)) {
-				//创建临时小组
-				Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
-				userGroup.put(userId, ctx);
-				tempList.add(userGroup);
-			}
-		}
+		//Set<Map<String, ChannelHandlerContext>> tempList = new HashSet<Map<String, ChannelHandlerContext>>();
+
+//		for (Map<String, ChannelHandlerContext> allUser : groupList) {
+//			if (!allUser.containsKey(userId)) {
+//				//创建临时小组
+//				Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
+//				userGroup.put(userId, ctx);
+//				tempList.add(userGroup);
+//			}
+//		}
+
+		Map<String, ChannelHandlerContext> userGroup = new ConcurrentHashMap<>();
+		userGroup.put(userId, ctx);
 		// 更新组成员
-		if (tempList.size() > 0) {
-			//将临时小组加入正式小组中
-			synchronized(groupList){
-				groupList.addAll(tempList);
-			}
+		//将临时小组加入正式小组中
+		synchronized(groupList){
+			groupList.add(userGroup);
 		}
 	}
 }
