@@ -44,7 +44,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		String userId = ctx.channel().id().asLongText();
 		String message = msg.text();
 		boolean isBroadCase = true;
-		// 更新用户信息
+		// 获取用户信息
 		UserService userService = SpringBeanUtil.getBean(UserService.class);
 		UserEntity user = userService.getUserByUserId(userId);
 		MessageVo messageVo ;
@@ -66,7 +66,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 
 			user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId()) ? user.getGroupId() : messageVo.getGroupId());
 			user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName().trim());
-			
+
 			CustomHandle handle = new CustomHandleImpl();
 			handle.messageHandle(messageVo, user,ctx);
 
@@ -128,7 +128,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		}
 
 		log.info("离开用户：" + userId);
-		pushService.pushMessage(user.getGroupId(), String.format(user.getUserName() + "离开了", user.getUserName()));
+		pushService.pushMessage(user.getGroupId(), String.format(user.getUserName() + "离开了", user.getUserName()),MessageVo.MSG_SYSTEM_REMOVE);
 
 	}
 

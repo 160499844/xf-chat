@@ -104,6 +104,7 @@ function socketInit(url){
 			console.log("收到消息", result);
 			// ta.value = ta.value + "\n" + result.content;
 			messageElement(result);
+
 			updateGroupInfo(result);
 			// countSpan.html(result.info.group_count);
 			// usersSpan.val(result.info.gourp_users);
@@ -134,10 +135,14 @@ function socketInit(url){
  * @returns
  */
 function updateGroupInfo(messageVo){
-	var title = "";
-	title += messageVo.groupId;
-	title += "("+messageVo.info.group_count+")";
-	$("#title").html(title);
+	var type = messageVo.type;
+	if("SR"===type || "SA" === type){
+		var title = "";
+		title += messageVo.groupId;
+		title += "("+messageVo.info.group_count+")";
+		$("#title").html(title);
+	}
+
 }
 function getPic(fileName){
 	var base64;
@@ -194,7 +199,7 @@ function messageElement(messageVo) {
 		html += "<img data-action='zoom' src='"+bs64+"'/>"
 		
 		//html += "<img  data-preview-src='' data-preview-group='1' src='"+messageVo.msg+"'/>"
-	}else if("S" === type){
+	}else{
 		html = "<div class='sys-message-div'><div class='im-chat-user sys-message-info'><cite><i>"+msg+"</i></cite></div></div>";
 	}
 	html += "</div></li>";

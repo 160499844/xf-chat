@@ -43,11 +43,11 @@ public class CustomHandleImpl implements CustomHandle {
 		 * 传输的就是TextWebSocketFrame类型的数据
 		 */
 		// 组装返回对象
-		messageVo.setContent(content);
+		//messageVo.setContent(content);
 	//	Integer groupCount = GroupContext.getGroupCount(user.getGroupId());
-		GroupService groupService = SpringBeanUtil.getBean(GroupService.class);
-		Integer groupCount = groupService.getGroupCount(user.getGroupId());
-		messageVo.put("group_count", groupCount);// 当前在线人数
+		//GroupService groupService = SpringBeanUtil.getBean(GroupService.class);
+		//Integer groupCount = groupService.getGroupCount(user.getGroupId());
+		//messageVo.put("group_count", 0);// 当前在线人数
 		return messageVo;
 	}
 	/**
@@ -74,7 +74,7 @@ public class CustomHandleImpl implements CustomHandle {
 			//发送系统消息
 			PushService pushService = SpringBeanUtil.getBean(PushService.class);
 			String name = user.getUserName().length()>5?user.getUserName().substring(0,5) + "...":user.getUserName();
-			pushService.pushMessage(user.getGroupId(), String.format("欢迎%s加入群组", user.getUserName()));
+			pushService.pushMessage(user.getGroupId(), String.format("欢迎%s加入群组", user.getUserName()),MessageVo.MSG_SYSTEM_ADD);
 		}
 	}
 
