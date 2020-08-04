@@ -2,6 +2,7 @@ package com.xiaofeng.web.service;
 
 import java.security.InvalidAlgorithmParameterException;
 
+import com.xiaofeng.global.UtilConstants;
 import com.xiaofeng.queue.MessageSender;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class PushService {
 					String msg = "";
 					try {
 						msg = EncryptMessage.encrypt(txt, groupToken.getAesKey());
-					} catch (InvalidAlgorithmParameterException e) {
+					} catch (Exception e) {
 						log.error("广播aes加密失败!");
 						e.printStackTrace();
 					}
@@ -64,7 +65,15 @@ public class PushService {
 					messageVo.setMsg(msg);
 					//log.info(String.format("广播消息(%s):%s", groupId,txt));
 					//DynMessage.broadcast(groupId, com.xiaofeng.utils.string.StringUtils.toJson(messageVo));
-					messageSender.sendEnvent(messageVo);
+					if(UtilConstants.MSG.MSG_SYSTEM_ADD.equals(messageType) || UtilConstants.MSG.MSG_SYSTEM_REMOVE.equals(messageType)){
+						//如果是事件
+						messageSender.sendEnvent(messageVo);
+					}else{
+						//普通消息
+						messageSender.sendMsg(
+								messageVo
+						);
+					}
 				}else {
 					throw new BaseException("操作失败,组标识无效!");
 				}
@@ -80,7 +89,7 @@ public class PushService {
 	 * @param txt 消息内容
 	 */
 	public void pushMessage(String groupId, String txt)  {
-		pushMessage(groupId,txt,"S");
+		pushMessage(groupId,txt, UtilConstants.MSG.MSG_SYSTEM);
 	}
 
 }

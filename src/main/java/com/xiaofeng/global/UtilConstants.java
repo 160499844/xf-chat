@@ -18,6 +18,8 @@ public interface UtilConstants {
 		public static final String MSG_TEXT = "T";
 		public static final String MSG_PICTURE = "P";
 		public static final String MSG_SYSTEM = "S";
+		public static final String MSG_SYSTEM_REMOVE = "SR";
+		public static final String MSG_SYSTEM_ADD = "SA";
 	}
 
 }

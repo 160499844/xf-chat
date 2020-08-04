@@ -1,5 +1,6 @@
 package com.xiaofeng.netty.server.handler;
 
+import com.xiaofeng.global.UtilConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -74,7 +75,7 @@ public class CustomHandleImpl implements CustomHandle {
 			//发送系统消息
 			PushService pushService = SpringBeanUtil.getBean(PushService.class);
 			String name = user.getUserName().length()>5?user.getUserName().substring(0,5) + "...":user.getUserName();
-			pushService.pushMessage(user.getGroupId(), String.format("欢迎%s加入群组", user.getUserName()),MessageVo.MSG_SYSTEM_ADD);
+			pushService.pushMessage(user.getGroupId(), String.format("欢迎%s加入群组", user.getUserName()), UtilConstants.MSG.MSG_SYSTEM_ADD);
 		}
 	}
 

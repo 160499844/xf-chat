@@ -17,11 +17,6 @@ import lombok.Data;
 @Data
 public class MessageVo implements Serializable {
 
-	public static final String MSG_SYSTEM = "S";
-	public static final String MSG_SYSTEM_REMOVE = "SR";
-	public static final String MSG_SYSTEM_ADD = "SA";
-	public static final String MSG_TXT = "T";
-	public static final String MSG_PIC = "P";
 	/**
 	 * var obj = {
 				"msg" : message,

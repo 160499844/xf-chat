@@ -34,7 +34,7 @@ public class PushController {
 	 * @throws
 	 */
 	@RequestMapping("push")
-	public Result pushTxt(String groupId,String txt) throws InvalidAlgorithmParameterException {
+	public Result pushTxt(String groupId,String txt) {
 		if(StringUtils.isEmpty(groupId)) {
 			groupId = DynMessage.DEFAULT_GROUP;
 		}

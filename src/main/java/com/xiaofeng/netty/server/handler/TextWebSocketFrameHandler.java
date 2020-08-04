@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.xiaofeng.global.GroupContext;
+import com.xiaofeng.global.UtilConstants;
 import com.xiaofeng.queue.MessageSender;
 import com.xiaofeng.utils.user.Users;
 import org.apache.commons.lang3.StringUtils;
@@ -104,7 +105,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 	 * 用户退出
 	 */
 	@Override
-	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+	public void handlerRemoved(ChannelHandlerContext ctx)  {
 		String userId = ctx.channel().id().asLongText();
 		//UserToken user = UserInfoContext.getUser(userId);
 		UserService userService = SpringBeanUtil.getBean(UserService.class);
@@ -128,12 +129,12 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		}
 
 		log.info("离开用户：" + userId);
-		pushService.pushMessage(user.getGroupId(), String.format(user.getUserName() + "离开了", user.getUserName()),MessageVo.MSG_SYSTEM_REMOVE);
+		pushService.pushMessage(user.getGroupId(), String.format(user.getUserName() + "离开了", user.getUserName()), UtilConstants.MSG.MSG_SYSTEM_REMOVE);
 
 	}
 
 	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
 		cause.printStackTrace();
 		log.info("异常发生");
 		ctx.close();
