@@ -4,7 +4,7 @@ var userName = "";
 var groupId = "";
 userName = GetQueryValue("userName");
 var qrCode = GetQueryValue("code");
-
+var headImg = "<img src='images/demo8.jpg' />";//初始化头像
 //公钥
 var PUBLIC_KEY = '';
 //私钥
@@ -13,8 +13,6 @@ var socket;
 var encrypt = new JSEncrypt();
 //初始化
 init();
-
-
 
 function init(){
 	$.ajax({
@@ -187,7 +185,7 @@ function messageElement(messageVo) {
 	html += "<div class='"
 		+ className
 		+ "'>"
-		+ "<img src='images/demo9.jpg' />"
+		+ headImg
 		+ "<cite><i>" + messageVo.time + "</i>&nbsp;" + messageVo.name
 		+ "</cite>" + "</div>";
 	html += "<div class='im-chat-text'>";
