@@ -183,7 +183,7 @@ public class GroupController {
 			map.put("key", groupToken.getAesKey());
 			map.put("n", groupId);
 			map.put("userName",userNameObj.toString());
-			map.put("websocket", projectWebSocketPattern);
+			map.put("websocket", projectWebSocketPattern + UtilConstants.NettyConfigConstants.HOST_PATH);
 			session.setAttribute(UtilConstants.SESSION_GROUP_AES_KEY, groupId);
 			// 返回小组aeskey
 		} catch (Exception e) {

@@ -211,8 +211,8 @@ function messageElement(messageVo) {
 // 发送数据
 function send(message,type) {
 	//限制内容长度
-	if(message.length>1000){
-		message = message.substring(1000);
+	if(message.length>2000){
+		message = message.substring(2000);
 	}
 	
 	var msg;
