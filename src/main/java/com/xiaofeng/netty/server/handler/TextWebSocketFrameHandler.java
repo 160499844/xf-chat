@@ -54,7 +54,7 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 		} catch (Exception e) {
 			messageVo = new MessageVo();
 			isBroadCase = false;
-			log.error("消息解密失败{}",e);
+			log.error("消息转换异常{}",e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -67,9 +67,10 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 
 			user.setGroupId(StringUtils.isEmpty(messageVo.getGroupId()) ? user.getGroupId() : messageVo.getGroupId());
 			user.setUserName(StringUtils.isEmpty(messageVo.getName()) ? user.getUserName() : messageVo.getName().trim());
-
-			CustomHandle handle = new CustomHandleImpl();
-			handle.messageHandle(messageVo, user,ctx);
+			messageVo.setName(user.getUserName());
+			//消息处理
+			//CustomHandle handle = new CustomHandleImpl();
+			CustomHandleImpl.messageHandle(messageVo, user,ctx);
 
 			//放入消息队列中
 			MessageSender messageSender = SpringBeanUtil.getBean(MessageSender.class);
@@ -86,12 +87,8 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx){
 		SocketAddress localAddress = ctx.channel().localAddress();
-		
 		String ip = localAddress.toString().replace("/", "");
 		String userId = ctx.channel().id().asLongText();
-		// 打印出channel唯一值，asLongText方法是channel的id的全名
-		//log.info(String.format("连接用户:%s,ip:%s", userId, ip));
-
 		UserService userService = SpringBeanUtil.getBean(UserService.class);
 		UserEntity user = new UserEntity();
 		user.setIp(ip);

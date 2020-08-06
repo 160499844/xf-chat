@@ -85,7 +85,7 @@
 			<form class="mui-input-group">
 				<div class="mui-input-row">
 					<label>房间号</label> <input type="text" class="mui-input-clear"
-						placeholder="房间号" id="groupId" disabled="disabled" value="default">
+						placeholder="房间号" id="groupId" disabled="disabled" value="加载中...">
 				</div>
 				<div class="mui-input-row">
 					<label>昵称</label> <input type="text" class="mui-input-clear"
@@ -113,6 +113,7 @@
 					var code = GetQueryValue("code");
 					console.log("userName", userName);
 					var check = false;
+					var checkResult = false;
 					if (userName === "" || userName.length == 0
 							|| userName.length > 5) {
 						console.log("昵称长度限制1~5个字符之间");
@@ -121,10 +122,16 @@
 					} else {
 						check = true;
 						//使用临时用户名
-						updateUserName(userName);
+						checkResult = updateUserName(userName);
 					}
-					console.log("昵称不允许为空", check);
-					if (check) {
+					if(checkResult===false){
+						console.log("昵称已经被使用", checkResult);
+						mui.toast("昵称已经被使用");
+					}
+					if(check===false){
+						console.log("昵称不允许为空", check);
+					}
+					if (check && checkResult) {
 						var url = 'chat.html?userName=' + userName + '&code='
 								+ code;
 						mui.openWindow({

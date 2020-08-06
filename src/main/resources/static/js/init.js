@@ -302,6 +302,14 @@ function updateUserName(userName){
 			},
 		"dataType" : "json",
 		"success" : function(data) {
+			console.log("data",data);
+			if(data.code===0){
+				//校验通过
+				return true;
+			}else{
+				//校验失败
+				return false;
+			}
 		}
 	});
 }

@@ -1,6 +1,7 @@
 package com.xiaofeng.queue;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xiaofeng.global.UtilConstants;
 import com.xiaofeng.netty.server.DynMessage;
 import com.xiaofeng.utils.MessageHandleVo;
 import com.xiaofeng.utils.MessageVo;
@@ -14,16 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * 处理消息队列
+ * 接收触发事件队列中的事件
  */
 @Slf4j
 @Component
-@RabbitListener(queues = "event_queue")
+@RabbitListener(queues = UtilConstants.QUEUE.QUEUE_EVENT)
 public class MessageEventHandle {
     @Autowired
     private MessageSender messageSender;
-    @Autowired
-    private GroupService groupService;
     /**
      * 接收
      * @param messageVo 收到的消息

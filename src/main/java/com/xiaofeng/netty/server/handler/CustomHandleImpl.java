@@ -26,35 +26,20 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @Slf4j
-public class CustomHandleImpl implements CustomHandle {
+public class CustomHandleImpl {
 
 	/**
 	 * 处理消息
 	 */
-	@Override
-	public Object messageHandle(MessageVo messageVo,UserEntity user, ChannelHandlerContext ctx) {
-		
-		String content = messageVo.getMsg();
-		messageVo.setName(user.getUserName());
+	public static Object messageHandle(MessageVo messageVo,UserEntity user, ChannelHandlerContext ctx) {
 
-		
 		firstJoinGroup(user.getSessionId(), messageVo, user, ctx);
-		/**
-		 * writeAndFlush接收的参数类型是Object类型，但是一般我们都是要传入管道中传输数据的类型，比如我们当前的demo
-		 * 传输的就是TextWebSocketFrame类型的数据
-		 */
-		// 组装返回对象
-		//messageVo.setContent(content);
-	//	Integer groupCount = GroupContext.getGroupCount(user.getGroupId());
-		//GroupService groupService = SpringBeanUtil.getBean(GroupService.class);
-		//Integer groupCount = groupService.getGroupCount(user.getGroupId());
-		//messageVo.put("group_count", 0);// 当前在线人数
 		return messageVo;
 	}
 	/**
 	 * 第一次加入群聊
 	 */
-	private void firstJoinGroup(String sessionId,MessageVo messageVo,UserEntity user, ChannelHandlerContext ctx) {
+	private static void firstJoinGroup(String sessionId,MessageVo messageVo,UserEntity user, ChannelHandlerContext ctx) {
 		String mSessionId = messageVo.getSessionId();
 		if(StringUtils.isEmpty(sessionId) && StringUtils.isNotEmpty(mSessionId)) {
 			//第一次加入群聊

@@ -46,4 +46,13 @@ public interface UtilConstants {
 		public static final String MSG_SYSTEM_ADD = "SA";
 	}
 
+	/**
+	 * 队列
+	 */
+	public interface QUEUE{
+		public static final String QUEUE_MSG = "msg_queue";
+		public static final String QUEUE_EVENT = "event_queue";
+
+	}
+
 }
