@@ -16,6 +16,7 @@ import lombok.Data;
  */
 @Data
 public class MessageVo implements Serializable {
+
 	/**
 	 * var obj = {
 				"msg" : message,

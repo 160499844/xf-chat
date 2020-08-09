@@ -31,7 +31,7 @@ public class GroupContext {
 	//保存每个用户的ChannelHandlerContext对象
 	public static Groups<String, Users<Map<String, ChannelHandlerContext>>> USER_GROUP = new Groups<>();
 	//临时存放用户和session
-	public static ArrayBlockingQueue<MessageHandleVo> userSession = new ArrayBlockingQueue<MessageHandleVo>(1000,true);
+	public static ArrayBlockingQueue<MessageHandleVo> userSession = new ArrayBlockingQueue<MessageHandleVo>(5000,true);
 
 	public static List<UserToken> getGroupUsers(String groupId) {
 		List<UserToken> list = new ArrayList<UserToken>();

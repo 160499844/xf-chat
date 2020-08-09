@@ -2,6 +2,7 @@ package com.xiaofeng.web.service;
 
 import java.security.InvalidAlgorithmParameterException;
 
+import com.xiaofeng.global.UtilConstants;
 import com.xiaofeng.queue.MessageSender;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +29,16 @@ public class PushService {
 	private GroupService groupService;
 	@Autowired
 	private MessageSender messageSender;
+
 	/**
 	 * 推送消息
-	 * 
-	 * @param txt
-	 * @throws InvalidAlgorithmParameterException 
+	 * @param groupId 组名称
+	 * @param txt 消息内容
+	 * @param messageType 消息类型
 	 */
-
-	public void pushMessage(String groupId, String txt)  {
+	public void pushMessage(String groupId, String txt,String messageType)  {
 		if(!StringUtils.isEmpty(groupId)) {
-			
+
 			// 组装返回对象
 			MessageVo messageVo = new MessageVo();
 			//Integer groupCount = GroupContext.getGroupCount(groupId);
@@ -47,24 +48,32 @@ public class PushService {
 			//log.info(String.format("广播消息(%s)开始广播", groupId));
 			Group findByGroupId = groupRepository.findByGroupId(groupId);
 			if(findByGroupId!=null) {
-				
+
 				GroupToken groupToken = findByGroupId.getToken();
 				if(groupToken!=null) {
 					String msg = "";
 					try {
 						msg = EncryptMessage.encrypt(txt, groupToken.getAesKey());
-					} catch (InvalidAlgorithmParameterException e) {
+					} catch (Exception e) {
 						log.error("广播aes加密失败!");
 						e.printStackTrace();
 					}
 					messageVo.setContent(msg);
 					messageVo.setGroupId(groupId);
-					messageVo.setType("S");
+					messageVo.setType(messageType);
 					messageVo.setName("系统消息");
 					messageVo.setMsg(msg);
 					//log.info(String.format("广播消息(%s):%s", groupId,txt));
 					//DynMessage.broadcast(groupId, com.xiaofeng.utils.string.StringUtils.toJson(messageVo));
-					messageSender.sendMsg(messageVo);
+					if(UtilConstants.MSG.MSG_SYSTEM_ADD.equals(messageType) || UtilConstants.MSG.MSG_SYSTEM_REMOVE.equals(messageType)){
+						//如果是事件
+						messageSender.sendEnvent(messageVo);
+					}else{
+						//普通消息
+						messageSender.sendMsg(
+								messageVo
+						);
+					}
 				}else {
 					throw new BaseException("操作失败,组标识无效!");
 				}
@@ -72,6 +81,15 @@ public class PushService {
 				log.info(String.format("广播消息(%s)广播失败", groupId));
 			}
 		}
+	}
+
+	/**
+	 * 系统推送消息
+	 * @param groupId 组名称
+	 * @param txt 消息内容
+	 */
+	public void pushMessage(String groupId, String txt)  {
+		pushMessage(groupId,txt, UtilConstants.MSG.MSG_SYSTEM);
 	}
 
 }

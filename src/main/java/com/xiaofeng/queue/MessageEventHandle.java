@@ -1,10 +1,11 @@
 package com.xiaofeng.queue;
 
-import com.xiaofeng.global.GroupContext;
+import com.alibaba.fastjson.JSONObject;
 import com.xiaofeng.global.UtilConstants;
 import com.xiaofeng.netty.server.DynMessage;
 import com.xiaofeng.utils.MessageHandleVo;
 import com.xiaofeng.utils.MessageVo;
+import com.xiaofeng.web.service.GroupService;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
@@ -13,27 +14,27 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 /**
- * 接收消息队列中的内容
+ * 接收触发事件队列中的事件
  */
 @Slf4j
 @Component
-@RabbitListener(queues = UtilConstants.QUEUE.QUEUE_MSG)
-public class MessageReceiver01 {
+@RabbitListener(queues = UtilConstants.QUEUE.QUEUE_EVENT)
+public class MessageEventHandle {
     @Autowired
     private MessageSender messageSender;
     /**
-     * 接收消息
+     * 接收
      * @param messageVo 收到的消息
      */
     @RabbitHandler
     public void process(MessageVo messageVo) {
+        log.info("[处理队列]收到指示,触发队列" );
+
+        //GroupService groupService = SpringBeanUtil.getBean(GroupService.class);
+       // Integer groupCount = groupService.getGroupCount(messageVo.getGroupId());
+       // messageVo.put("group_count", groupCount);// 当前在线人数
         String jsonString = com.xiaofeng.utils.string.StringUtils.toJson(messageVo);
-        log.info("[消息队列01]收到消息  : " + jsonString);
         //DynMessage.broadcast(messageVo.getGroupId(), jsonString);
         DynMessage.broadcast(messageVo.getGroupId(),jsonString,messageSender);
     }

@@ -1,6 +1,7 @@
 package com.xiaofeng.queue;
 
 import com.xiaofeng.global.GroupContext;
+import com.xiaofeng.global.UtilConstants;
 import com.xiaofeng.netty.server.DynMessage;
 import com.xiaofeng.utils.MessageHandleVo;
 import com.xiaofeng.utils.MessageVo;
@@ -22,7 +23,7 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-@RabbitListener(queues = "msg_queue")
+@RabbitListener(queues = UtilConstants.QUEUE.QUEUE_MSG)
 public class MessageReceiver02 {
 
     @Autowired

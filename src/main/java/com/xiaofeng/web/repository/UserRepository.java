@@ -131,4 +131,16 @@ public class UserRepository {
 		}
 		log.info("用户数据初始化!");
 	}
+
+	/**
+	 * 判断用户名是否重复
+	 * @param groupId
+	 * @param userName
+	 */
+    public int findByUserName(String groupId, String userName) {
+		Query query = new Query(Criteria.where("groupId").is(groupId));
+		query.addCriteria(Criteria.where("userName").is(userName));
+		List<UserEntity> find = mongoTemplate.find(query, UserEntity.class);
+		return find.size();
+    }
 }

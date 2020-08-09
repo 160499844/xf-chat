@@ -4,7 +4,7 @@ var userName = "";
 var groupId = "";
 userName = GetQueryValue("userName");
 var qrCode = GetQueryValue("code");
-
+var headImg = "<img src='images/demo8.jpg' />";//初始化头像
 //公钥
 var PUBLIC_KEY = '';
 //私钥
@@ -13,8 +13,6 @@ var socket;
 var encrypt = new JSEncrypt();
 //初始化
 init();
-
-
 
 function init(){
 	$.ajax({
@@ -104,6 +102,7 @@ function socketInit(url){
 			console.log("收到消息", result);
 			// ta.value = ta.value + "\n" + result.content;
 			messageElement(result);
+
 			updateGroupInfo(result);
 			// countSpan.html(result.info.group_count);
 			// usersSpan.val(result.info.gourp_users);
@@ -134,10 +133,14 @@ function socketInit(url){
  * @returns
  */
 function updateGroupInfo(messageVo){
-	var title = "";
-	title += messageVo.groupId;
-	title += "("+messageVo.info.group_count+")";
-	$("#title").html(title);
+	var type = messageVo.type;
+	if("SR"===type || "SA" === type){
+		var title = "";
+		title += messageVo.groupId;
+		title += "("+messageVo.info.group_count+")";
+		$("#title").html(title);
+	}
+
 }
 function getPic(fileName){
 	var base64;
@@ -182,7 +185,7 @@ function messageElement(messageVo) {
 	html += "<div class='"
 		+ className
 		+ "'>"
-		+ "<img src='images/demo9.jpg' />"
+		+ headImg
 		+ "<cite><i>" + messageVo.time + "</i>&nbsp;" + messageVo.name
 		+ "</cite>" + "</div>";
 	html += "<div class='im-chat-text'>";
@@ -194,7 +197,7 @@ function messageElement(messageVo) {
 		html += "<img data-action='zoom' src='"+bs64+"'/>"
 		
 		//html += "<img  data-preview-src='' data-preview-group='1' src='"+messageVo.msg+"'/>"
-	}else if("S" === type){
+	}else{
 		html = "<div class='sys-message-div'><div class='im-chat-user sys-message-info'><cite><i>"+msg+"</i></cite></div></div>";
 	}
 	html += "</div></li>";
@@ -206,8 +209,8 @@ function messageElement(messageVo) {
 // 发送数据
 function send(message,type) {
 	//限制内容长度
-	if(message.length>1000){
-		message = message.substring(1000);
+	if(message.length>2000){
+		message = message.substring(2000);
 	}
 	
 	var msg;
@@ -299,6 +302,14 @@ function updateUserName(userName){
 			},
 		"dataType" : "json",
 		"success" : function(data) {
+			console.log("data",data);
+			if(data.code===0){
+				//校验通过
+				return true;
+			}else{
+				//校验失败
+				return false;
+			}
 		}
 	});
 }

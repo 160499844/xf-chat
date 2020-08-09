@@ -13,7 +13,6 @@ import com.xiaofeng.utils.aes.AESUtils;
 public class EncryptMessage {
 	
 	/**
-	 * @throws InvalidAlgorithmParameterException 
 	 * 
 	 * @Title: encrypt   
 	 * @Description: 加密
@@ -22,7 +21,7 @@ public class EncryptMessage {
 	 * @return: String  加密后的信息
 	 * @throws
 	 */
-	public static String encrypt(String str,String key) throws InvalidAlgorithmParameterException {
+	public static String encrypt(String str,String key) {
 		String string = "";
 		string = AESUtils.encrypt(str,key);
 		return string;
@@ -33,9 +32,8 @@ public class EncryptMessage {
 	 * 解密
 	 * @param str 需要解密的字符串
 	 * @return
-	 * @throws InvalidAlgorithmParameterException
 	 */
-	public static String decrypt(String str,String key) throws InvalidAlgorithmParameterException {
+	public static String decrypt(String str,String key) {
 		String string = "";
 		string = AESUtils.decrypt(str,key);
 		return string;

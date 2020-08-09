@@ -1,9 +1,7 @@
 package com.xiaofeng.netty.server;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import com.xiaofeng.global.UtilConstants;
 
-import com.xiaofeng.netty.server.handler.HttpHandler;
 import com.xiaofeng.netty.server.handler.TextWebSocketFrameHandler;
 
 import io.netty.channel.ChannelInitializer;
@@ -38,7 +36,7 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
         //ws://server:port/context_path
         //ws://localhost:9999/ws
         //参数指的是contex_path
-        pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
+        pipeline.addLast(new WebSocketServerProtocolHandler(UtilConstants.NettyConfigConstants.HOST_PATH));
         //websocket定义了传递数据的6中frame类型
         pipeline.addLast(new TextWebSocketFrameHandler());
         //pipeline.addLast(new HttpHandler());
