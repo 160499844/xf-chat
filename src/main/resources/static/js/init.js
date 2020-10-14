@@ -292,26 +292,28 @@ function setSession(s){
  * @returns
  */
 function updateUserName(userName){
+	var check = false;
 	$.ajax({
 		"async" : false,
 		"url" : "user/updateInfo",
 		"type" : "POST",
 			"data" : {
 				"userName":userName
-				
+
 			},
 		"dataType" : "json",
 		"success" : function(data) {
 			console.log("data",data);
 			if(data.code===0){
 				//校验通过
-				return true;
+				check= true;
 			}else{
 				//校验失败
-				return false;
+				check= false;
 			}
 		}
 	});
+	return check;
 }
 function getGroupInfo(code){
 	var content;
