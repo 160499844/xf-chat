@@ -101,6 +101,38 @@
 </body>
 <script src="/js/jquery-2.2.4.min.js"></script>
 <script src="/js/mui.js"></script>
+
+<script
+	src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>
+<script type="text/javascript" src="/js/CryptoJS-master/rollups/aes.js"></script>
+<script type="text/javascript"
+	src="/js/CryptoJS-master/components/mode-ecb.js"></script>
+<script type="text/javascript"
+	src="/js/CryptoJS-master/components/pad-nopadding.js"></script>
+<script type="text/javascript" src="/js/init.js"></script>
+
+<!-- <script type="text/javascript" src="/js/jsencrypt.js"></script> -->
+<script type="text/javascript">
+	$(function() {
+		$(".returnIndex").on("tap", function() {
+			mui.openWindow({
+				url : 'chat_index.html',
+				id : 'index'
+			});
+		});
+		$(".createhtml").on("tap", function() {
+			mui.openWindow({
+				url : 'index.html',
+				id : 'index'
+			});
+		});
+		var code = GetQueryValue("code");
+		console.log("code", code);
+		var content = getGroupName(code);
+		$("#groupId").val(content.n);
+
+	});
+</script>
 <script type="text/javascript">
 	mui.init();
 	(function($) {
@@ -145,36 +177,5 @@
 					}
 				});
 	})(mui);
-</script>
-<script
-	src="https://cdn.bootcss.com/jsencrypt/3.0.0-beta.1/jsencrypt.js"></script>
-<script type="text/javascript" src="/js/CryptoJS-master/rollups/aes.js"></script>
-<script type="text/javascript"
-	src="/js/CryptoJS-master/components/mode-ecb.js"></script>
-<script type="text/javascript"
-	src="/js/CryptoJS-master/components/pad-nopadding.js"></script>
-<script type="text/javascript" src="/js/init.js"></script>
-
-<!-- <script type="text/javascript" src="/js/jsencrypt.js"></script> -->
-<script type="text/javascript">
-	$(function() {
-		$(".returnIndex").on("tap", function() {
-			mui.openWindow({
-				url : 'chat_index.html',
-				id : 'index'
-			});
-		});
-		$(".createhtml").on("tap", function() {
-			mui.openWindow({
-				url : 'index.html',
-				id : 'index'
-			});
-		});
-		var code = GetQueryValue("code");
-		console.log("code", code);
-		var content = getGroupName(code);
-		$("#groupId").val(content.n);
-
-	});
 </script>
 </html>
