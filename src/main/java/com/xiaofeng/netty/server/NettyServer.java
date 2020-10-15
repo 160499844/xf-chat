@@ -38,8 +38,8 @@ public class NettyServer {
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
         //绑定端口,开始接收进来的连接
         try {
-            ChannelFuture future = bootstrap.bind(socketAddress).sync();
             log.info("服务器启动开始监听端口: {}", socketAddress.getPort());
+            ChannelFuture future = bootstrap.bind(socketAddress).sync();
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
