@@ -23,7 +23,7 @@ public class XfChatApplication {
 		 //启动服务端
         NettyServer nettyServer = new NettyServer();
         new Thread(new MessageRunnable01()).start();
-        new Thread(new MessageRunnable02()).start();
+        //new Thread(new MessageRunnable02()).start();
         long endTime = System.currentTimeMillis();    //获取结束时间
         System.out.println("启动消耗时间:" + ((endTime - startTime)/1000) + "秒");    //输出程序运行时间
         nettyServer.start(new InetSocketAddress(UtilConstants.NettyConfigConstants.HOST_NAME, UtilConstants.NettyConfigConstants.HOST_PORT));

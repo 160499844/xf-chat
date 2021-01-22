@@ -29,6 +29,13 @@ public class MessageRunnable01 implements Runnable {
                 log.error("[消息处理队列01]异常");
                 e.printStackTrace();
             }
+            try {
+                if(GroupContext.userSession.isEmpty()){
+                    Thread.sleep(100);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         }
     }

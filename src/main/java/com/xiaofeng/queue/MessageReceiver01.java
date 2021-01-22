@@ -22,7 +22,7 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-@RabbitListener(queues = UtilConstants.QUEUE.QUEUE_MSG)
+@RabbitListener(queues = UtilConstants.QUEUE.QUEUE_MSG, concurrency = "4")
 public class MessageReceiver01 {
     @Autowired
     private MessageSender messageSender;
@@ -33,7 +33,7 @@ public class MessageReceiver01 {
     @RabbitHandler
     public void process(MessageVo messageVo) {
         String jsonString = com.xiaofeng.utils.string.StringUtils.toJson(messageVo);
-        log.info("[消息队列01]收到消息  : " + jsonString);
+        log.info("[消息队列]收到消息  : " + jsonString);
         //DynMessage.broadcast(messageVo.getGroupId(), jsonString);
         DynMessage.broadcast(messageVo.getGroupId(),jsonString,messageSender);
     }

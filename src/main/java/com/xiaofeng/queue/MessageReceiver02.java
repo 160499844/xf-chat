@@ -22,8 +22,8 @@ import java.util.Set;
  * 接收消息队列中的内容
  */
 @Slf4j
-@Component
-@RabbitListener(queues = UtilConstants.QUEUE.QUEUE_MSG)
+//@Component
+//@RabbitListener(queues = UtilConstants.QUEUE.QUEUE_MSG)
 public class MessageReceiver02 {
 
     @Autowired
